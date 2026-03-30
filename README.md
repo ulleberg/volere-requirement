@@ -66,9 +66,39 @@ The original template files (2010) are preserved in the repo root:
 | `d–g` | Case studies (Library, Controller) |
 | `h–i` | Atomic requirement spreadsheets (XLS) |
 
-## Design Philosophy
+## Key Insights
 
-**Chesterton's fence** — Volere has been refined over 30 years. We keep every element until we've proven it's unnecessary, not the other way around.
+These insights emerged from building and validating the framework on a real project (thul-studio: 43 URs, 12 TCs, 12,814 lines dead code removed, 23 security tests added).
+
+**1. The "engineering manager" layer for agents is the missing piece.**
+Agents can write code. Nothing forces them to write it *well*. Volere + V-Model provides the structural discipline that human engineering managers provide to human teams. The framework IS the engineering manager.
+
+**2. Soft constraints without hard enforcement = drift.**
+CLAUDE.md alone doesn't work. Agents respect hard failures (CI breaks, hook blocks) and ignore soft guidelines. Every V-Model level needs both columns: instruction (tells agents what to do) AND enforcement (catches when they don't).
+
+**3. The snow card is already agent-ready.**
+Volere's 30-year-old atomic requirement format maps almost perfectly to agent task definitions. Nobody had connected these dots. Description → what to build. Rationale → context for trade-offs. Fit criterion → acceptance test assertion.
+
+**4. Skilled agent teams produce specifications, not just documents.**
+Unskilled teams write parallel documents. Skilled teams write integrated specifications — cross-referencing, catching contradictions, self-organizing to produce coordination artifacts nobody asked for. (Proven in Experiment 001, thul-agentic-research.)
+
+**5. Test theater is the silent killer.**
+577 tests sound impressive. 23% actually verify fit criteria. The rest are theater — high coverage, low verification. Mutation testing and the VERIFIES/SUPPORTS/THEATER/REDUNDANT classification are essential.
+
+**6. The mess is evidence — don't clean before you trace.**
+Dead code reveals derived requirements. Unnecessary tests reveal test theater. Cleaning first destroys the signal. The sequence must be: requirements → trace → cleanup.
+
+**7. Acceptance is multi-dimensional.**
+A single requirement may need fit criteria across user, security, operational, and regulatory dimensions (FCC, RED, ATEX, IEC 61508). Agents need to know which dimensions apply. This is where Volere's structured approach beats user stories and BDD.
+
+**8. Graduated rigour prevents both laziness and ceremony.**
+DAL levels (A-E) scale verification to risk. A CSS fix doesn't need the same treatment as a database migration. Without this, the framework is either too heavy for small changes or too light for critical ones.
+
+**9. Chesterton's fence applies to frameworks too.**
+Volere included BUCs, PUCs, satisfaction/dissatisfaction scores, and 9 non-functional types for reasons developed over 30 years. We don't remove them because "our projects are small." We include them and let projects discover whether they need them.
+
+**10. Agents are lazy — make the right path the only path.**
+This was the trigger for the entire framework. A JS monolith degraded because agents chose the easy path. The framework's job is to make discipline the default, not the exception. Pre-commit hooks, not guidelines. Required system tests, not optional e2e. "Manually verified" is a bug in the process.
 
 See `ARCHITECTURE.md` for the full design principles, V-Model mapping, and design decisions.
 
