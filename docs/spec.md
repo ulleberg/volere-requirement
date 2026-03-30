@@ -209,6 +209,39 @@ volere@ulleberg (plugin)
 - `gitleaks` (for check-secrets hook) — optional, degrades gracefully
 - No runtime dependencies — skills are prompt files, hooks are shell scripts
 
+## Acceptance Testing
+
+The framework must eat its own dogfood. Every version is acceptance-tested against fit criteria before release — no "light" acceptance.
+
+### Per-Version Acceptance Protocol
+
+Each version ships with:
+1. **Fit criteria** for every component in that version (written as YAML snow cards using the framework's own schema)
+2. **Acceptance tests** that verify each fit criterion — automated where possible, scripted manual where not
+3. **Validation run** on a real project (not a toy example) before release
+
+### Version-Specific Acceptance
+
+| Version | Acceptance Test |
+|---------|----------------|
+| **v0.1** | `volere init` on a fresh repo produces valid structure. `write-requirement` skill produces a YAML card that passes JSON Schema validation. Run on a new thul-* project. |
+| **v0.2** | `check-secrets` hook blocks a commit containing a test secret. `check-traceability` hook warns on a commit with no UR reference. Tested on thul-studio. |
+| **v0.3** | `review-requirements` produces review quality comparable to thul-studio Pass 1 (scored by synthesis agent on specificity, testability, cross-document coherence). Run on a project with 10+ URs. |
+| **v0.4** | `trace-codebase` identifies known dead code and test theater in a project with planted examples. `audit-tests` correctly classifies VERIFIES vs THEATER. Run on thul-studio as regression. |
+| **v0.5** | `volere trace` output matches manual traceability matrix. `volere coverage` correctly reports uncovered fit criteria. Verified against thul-studio's 43 URs. |
+| **v0.6** | DAL-E project has no blocking hooks. DAL-A project blocks on missing tests. `classify-risk` assigns correct DAL to 10 test cases spanning CSS changes to DB migrations. |
+| **v0.7** | `volere impact UR-03` correctly identifies all downstream URs, TCs, and test files. Verified against thul-studio's known dependency graph. |
+| **v0.8** | Security baseline profile catches 5 planted security violations. Profile can be applied to existing project without breaking CI. |
+| **v1.0** | Full framework applied to a new project from scratch. Project goes from zero to structured requirements, enforced architecture, and traced tests in one session. |
+
+### Regression
+
+Each version's acceptance tests become regression tests for subsequent versions. By v1.0, the accumulated acceptance suite covers all components.
+
+### The Rule
+
+> No version is released until its acceptance tests pass on a real project. "Tests pass" means fit criteria are verified, not just "no errors."
+
 ## Success Criteria
 
 The framework is successful when:
