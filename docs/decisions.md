@@ -126,4 +126,50 @@ YAML is proposed, but alternatives exist:
 - Are there derived requirements hiding in the codebase that aren't captured?
 - Are the 577 tests actually verifying fit criteria, or is some of it test theater?
 
-## Status: DECIDED — thul-studio requirements review is next
+### OD-7: Synthesis Q1 — CORS fix scope
+**DECIDED: Option A — restrict CORS to Tailscale origins.** Tailscale provides network-level auth. Terminal auth would break the iframe approach for low threat-model benefit.
+
+### OD-8: Synthesis Q2 — Token lifecycle
+**DECIDED: Static token is sufficient.** Single user, behind Tailscale. Move token from config to `~/.secrets` for consistency. No rotation/expiry needed.
+
+### OD-9: UR-33 broadened to secrets management
+**DECIDED: UR-33 expanded from "token lifecycle" to full secrets management.**
+
+The investigation revealed the documented convention ("all secrets in `~/.secrets`") doesn't match reality:
+- Daemon processes (launchd) use local `.env` files because launchd doesn't source zshrc
+- Three repos (thul-ops, thul-studio, thul-finance) use `.env` — this is legitimate but undocumented
+- No pre-commit hooks for secrets detection in any repo
+- No CI secrets scanning (gitleaks, trufflehog) anywhere
+- Doc-health agent scans monthly but is report-only
+- `STUDIO_TOKEN` exists in `~/.secrets` but isn't in the dotfiles README template
+
+This is a concrete example of soft constraints (CLAUDE.md) without hard enforcement (hooks/CI) = drift. Exactly the problem the Volere Agentic Framework is designed to solve.
+
+Updated UR-33 captures the two-tier pattern and adds hard enforcement via pre-commit hooks + CI + doc-health.
+
+### OD-10: Synthesis Q3 — Session isolation priority
+**DECIDED: P3 with documented trigger.** Single-operator threat model makes this low priority today. Re-evaluate if: others join the Tailscale mesh, untrusted prompts run in sessions, or "Agents as a Service" puts customer agents on the infrastructure.
+
+### OD-11: Synthesis Q4 — Derived requirements placement
+**DECIDED: Technical Constraints appendix.** Create `docs/requirements/technical-constraints.md` with TC- prefix. Same Volere format, traces upward to URs. Lives at the design level of the V-Model, verified by unit tests. Keeps UR document clean (user-facing only).
+
+### OD-12: Synthesis Q5 — Conference transcript durability
+**DECIDED: P1 — transcripts are reference material.** Incremental writes per round (crash resilient). Structured metadata (participants, topic, date, decisions). Future: skill/hook to extract decisions and feed back into requirements/expertise.
+
+### OD-13: Synthesis Q6 — Machine count in URs
+**DECIDED: Design for N machines.** URs reference "all machines" or "across the mesh," never specific counts. roster.yaml abstracts topology. M5, M6, or cloud nodes work without rewriting requirements.
+
+### OD-14: Synthesis Q7 — Chat history persistence
+**DECIDED: File-persisted on campus (Option 2).** Chat history stored in `thul-agents/agents/{role}/chats/{date}.md`. One file per day, pruned after 30 days. Campus synced across mesh via git (needed anyway for roster). Chat is agent knowledge — belongs with the agent, not the infrastructure.
+
+**Side finding: Campus sync is a prerequisite.** roster.yaml, expertise/, SOUL.md, and now chats/ all need syncing. This should be a UR or technical constraint.
+
+### OD-15: Synthesis Q8 — Workspace grouping
+**DECIDED: "Ungrouped" section at bottom for non-pinned folders.** Pin manually if frequent. Takes effect on page load, no restart.
+
+### OD-16: Synthesis Q9 — Health checks scope
+**DECIDED: Split clearly.** UR-20 = project standards compliance (per-session, file quality + staleness). UR-30 = machine health (/health endpoint, infrastructure). Renamed UR-20 from "Project health checks" to "Project standards compliance."
+
+**Side finding: Need a Project Constitution.** UR-20 checks existence AND quality, but the standard it checks against needs to be defined. Created `docs/project-constitution.md` as a framework-level spec defining minimum content for CLAUDE.md, ARCHITECTURE.md, README.md, requirements/. This is a Volere Agentic Framework deliverable, not a Studio UR.
+
+## Status: All 9 synthesis questions decided
