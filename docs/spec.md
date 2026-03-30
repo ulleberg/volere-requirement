@@ -75,6 +75,8 @@ fit_criteria:
 dal: C                    # A=catastrophic B=critical C=moderate D=minor E=cosmetic
 priority: must            # must | should | could | wont
 status: implemented       # proposed | implemented | verified | deprecated
+satisfaction: 5           # 1-5 stakeholder happiness if implemented (Kano)
+dissatisfaction: 4        # 1-5 stakeholder unhappiness if missing (Kano)
 
 origin:
   stakeholder: Thomas Ulleberg
@@ -84,6 +86,7 @@ origin:
 
 depends_on: [UR-038]
 conflicts: []
+decomposed_to: [TC-05]   # traces downward to child requirements
 
 history:
   - date: 2026-03-30
@@ -101,7 +104,194 @@ serves: [UR-03, UR-16]   # traces upward to URs
 # ... rest same as snow card
 ```
 
-### 5. DAL Profiles
+### 5. Project Context (Volere sections 1-4)
+
+Before writing requirements, the framework captures project-level context that scopes everything else.
+
+**Project context file** (`docs/requirements/context.yaml`):
+
+```yaml
+# Project context — Volere sections 1-4
+project:
+  name: thul-studio
+  purpose: >
+    Browser-based terminal manager for multiple Claude Code sessions
+    with multi-agent collaboration.
+  scope:
+    in: [session management, agent communication, browser UI, CLI]
+    out: [agent identity (thul-agents), scheduling (thul-ops), billing]
+
+stakeholders:
+  - name: Thomas Ulleberg
+    role: Owner / sole operator
+    interests: [reliability, mobile access, multi-agent coordination]
+  - name: Steve (CTO agent)
+    role: Technical architect
+    interests: [code quality, architecture coherence]
+  # Add stakeholders as they emerge — customers, regulators, operators
+
+constraints:
+  mandated:
+    - "Must run behind Tailscale — no public internet exposure"
+    - "Go binary + static HTML — no Node.js runtime in production"
+    - "Two runtime deps max (gorilla/websocket, gopkg.in/yaml.v3)"
+  budget: null              # No budget constraint currently
+  schedule: null            # No deadline currently
+  platform: "macOS (M3/M4), Darwin, launchd"
+
+glossary:
+  session: "A Claude Code instance running in a tmux pane, accessible via browser terminal"
+  campus: "The thul-agents repo — where agent identity, expertise, and training live"
+  surface: "A browser page (Landing, Grid, Chat) served by Studio"
+  fit criterion: "A measurable condition that defines when a requirement is satisfied"
+  DAL: "Design Assurance Level (A-E) — scales verification effort to risk"
+  snow card: "Volere's atomic requirement format — one card per requirement"
+
+open_issues:
+  - id: OI-01
+    title: "Campus sync mechanism for multi-machine"
+    status: open
+    affects: [UR-05, UR-25]
+  - id: OI-02
+    title: "Agents as a Service — multi-tenant implications"
+    status: parking-lot
+    affects: [UR-38]
+
+risks:
+  - id: RISK-01
+    title: "Context window blindness in large codebases"
+    probability: high
+    impact: medium
+    mitigation: "grep-before-create rule, architectural fitness functions"
+  - id: RISK-02
+    title: "Test theater — agents write tests that pass but verify nothing"
+    probability: high
+    impact: high
+    mitigation: "audit-tests skill, mutation testing in DAL-B+"
+```
+
+**The `volere init` scaffold creates this file** with placeholders. The `write-requirement` skill reads it to understand scope, stakeholders, and glossary before writing a requirement.
+
+### 5a. Interface Contracts (V-Model architecture level)
+
+The V-Model's architecture level maps to integration tests. Our spec has boundaries (what can import what) but is missing **interface contracts** — what each module provides and requires.
+
+```yaml
+# .volere/contracts/session-manager.yaml
+module: internal/session/
+version: 1
+
+provides:
+  - function: CreateSession
+    accepts:
+      folder: { type: string, required: true, constraint: "must exist" }
+      type: { type: string, enum: [claude, claude-auto, shell] }
+    returns:
+      id: { type: string, format: "studio-{hex8}" }
+      pid: { type: int, constraint: "> 0" }
+      port: { type: int, constraint: "within configured range" }
+    guarantees:
+      - "Returned port is allocated and not in use"
+      - "Session is persisted to sessions.json atomically"
+      - "tmux session is created before function returns"
+    errors:
+      - condition: "No ports available"
+        returns: "PortExhaustedError with capacity details"
+
+requires:
+  - "Port pool has at least one available port"
+  - "Target folder exists and is readable"
+  - "tmux is available on PATH"
+```
+
+**Verified by integration tests.** When an agent modifies a module, the contract tests catch interface violations. This prevents the interface drift anti-pattern.
+
+**Ships in v0.5** alongside `volere trace`. Contract files are optional — projects add them for critical module boundaries.
+
+### 5b. Requirement Decomposition (V-Model levels)
+
+For complex systems, two levels (UR + TC) aren't enough. The V-Model decomposes:
+
+```
+Stakeholder Requirements (SHR)     "I want to talk to agents from my phone"
+  └── System Requirements (UR)     "Mobile chat with STT/TTS over Tailscale"
+      └── Subsystem Requirements   "Chat module handles voice, Grid handles sessions"
+          └── Component Reqs (TC)  "Deepgram WebSocket needs CloseStream on shutdown"
+```
+
+The schema supports this via `source` (traces up) and `decomposed_to` (traces down):
+
+```yaml
+id: SHR-01
+title: Mobile agent access
+decomposed_to: [UR-04, UR-05, UR-11, UR-12]
+
+id: UR-04
+source: SHR-01
+decomposed_to: [TC-07]
+
+id: TC-07
+serves: [UR-04, UR-11]
+```
+
+**For simple projects (< 50 requirements):** UR + TC is sufficient. Don't add SHR/subsystem levels unless complexity demands it.
+
+**For complex/regulated projects:** Add levels as needed. The schema is the same at every level — only the prefix changes.
+
+### 5c. Requirements Reuse (Shared Catalogs)
+
+Multiple projects share requirements: security baselines, coding standards, project constitution compliance. Instead of duplicating, projects import from shared catalogs.
+
+```yaml
+# .volere/imports.yaml
+catalogs:
+  - name: security-baseline
+    source: volere@ulleberg/catalogs/security-baseline.yaml
+    version: 1.0
+    tailoring:
+      - exclude: [SEC-012]           # Not applicable to this project
+      - override:
+          SEC-003:
+            dal: B                    # Raise from C to B for this project
+
+  - name: project-standards
+    source: volere@ulleberg/catalogs/project-standards.yaml
+    version: 1.0
+```
+
+Catalogs are YAML files containing requirement cards. Projects import them with optional tailoring (exclude, override) — the same pattern as OSCAL profiles.
+
+**Ships in v0.8** alongside compliance profiles. The security baseline catalog is built from the patterns proven on thul-studio.
+
+### 5d. Change Management (Suspect Links)
+
+When a requirement changes, everything downstream is suspect until re-verified.
+
+```
+UR-03 changes (state detection accuracy)
+  ↓ volere impact UR-03
+  Suspect links:
+    ├── TC-05 (idle debounce) — serves UR-03
+    ├── TC-09 (context persistence) — serves UR-19, depends on UR-03
+    ├── UR-16 (response extraction) — depends on UR-03
+    ├── tests/session/state_test.go — verifies UR-03
+    └── tests/a2a/handler_test.go — verifies TC-05
+
+  Action required:
+    - Review TC-05, TC-09, UR-16 for consistency with changed UR-03
+    - Re-run affected tests
+    - Mark as re-verified or update
+```
+
+**How it works:**
+1. `volere impact <id>` traverses the dependency graph (source, depends_on, serves, decomposed_to)
+2. Flags all downstream artifacts as "suspect"
+3. Agent must review each suspect link and either confirm or update
+4. `volere validate` fails if suspect links remain unresolved
+
+**Ships in v0.7.** The dependency graph is built from the YAML files — no external database needed.
+
+### 6. DAL Profiles
 
 ```yaml
 # .volere/profile.yaml
@@ -129,7 +319,7 @@ profiles:
     review: [code-reviewer, test-engineer, architecture-reviewer, security-engineer]
 ```
 
-### 6. Regulatory Compliance Framework
+### 7. Regulatory Compliance Framework
 
 Multi-dimensional acceptance is a core requirement (Pain Point 6 from discovery). A single requirement may need fit criteria across user, regulatory, security, and safety dimensions.
 
@@ -268,7 +458,7 @@ When `review-requirements` runs on a project with compliance profiles, the compl
 - Not legal advice — it structures the evidence, it doesn't interpret the law
 - It IS a traceability and evidence management system that makes audits predictable
 
-### 7. Project Constitution (built-in)
+### 8. Project Constitution (built-in)
 
 Defines minimum content standards for:
 - `CLAUDE.md` — Architecture, Testing, Conventions sections
@@ -278,7 +468,7 @@ Defines minimum content standards for:
 
 Staleness check: warns if docs are 30+ days older than latest code commit.
 
-### 7. CLI
+### 9. CLI
 
 ```bash
 volere init [--dal C]              # Scaffold project with DAL profile
