@@ -5,7 +5,7 @@ description: Run agent team reviews on requirements — detects review type (ful
 
 # Review Requirements
 
-Assemble an agent team to review, validate, or trace requirements. Three review types, each proven on thul-studio. The skill detects which type is needed and generates the team assembly prompt.
+Assemble an agent team to review, validate, or trace requirements. Three review types, each with a proven pattern. The skill detects which type is needed and generates the team assembly prompt.
 
 ## When to Use
 
@@ -51,9 +51,11 @@ LAST_REQ=$(find docs/requirements -name "*.yaml" -newer docs/requirements/review
 
 2. **Find the agent roster:**
    Look for the roster in order:
+   - `.volere/context.yaml` — `agents` section if present
    - Project's own `roster.yaml`
-   - `thul-agents/roster.yaml` (if the project is in the thul ecosystem)
+   - `${VOLERE_AGENTS_PATH}/roster.yaml` if the env var is set
    - Ask the user for the path to their agent definitions
+   - If none found, use **Zero-Agent Mode** (see below)
 
 3. **Read the project context:**
    ```bash
@@ -65,6 +67,17 @@ LAST_REQ=$(find docs/requirements -name "*.yaml" -newer docs/requirements/review
    // ~/.claude/settings.json
    { "env": { "CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS": "1" } }
    ```
+
+## Zero-Agent Mode
+
+When no agent roster is configured (`${VOLERE_AGENTS_PATH}` is unset and `.volere/context.yaml` has no `agents` section), the review runs all perspectives sequentially in one Claude Code session:
+
+1. Each review perspective gets its own heading
+2. The agent adopts each role in sequence (architecture-reviewer → test-engineer → security-engineer → synthesis-lead)
+3. Each perspective produces its analysis before the next begins
+4. The synthesis runs last, consolidating all perspectives
+
+This is slower but requires no infrastructure beyond a single Claude Code session.
 
 ## Review Type 1: Full Review (Pass 1)
 
@@ -95,8 +108,8 @@ All teammates should read:
 Spawn these teammates:
 
 1. Architecture Reviewer — spawn with prompt:
-   "You are the Architecture Reviewer.
-   {LOAD_SOUL: chief-technical-officer}
+   "You are the Architecture Reviewer (architecture-reviewer role).
+   {LOAD_SOUL: architecture-reviewer}
 
    Read all requirement cards in docs/requirements/.
    Read ARCHITECTURE.md and CLAUDE.md.
@@ -110,7 +123,7 @@ Spawn these teammates:
    Stay in your lane — architecture and completeness."
 
 2. Test Engineer — spawn with prompt:
-   "You are the Test Engineer.
+   "You are the Test Engineer (test-engineer role).
    {LOAD_SOUL: test-engineer}
 
    Read all requirement cards in docs/requirements/.
@@ -125,7 +138,7 @@ Spawn these teammates:
    Stay in your lane — test quality and coverage."
 
 3. Security Engineer — spawn with prompt:
-   "You are the Security Engineer.
+   "You are the Security Engineer (security-engineer role).
    {LOAD_SOUL: security-engineer}
 
    Read all requirement cards in docs/requirements/.
@@ -140,7 +153,7 @@ Spawn these teammates:
    Stay in your lane — security only."
 
 4. DevOps Engineer — spawn with prompt:
-   "You are the DevOps Engineer.
+   "You are the DevOps Engineer (devops-engineer role).
    {LOAD_SOUL: devops-engineer}
 
    Read all requirement cards in docs/requirements/.
@@ -155,8 +168,8 @@ Spawn these teammates:
    Stay in your lane — operations and reliability."
 
 5. Synthesis Lead — spawn with prompt:
-   "You are the Synthesis Lead.
-   {LOAD_SOUL: chief-of-staff}
+   "You are the Synthesis Lead (synthesis-lead role).
+   {LOAD_SOUL: synthesis-lead}
 
    Wait for all four reviewers to complete, then read all reviews.
 
@@ -175,7 +188,7 @@ Have teammates discuss and challenge each other's findings.
 
 **Replace {PLACEHOLDERS}:**
 - `{COUNT}`, `{UR_COUNT}`, `{TC_COUNT}` — from file listing
-- `{LOAD_SOUL: role}` — replace with: "Read your identity: {ROSTER_PATH}/agents/{role}/SOUL.md" and expertise if available
+- `{LOAD_SOUL: role}` — replace with: "Read your identity: `${VOLERE_AGENTS_PATH}/agents/<role>/SOUL.md`" if the env var is set, otherwise omit the SOUL line and proceed in Zero-Agent Mode
 
 **Output structure:**
 ```
