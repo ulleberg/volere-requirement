@@ -1,6 +1,6 @@
 # Problem Brief
 
-## Status: Draft
+## Status: Complete — spec written at docs/spec.md
 ## Date: 2026-03-30
 
 ## Problem Statement
