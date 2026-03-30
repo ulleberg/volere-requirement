@@ -106,6 +106,30 @@ Use the Test Tracer from the trace-codebase skill or review-requirements skill (
 
 ## Output Format
 
+### Verification Level Analysis
+
+For each fit criterion, report the highest V-Model level at which it has been tested:
+
+| Requirement | Fit Criterion | Expected Level | Actual Level | Gap? |
+|-------------|--------------|----------------|--------------|------|
+| UR-03 | Grid renders sessions | system | unit | YES — browser-facing criterion needs system test |
+| UR-12 | TTS plays audio | acceptance | integration | YES — hardware-adjacent criterion needs acceptance test |
+| UR-27 | CSP headers set | system | system | No |
+
+**Browser-facing flag:** Any fit criterion containing these keywords requires system or acceptance level verification:
+- "user can see", "renders", "displays", "shows", "page", "screen"
+- "user can hear", "plays", "audio", "speaks"
+- "browser", "loads", "navigates"
+
+If a fit criterion matches these keywords but only has unit or integration tests, flag it:
+
+```
+⚠ UR-03:user — "Grid renders all active sessions" — browser-facing criterion
+  Current verification: unit (TestGridHandler returns JSON)
+  Required verification: system (browser renders grid with sessions visible)
+  Action: Add Playwright or browser-check test that verifies the rendered page
+```
+
 ### Classification Table
 
 ```markdown
@@ -146,6 +170,15 @@ Recommendations:
   Remove: 75 tests (THEATER + REDUNDANT)
   Rewrite: 10 tests (SUPPORTS → VERIFIES)
   Add: 7 tests (uncovered fit criteria)
+
+Verification levels:
+  Acceptance: 12/55 fit criteria (22%)
+  System:     18/55 fit criteria (33%)
+  Integration: 15/55 fit criteria (27%)
+  Unit only:  10/55 fit criteria (18%)
+
+Browser-facing gaps: 3 criteria with only unit tests (should be system+)
+Hardware-adjacent: 2 criteria — loopback approach recommended
 ```
 
 ## After the Audit
@@ -155,6 +188,27 @@ Recommendations:
 3. **Rewrite SUPPORTS → VERIFIES** — change assertions to match the stated fit criterion
 4. **Add tests for GAPS** — prioritised by DAL level (A first)
 5. **Update the coverage matrix** — run `volere coverage` (v0.5) to confirm improvement
+
+## Loopback Testing Pattern
+
+When a fit criterion involves hardware (microphone, camera, speaker, sensor), don't mark it as "requires manual testing." Instead, suggest a loopback approach:
+
+1. **Identify the service boundary** — where does software meet hardware? (e.g., STT WebSocket endpoint)
+2. **Generate synthetic input** — use another service's output (e.g., TTS generates speech → MP3 bytes)
+3. **Feed through the pipeline** — send synthetic input through the same path real hardware would use
+4. **Verify the output** — assert the pipeline produces the expected result
+
+### Examples
+
+| Feature | Loopback approach |
+|---------|------------------|
+| STT (microphone) | TTS → MP3 → STT WebSocket → verify transcription keywords |
+| Camera upload | Generate test image → POST to inbox → verify file processed |
+| Voice commands | TTS a command → STT transcribe → verify intent parsed |
+| Speaker output | TTS → verify MP3 is valid audio (duration, format, non-silent) |
+| Multi-machine health | Mock peer health endpoint → verify dashboard renders status |
+
+The constraint "we can't test this because it needs hardware" is usually false. The real question: **"What's the minimum loop that exercises the full pipeline without physical devices?"**
 
 ## Integration with Other Skills
 
