@@ -1,11 +1,13 @@
 # Roadmap: v0.1 → v1.0
 
-## Status: Active
+## Status: Active — v0.1 through v0.8 shipped, entering v0.9 hardening
 ## Date: 2026-03-30
 
 ## Where We Are
 
-v0.1 is shipped: YAML schema, project scaffold, write-requirement skill, validator. Validated on thul-studio (43 URs, 12 TCs, 12,814 lines dead code removed, 23 security tests added).
+v0.1 through v0.8 shipped in a single session. The framework has: 5 skills, 4 hooks, 7 CLI commands, 4 JSON schemas, project scaffold, requirement templates (BUC/PUC/UR/TC), security baseline catalog, evidence lifecycle, suspect link management, and DAL profiles.
+
+Next: v0.9 hardening (validate on 3 real projects), then v1.0 release.
 
 ## Dependency Graph
 
