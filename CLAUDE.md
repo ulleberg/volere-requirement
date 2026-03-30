@@ -8,7 +8,7 @@ Archive of the original Volere Requirements Template (v15) plus the Volere Agent
 - **docs/** — discovery-to-delivery documentation: problem, brief, options, decisions, spec, roadmap, team prompts, execution plans.
 - **plugin/** — the framework (v0.1–v0.8 shipped, v0.9 hardening):
   - `schema/` — 4 JSON schemas (requirement with cross_verify + verification_method, profile with verification_commands, compliance, evidence with verification_level)
-  - `skills/` — 5 skills (write-requirement, review-requirements, trace-codebase, audit-tests, classify-risk)
+  - `skills/` — 6 skills (extract-requirements, write-requirement, review-requirements, trace-codebase, audit-tests, classify-risk)
   - `hooks/` — 6 hooks (check-secrets, check-traceability, check-fit-criteria, check-checkout, check-merge, installer)
   - `cli/` — CLI with 7 commands + suspect link manager
   - `catalogs/` — shared requirement catalogs (security-baseline)

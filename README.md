@@ -36,7 +36,7 @@ Each level has testable fit criteria. Each level traces to the next. Each level 
 | Component | What it does |
 |-----------|-------------|
 | `plugin/schema/` | JSON Schema for requirement cards, DAL profiles, compliance, evidence |
-| `plugin/skills/` | 5 skills: write-requirement, review-requirements, trace-codebase, audit-tests, classify-risk |
+| `plugin/skills/` | 6 skills: extract-requirements, write-requirement, review-requirements, trace-codebase, audit-tests, classify-risk |
 | `plugin/hooks/` | 4 hooks: check-secrets, check-traceability, check-fit-criteria, installer |
 | `plugin/cli/volere` | CLI with 7 commands: init, new, validate, trace, coverage, impact, review |
 | `plugin/catalogs/` | Shared requirement catalogs (security-baseline) |
