@@ -77,6 +77,12 @@ install_hook "$SCRIPT_DIR/check-traceability.sh" "$HOOKS_DIR/commit-msg" "commit
 # Install pre-push (check-fit-criteria) — only at DAL-B+
 install_hook "$SCRIPT_DIR/check-fit-criteria.sh" "$HOOKS_DIR/pre-push" "pre-push (check-fit-criteria, active at DAL-B+)"
 
+# Install post-checkout (check-checkout) — advisory
+install_hook "$SCRIPT_DIR/check-checkout.sh" "$HOOKS_DIR/post-checkout" "post-checkout (check-checkout, advisory)"
+
+# Install post-merge (check-merge) — advisory
+install_hook "$SCRIPT_DIR/check-merge.sh" "$HOOKS_DIR/post-merge" "post-merge (check-merge, advisory)"
+
 # Configure strict mode
 if [ "$STRICT" -eq 1 ]; then
   echo ""
@@ -86,4 +92,9 @@ if [ "$STRICT" -eq 1 ]; then
 fi
 
 echo ""
-echo "Done. Hooks installed in $HOOKS_DIR"
+echo "Done. 5 hooks installed in $HOOKS_DIR"
+echo "  pre-commit:    check-secrets (blocks)"
+echo "  commit-msg:    check-traceability (advisory or strict)"
+echo "  pre-push:      check-fit-criteria (blocks at DAL-B+)"
+echo "  post-checkout: check-checkout (advisory)"
+echo "  post-merge:    check-merge (advisory)"
