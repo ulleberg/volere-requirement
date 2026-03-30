@@ -54,6 +54,11 @@
             "enum": ["required", "recommended", "optional", "forbidden"]
           },
           "description": "Verification types and their enforcement level"
+        },
+        "verification_commands": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "Commands to run for fit criteria verification at this DAL level (e.g., 'npm test', 'npx playwright test'). Falls back to auto-detection if not specified."
         }
       }
     }
