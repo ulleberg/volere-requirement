@@ -116,6 +116,29 @@ Classify the risk if this requirement fails:
 - `decomposed_to` — what child requirements does this break into?
 - `serves` (TC only) — which UR(s) does this technical constraint serve?
 
+### 8. Cross-Impact Verification
+
+Ask: **"Does this requirement's fit criterion affect other requirements?"**
+
+If this is a security, infrastructure, or platform change, identify which user-facing requirements could break:
+
+| Change type | Ask | Example |
+|-------------|-----|---------|
+| Security (CSP, CORS, auth) | Which browser surfaces or API consumers does this restrict? | CSP blocking CDN scripts breaks grid page |
+| Infrastructure (ports, networking, deployment) | Which features depend on the infrastructure being changed? | Port change breaks WebSocket connections |
+| Performance (rate limits, timeouts, caching) | Which features hit the constrained resource? | Cache TTL change breaks real-time updates |
+| Data model (schema, storage, format) | Which features read/write this data? | Column rename breaks downstream queries |
+
+Populate the `cross_verify` field with the affected requirement IDs:
+
+```yaml
+cross_verify:
+  - UR-03   # Grid page — loads React from CDN
+  - UR-12   # TTS audio — uses blob: URLs
+```
+
+**Test:** If this requirement changes, would someone know which OTHER requirements to re-verify? If not, `cross_verify` is incomplete.
+
 ## Output
 
 Write the requirement card to:
@@ -155,6 +178,7 @@ Before committing, verify:
 - [ ] Traceability links are correct (depends_on, serves, decomposed_to)
 - [ ] Card passes schema validation
 - [ ] If this is a TC, the `serves` field references at least one UR
+- [ ] If this is a security/infrastructure change, `cross_verify` lists affected user-facing requirements
 
 ## Anti-patterns to Avoid
 
