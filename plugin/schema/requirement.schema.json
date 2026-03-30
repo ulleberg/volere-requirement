@@ -109,6 +109,11 @@
       "items": { "type": "string", "pattern": "^(UR|TC|SHR|SEC|BUC|PUC)-[0-9]{3}$" },
       "description": "Child requirements this decomposes into"
     },
+    "cross_verify": {
+      "type": "array",
+      "items": { "type": "string", "pattern": "^(UR|TC|SHR|SEC|BUC|PUC)-[0-9]{3}$" },
+      "description": "Requirements whose fit criteria must be re-verified when this requirement changes — catches cross-requirement breakage (e.g., CSP hardening breaking CDN-dependent pages)"
+    },
     "history": {
       "type": "array",
       "items": {
@@ -151,6 +156,11 @@
         "evidence": {
           "type": "string",
           "description": "Type of evidence artifact produced (e.g., test-report)"
+        },
+        "verification_method": {
+          "type": "string",
+          "enum": ["unit", "integration", "system", "acceptance"],
+          "description": "Expected V-Model verification level — flags mismatches when a browser-facing criterion has only unit tests"
         }
       }
     }
