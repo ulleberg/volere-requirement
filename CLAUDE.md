@@ -6,13 +6,13 @@ Archive of the original Volere Requirements Template (v15) plus the Volere Agent
 
 - **Original Volere files (a–i)** — template, case studies, requirement stationery. Preserved as-is.
 - **docs/** — discovery-to-delivery documentation: problem, brief, options, decisions, spec, roadmap, team prompts, execution plans.
-- **plugin/** — the framework (v0.1–v0.8 shipped):
-  - `schema/` — 4 JSON schemas (requirement, profile, compliance, evidence)
+- **plugin/** — the framework (v0.1–v0.8 shipped, v0.9 hardening):
+  - `schema/` — 4 JSON schemas (requirement with cross_verify + verification_method, profile with verification_commands, compliance, evidence with verification_level)
   - `skills/` — 5 skills (write-requirement, review-requirements, trace-codebase, audit-tests, classify-risk)
-  - `hooks/` — 4 hooks (check-secrets, check-traceability, check-fit-criteria, installer)
+  - `hooks/` — 6 hooks (check-secrets, check-traceability, check-fit-criteria, check-checkout, check-merge, installer)
   - `cli/` — CLI with 7 commands + suspect link manager
   - `catalogs/` — shared requirement catalogs (security-baseline)
-  - `templates/` — project scaffold, BUC/PUC/UR/TC/evidence/compliance templates
+  - `templates/` — project scaffold, BUC/PUC/UR/TC/evidence/compliance templates, retrofit guide
   - `requirements/` — framework's own requirements (dogfooding)
 
 See `ARCHITECTURE.md` for the full V-Model mapping, design principles, and design decisions.
@@ -27,6 +27,8 @@ See `ARCHITECTURE.md` for the full V-Model mapping, design principles, and desig
 - **DAL** (Design Assurance Level, A-E) — scales verification effort to risk
 - **Fit criterion** — measurable condition defining when a requirement is satisfied
 - **Suspect link** — a downstream requirement that needs re-verification after an upstream change
+- **Cross-verify** — requirements whose fit criteria must be re-verified when a related requirement changes
+- **Verification level** — V-Model level (unit/integration/system/acceptance) at which evidence was collected
 
 ## Testing
 
@@ -34,7 +36,7 @@ See `ARCHITECTURE.md` for the full V-Model mapping, design principles, and desig
 # Validate requirement cards against schema
 plugin/validate.sh plugin/requirements/UR-001.yaml
 
-# Run hook test suite (12 tests)
+# Run hook test suite (16 tests)
 plugin/hooks/test-hooks.sh
 
 # CLI commands
