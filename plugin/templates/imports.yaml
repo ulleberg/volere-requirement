@@ -1,0 +1,13 @@
+# Volere Requirements Import
+# Import shared requirement catalogs with optional tailoring.
+# Place at: .volere/imports.yaml
+
+catalogs: []
+  # - name: security-baseline
+  #   source: volere@ulleberg/catalogs/security-baseline.yaml
+  #   version: "1.0"
+  #   tailoring:
+  #     - exclude: []           # Requirement IDs to skip (only if tailorable: true)
+  #     - override:             # Field overrides per requirement
+  #         SEC-003:
+  #           dal: A            # Raise DAL for this project

@@ -1,0 +1,74 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/ulleberg/volere-requirement/plugin/schema/evidence.schema.json",
+  "title": "Volere Evidence Record",
+  "description": "Proof that a fit criterion was verified — with lifecycle tracking and expiry",
+  "type": "object",
+  "required": ["requirement", "dimension", "criterion", "method", "status"],
+  "additionalProperties": false,
+  "properties": {
+    "requirement": {
+      "type": "string",
+      "description": "Requirement ID (e.g., UR-027)"
+    },
+    "dimension": {
+      "type": "string",
+      "description": "Fit criteria dimension (e.g., security, fcc-part15)"
+    },
+    "criterion": {
+      "type": "string",
+      "description": "The fit criterion text being verified"
+    },
+    "method": {
+      "type": "string",
+      "enum": ["test", "analysis", "review", "demonstration", "formal-methods"],
+      "description": "Verification method used"
+    },
+    "status": {
+      "type": "string",
+      "enum": ["planned", "collected", "verified", "expired"],
+      "description": "Evidence lifecycle status"
+    },
+    "collected": {
+      "type": "object",
+      "properties": {
+        "date": { "type": "string", "format": "date-time" },
+        "by": { "type": "string" },
+        "source": { "type": "string", "description": "Command or process that produced the evidence" },
+        "result": { "type": "string", "enum": ["PASS", "FAIL"] },
+        "tests_run": { "type": "integer" },
+        "tests_passed": { "type": "integer" }
+      }
+    },
+    "verified": {
+      "type": "object",
+      "properties": {
+        "date": { "type": "string", "format": "date-time" },
+        "by": { "type": "string" },
+        "method": { "type": "string", "enum": ["automated", "human-review", "lab-test"] }
+      }
+    },
+    "evidence_artifact": {
+      "type": "object",
+      "properties": {
+        "type": { "type": "string", "description": "test-report, analysis-document, review-record" },
+        "path": { "type": "string", "description": "Path to the evidence file" },
+        "lab": { "type": "string", "description": "Test lab name and reference number" }
+      }
+    },
+    "expires_when": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "file_changed": { "type": "string" },
+          "requirement_changed": { "type": "string" }
+        }
+      },
+      "description": "Conditions that expire this evidence (trigger re-verification)"
+    },
+    "notes": {
+      "type": "string"
+    }
+  }
+}

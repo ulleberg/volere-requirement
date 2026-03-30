@@ -1,0 +1,59 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/ulleberg/volere-requirement/plugin/schema/compliance.schema.json",
+  "title": "Volere Compliance Profile",
+  "description": "Defines which regulatory dimensions apply to a project and how they are verified",
+  "type": "object",
+  "required": ["dimensions"],
+  "properties": {
+    "dimensions": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "name", "standard", "applies_to", "verification"],
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Short identifier for this dimension (e.g., fcc-part15)"
+          },
+          "name": {
+            "type": "string",
+            "description": "Human-readable name"
+          },
+          "standard": {
+            "type": "string",
+            "description": "Reference to the standard or regulation"
+          },
+          "applies_to": {
+            "type": "array",
+            "items": { "type": "string" },
+            "description": "Volere requirement types this dimension applies to"
+          },
+          "verification": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "enum": ["test", "analysis", "review", "demonstration", "formal-methods"]
+            },
+            "description": "Acceptable verification methods for this dimension"
+          },
+          "evidence_required": {
+            "type": "boolean",
+            "description": "Whether evidence artifacts must be produced and stored"
+          },
+          "agent": {
+            "type": "string",
+            "description": "Specialist agent role for review (e.g., security-engineer)"
+          },
+          "sil": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 4,
+            "description": "Safety Integrity Level (for IEC 61508)"
+          }
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,45 @@
+# Volere Compliance Profile
+# Defines which regulatory dimensions apply to this project.
+# Place at: .volere/compliance.yaml
+
+dimensions:
+  # - id: security-baseline
+  #   name: Security Baseline
+  #   standard: "thul ecosystem security practices"
+  #   applies_to: [security]
+  #   verification: [test, analysis]
+  #   evidence_required: true
+  #   agent: security-engineer
+
+  # - id: fcc-part15
+  #   name: FCC Part 15 (Unintentional Radiators)
+  #   standard: "47 CFR Part 15"
+  #   applies_to: [performance, operational]
+  #   verification: [test, demonstration]
+  #   evidence_required: true
+  #   agent: rf-engineer
+
+  # - id: red-2014-53
+  #   name: EU Radio Equipment Directive
+  #   standard: "Directive 2014/53/EU"
+  #   applies_to: [performance, security, operational]
+  #   verification: [test, demonstration, analysis]
+  #   evidence_required: true
+  #   agent: regulatory-specialist
+
+  # - id: iec-62443
+  #   name: Industrial Cybersecurity
+  #   standard: "IEC 62443"
+  #   applies_to: [security]
+  #   verification: [test, analysis, review]
+  #   evidence_required: true
+  #   agent: security-engineer
+
+  # - id: iec-61508
+  #   name: Functional Safety
+  #   standard: "IEC 61508"
+  #   applies_to: [functional, performance, operational, maintainability]
+  #   verification: [test, analysis, review, formal-methods]
+  #   evidence_required: true
+  #   sil: 2
+  #   agent: compliance-officer

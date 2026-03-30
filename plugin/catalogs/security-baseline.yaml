@@ -1,0 +1,133 @@
+# Security Baseline Catalog
+# Reusable security requirements for thul-* ecosystem projects.
+# Import with: .volere/imports.yaml
+# Derived from: thul-studio UR-27, UR-28, UR-33 (proven patterns)
+
+catalog:
+  name: security-baseline
+  version: "1.0"
+  description: "Security baseline for projects accessible over Tailscale mesh"
+  author: Thomas Ulleberg
+  date: "2026-03-30"
+  derived_from: "thul-studio security hardening (Phase 4)"
+
+requirements:
+  - id: SEC-001
+    type: security
+    title: CORS restricted to mesh origins
+    description: >
+      API routes restrict CORS to configured mesh hostnames.
+      No wildcard origins on routes that return sensitive data.
+    rationale: >
+      CORS * allows any website to make authenticated requests if the user
+      is on the mesh. Restricting to known hostnames closes browser-based
+      attack chains.
+    fit_criteria:
+      security:
+        criterion: "Non-mesh origin requests receive no Access-Control-Allow-Origin header on API routes"
+        verification: test
+        test_type: integration
+    dal: B
+    priority: must
+    status: verified
+    tailorable: true
+    origin:
+      stakeholder: Thomas Ulleberg
+      date: "2026-03-30"
+      trigger: "T-01 attack chain in thul-studio security review"
+
+  - id: SEC-002
+    type: security
+    title: Content Security Policy headers
+    description: >
+      All HTML responses include CSP headers restricting script sources,
+      style sources, and connection targets.
+    rationale: >
+      CSP prevents XSS by limiting what scripts can execute.
+      Even if an attacker injects HTML, CSP blocks inline scripts from
+      untrusted sources.
+    fit_criteria:
+      security:
+        criterion: "HTML responses include Content-Security-Policy header with default-src 'self'"
+        verification: test
+        test_type: integration
+    dal: B
+    priority: must
+    status: verified
+    tailorable: true
+    origin:
+      stakeholder: Thomas Ulleberg
+      date: "2026-03-30"
+      trigger: "Security review finding"
+
+  - id: SEC-003
+    type: security
+    title: Input validation at API boundaries
+    description: >
+      All API inputs are validated and rejected with clear error messages.
+      No unsanitized input reaches internal logic.
+    rationale: >
+      Invalid input should produce 400 (client error), not 500 (server error).
+      Path traversal, oversized payloads, and malformed data are caught at
+      the boundary.
+    fit_criteria:
+      security:
+        criterion: "Path traversal sequences (../, ..\\ ) return 400. Payloads > 1MB return 413. Malformed input returns 400 with descriptive error."
+        verification: test
+        test_type: integration
+    dal: B
+    priority: must
+    status: verified
+    tailorable: true
+    origin:
+      stakeholder: Thomas Ulleberg
+      date: "2026-03-30"
+      trigger: "Input validation gaps in thul-studio API"
+
+  - id: SEC-004
+    type: security
+    title: No secrets in source code or config files
+    description: >
+      Secret values (API keys, tokens, passwords) never appear in source
+      files, config files, or git history. Enforced by pre-commit hook.
+    rationale: >
+      Secrets in source code are the most common cause of credential leakage.
+      A pre-commit hook catches them before they enter git history, which
+      is permanent.
+    fit_criteria:
+      security:
+        criterion: "Pre-commit hook blocks commits containing secret patterns (API keys, tokens, hex strings > 20 chars in assignments). Runs in < 2 seconds."
+        verification: test
+        test_type: integration
+    dal: A
+    priority: must
+    status: verified
+    tailorable: false
+    origin:
+      stakeholder: Thomas Ulleberg
+      date: "2026-03-30"
+      trigger: "Secrets management investigation during Volere framework discovery"
+
+  - id: SEC-005
+    type: security
+    title: Authenticated API routes
+    description: >
+      All API routes that return or modify data require Bearer token
+      authentication. Public routes are explicitly listed and minimal.
+    rationale: >
+      Unauthenticated API routes expose data to anyone on the network.
+      Even behind Tailscale, application-level auth prevents accidental
+      exposure and supports future multi-user scenarios.
+    fit_criteria:
+      security:
+        criterion: "All API routes require Bearer token. Public routes limited to: health check, static HTML, terminal proxy (documented exceptions with rationale)."
+        verification: test
+        test_type: integration
+    dal: B
+    priority: must
+    status: verified
+    tailorable: true
+    origin:
+      stakeholder: Thomas Ulleberg
+      date: "2026-03-30"
+      trigger: "thul-studio UR-23 — unauthenticated /crash-logs found"

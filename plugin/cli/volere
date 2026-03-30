@@ -306,6 +306,20 @@ cmd_validate() {
     warnings=$((warnings + 1))
   fi
 
+  # Suspect links
+  echo "  Suspect links:"
+  if [ -f "$PROJECT_ROOT/.volere/suspects.yaml" ] && grep -q "status: suspect" "$PROJECT_ROOT/.volere/suspects.yaml" 2>/dev/null; then
+    local suspect_count=$(grep -c "status: suspect" "$PROJECT_ROOT/.volere/suspects.yaml")
+    echo -e "    ${RED}✗${NC} $suspect_count unresolved suspect link(s)"
+    if [ "$suspects" -eq 1 ]; then
+      errors=$((errors + 1))
+    else
+      warnings=$((warnings + 1))
+    fi
+  else
+    echo -e "    ${GREEN}✓${NC} No suspect links"
+  fi
+
   # Summary
   echo ""
   local total=$((errors + warnings))
@@ -520,6 +534,32 @@ cmd_impact() {
   echo "    → Review all direct dependents for consistency"
   echo "    → Re-run affected tests"
   echo "    → Update affected code if needed"
+  echo ""
+  echo "  Mark dependents as suspect:"
+  echo "    volere impact --mark $target_id"
+}
+
+cmd_impact_mark() {
+  local source_id="${1:?Usage: volere impact --mark <ID>}"
+  local suspect_sh="$VOLERE_DIR/cli/suspect.sh"
+
+  # Find dependents and mark them suspect
+  for f in "$REQS_DIR"/*.yaml; do
+    [ -f "$f" ] || continue
+    [ "$(basename "$f")" = "context.yaml" ] && continue
+
+    local dep_id=$(grep "^id:" "$f" | head -1 | awk '{print $2}')
+    [ "$dep_id" = "$source_id" ] && continue
+
+    if grep -q "$source_id" "$f" 2>/dev/null; then
+      "$suspect_sh" mark "$dep_id" --reason "$source_id changed" --source "$source_id"
+    fi
+  done
+}
+
+cmd_impact_resolve() {
+  local id="${1:?Usage: volere impact --resolve <ID>}"
+  "$VOLERE_DIR/cli/suspect.sh" resolve "$id"
 }
 
 # ============================================================
@@ -566,7 +606,16 @@ case "${1:-help}" in
   validate) shift; cmd_validate "$@" ;;
   trace)    shift; cmd_trace "$@" ;;
   coverage) shift; cmd_coverage "$@" ;;
-  impact)   shift; cmd_impact "$@" ;;
+  impact)
+    shift
+    case "${1:---show}" in
+      --mark) shift; cmd_impact_mark "$@" ;;
+      --resolve) shift; cmd_impact_resolve "$@" ;;
+      --suspects) "$VOLERE_DIR/cli/suspect.sh" check ;;
+      --auto) "$VOLERE_DIR/cli/suspect.sh" auto ;;
+      *) cmd_impact "$@" ;;
+    esac
+    ;;
   review)   shift; cmd_review "$@" ;;
   help|--help|-h)
     echo "Volere Agentic Framework CLI"
@@ -580,6 +629,10 @@ case "${1:-help}" in
     echo "  trace                       Show traceability matrix"
     echo "  coverage [--dimension D]    Show fit criteria coverage"
     echo "  impact <ID>                 Show change impact for a requirement"
+    echo "  impact --mark <ID>          Mark dependents as suspect"
+    echo "  impact --resolve <ID>       Mark suspect link as resolved"
+    echo "  impact --suspects           Check for unresolved suspect links"
+    echo "  impact --auto               Auto-detect suspects from git changes"
     echo "  review                      Detect review type and show guidance"
     echo ""
     echo "Examples:"
