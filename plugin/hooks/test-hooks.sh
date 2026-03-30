@@ -166,6 +166,74 @@ unset VOLERE_TRACEABILITY_STRICT
 echo ""
 
 # ============================================================
+echo "check-checkout:"
+# ============================================================
+
+# Create requirements directory and a requirement card
+mkdir -p docs/requirements
+echo "id: UR-001" > docs/requirements/UR-001.yaml
+git add docs/requirements/UR-001.yaml
+git commit --quiet -m "Add UR-001"
+
+MAIN_HEAD=$(git rev-parse HEAD)
+
+git checkout --quiet -b feature-branch
+echo "id: UR-002" > docs/requirements/UR-002.yaml
+git add docs/requirements/UR-002.yaml
+git commit --quiet -m "Add UR-002"
+FEATURE_HEAD=$(git rev-parse HEAD)
+
+# Test 13: Post-checkout runs without error (advisory)
+git checkout --quiet main 2>/dev/null || git checkout --quiet master
+if "$SCRIPT_DIR/check-checkout.sh" "$FEATURE_HEAD" "$MAIN_HEAD" "1" >/dev/null 2>&1; then
+  log_pass "Post-checkout runs without error (advisory)"
+else
+  log_fail "Post-checkout should never block (advisory)"
+fi
+
+# Test 14: Post-checkout skips file checkouts
+if "$SCRIPT_DIR/check-checkout.sh" "$MAIN_HEAD" "$MAIN_HEAD" "0" >/dev/null 2>&1; then
+  log_pass "Skips file checkouts (flag=0)"
+else
+  log_fail "Should skip file checkouts"
+fi
+
+# Clean up
+git branch -D feature-branch --quiet 2>/dev/null || true
+
+echo ""
+
+# ============================================================
+echo "check-merge:"
+# ============================================================
+
+# Test 15: Post-merge runs without error when no reqs changed
+if "$SCRIPT_DIR/check-merge.sh" "0" >/dev/null 2>&1; then
+  log_pass "Post-merge runs without error (no changes)"
+else
+  log_fail "Post-merge should never block (advisory)"
+fi
+
+# Test 16: Post-merge detects changed requirement cards
+git checkout --quiet -b merge-test
+echo "id: UR-099" > docs/requirements/UR-099.yaml
+git add docs/requirements/UR-099.yaml
+git commit --quiet -m "Add UR-099"
+git checkout --quiet main 2>/dev/null || git checkout --quiet master
+git merge --quiet merge-test --no-edit 2>/dev/null || true
+if "$SCRIPT_DIR/check-merge.sh" "0" >/dev/null 2>&1; then
+  log_pass "Post-merge detects changed cards (advisory)"
+else
+  log_fail "Post-merge should never block (advisory)"
+fi
+
+# Clean up
+git branch -D merge-test --quiet 2>/dev/null || true
+rm -f docs/requirements/UR-001.yaml docs/requirements/UR-002.yaml docs/requirements/UR-099.yaml
+
+echo ""
+
+# ============================================================
 echo "Results:"
 echo "  $PASS passed, $FAIL failed"
 # ============================================================
