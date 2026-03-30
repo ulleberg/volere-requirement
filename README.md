@@ -49,7 +49,7 @@ Each level has testable fit criteria. Each level traces to the next. Each level 
 - **DAL levels (A-E)** — scale verification effort to risk, from linting-only to full multi-agent review
 - **Autonomous verification mandate** — agents perform ALL testing, from unit through acceptance
 - **Evidence chain** — verification results stored with expiry triggers for audit readiness
-- **Compliance profiles** — FCC, RED, IEC 62443, IEC 61508 (v0.8)
+- **Compliance profiles** — generic compliance dimensions with evidence chain (v0.8); specific standard profiles (FCC, RED, IEC) planned for v1.1
 
 ## Proven By
 
@@ -93,7 +93,7 @@ Unskilled teams write parallel documents. Skilled teams write integrated specifi
 Dead code reveals derived requirements. Unnecessary tests reveal test theater. Cleaning first destroys the signal. The sequence must be: requirements → trace → cleanup.
 
 **7. Acceptance is multi-dimensional.**
-A single requirement may need fit criteria across user, security, operational, and regulatory dimensions (FCC, RED, ATEX, IEC 61508). Agents need to know which dimensions apply. This is where Volere's structured approach beats user stories and BDD.
+A single requirement may need fit criteria across user, security, operational, and regulatory dimensions. Agents need to know which dimensions apply. This is where Volere's structured approach beats user stories and BDD. Compliance profiles for specific standards (FCC, RED, IEC) are planned for v1.1.
 
 **8. Graduated rigour prevents both laziness and ceremony.**
 DAL levels (A-E) scale verification to risk. A CSS fix doesn't need the same treatment as a database migration. Without this, the framework is either too heavy for small changes or too light for critical ones.
@@ -120,3 +120,4 @@ See `ARCHITECTURE.md` for the full design principles, V-Model mapping, and desig
 | v0.8 | **Shipped** | Compliance profiles, evidence chain, security baseline catalog |
 | v0.9 | **Active** | Production hardening — validate on 3 real projects |
 | v1.0 | Planned | Publish to thul-plugins marketplace as `volere@ulleberg` |
+| v1.1 | Planned | Pre-built compliance profiles (FCC Part 15, RED 2014/53/EU, IEC 61508) |

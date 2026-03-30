@@ -145,6 +145,6 @@ The framework's own requirements are written as YAML snow cards using the framew
 
 4. **Preserve original Volere files** — the a-i prefixed files are the original template. They're the foundation this framework builds on.
 
-5. **Multi-dimensional fit criteria** — one requirement, multiple acceptance dimensions (user, security, operational, regulatory). Inspired by regulated industries where a single requirement must satisfy FCC, security, and user acceptance simultaneously.
+5. **Multi-dimensional fit criteria** — one requirement, multiple acceptance dimensions (user, security, operational, regulatory). Inspired by regulated industries where a single requirement must satisfy multiple acceptance conditions simultaneously. Pre-built profiles for specific standards (FCC, RED, IEC 61508) are planned for v1.1.
 
 6. **Evidence chain** — verification results are stored as YAML with expiry triggers. When code or requirements change, evidence expires and re-verification is required. Inspired by OSCAL and DO-178C.
