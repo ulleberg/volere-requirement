@@ -74,6 +74,9 @@ install_hook "$SCRIPT_DIR/check-secrets.sh" "$HOOKS_DIR/pre-commit" "pre-commit 
 # Install commit-msg (check-traceability)
 install_hook "$SCRIPT_DIR/check-traceability.sh" "$HOOKS_DIR/commit-msg" "commit-msg (check-traceability)"
 
+# Install pre-push (check-fit-criteria) — only at DAL-B+
+install_hook "$SCRIPT_DIR/check-fit-criteria.sh" "$HOOKS_DIR/pre-push" "pre-push (check-fit-criteria, active at DAL-B+)"
+
 # Configure strict mode
 if [ "$STRICT" -eq 1 ]; then
   echo ""
