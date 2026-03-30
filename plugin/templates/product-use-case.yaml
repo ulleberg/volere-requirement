@@ -1,0 +1,41 @@
+# Volere Product Use Case (PUC)
+# Specific interaction between the user and the system.
+# PUCs sit between BUCs and URs — they describe user flows.
+# Multiple URs implement each PUC. Each PUC serves a BUC.
+
+id: PUC-001
+type: product-use-case
+title: ""                     # The user interaction (e.g., "Create a new agent session")
+
+description: >
+  What does the user do, step by step?
+  Describe the interaction from the user's perspective.
+
+rationale: >
+  Why does the user need this interaction? What BUC does it serve?
+
+fit_criteria:
+  user:
+    criterion: ""             # How do you know this interaction works?
+    verification: test
+    test_type: system         # PUC fit criteria are typically system-level tests
+    # "User selects a folder, clicks create, session appears in grid within 5s."
+
+dal: C
+priority: must
+status: proposed
+
+origin:
+  stakeholder: ""
+  date: ""
+  trigger: ""
+  source: ""                  # BUC this serves (e.g., BUC-001)
+
+serves: []                    # For traceability: [BUC-001]
+decomposed_to: []             # URs that implement this PUC
+# e.g., decomposed_to: [UR-001, UR-002, UR-013]
+
+history:
+  - date: ""
+    action: created
+    by: ""

@@ -8,18 +8,32 @@ Each requirement is a separate `.yaml` file validated against the Volere schema.
 
 ## Structure
 
-| Prefix | Level | Scope |
-|--------|-------|-------|
-| `UR-` | User Requirement | What the user needs from the system |
-| `TC-` | Technical Constraint | Implementation contract serving a UR |
-| `SHR-` | Stakeholder Requirement | High-level need (for complex/regulated projects) |
+| Prefix | Volere § | Level | Scope |
+|--------|---------|-------|-------|
+| `BUC-` | §7 | Business Use Case | High-level business process the system supports |
+| `PUC-` | §8 | Product Use Case | Specific user-system interaction |
+| `UR-` | §9-17 | User Requirement | What the user needs from the system |
+| `TC-` | — | Technical Constraint | Implementation contract serving a UR |
+| `SHR-` | §1-5 | Stakeholder Requirement | High-level need (complex/regulated projects) |
 
-## V-Model Mapping
+## V-Model Mapping (Left Side → Right Side)
 
 ```
-User Requirements (UR-xxx)           ←→  Acceptance / E2E tests
-  └── Technical Constraints (TC-xxx) ←→  Unit / Integration tests
+Business Use Cases (BUC-xxx)             ←→  Validation (right thing?)
+  └── Product Use Cases (PUC-xxx)        ←→  Acceptance Tests
+      └── User Requirements (UR-xxx)     ←→  System Tests
+          └── Technical Constraints (TC-xxx) ←→  Unit / Integration Tests
 ```
+
+## Decomposition
+
+BUCs answer "why do these requirements exist?"
+PUCs answer "what does the user do?"
+URs answer "what must the system do?"
+TCs answer "what must the implementation guarantee?"
+
+Each level decomposes into the next via the `decomposed_to` field.
+Each level traces upward via the `source` or `serves` field.
 
 ## Files
 

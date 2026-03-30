@@ -1,25 +1,85 @@
-# Volere Requirements Template
+# Volere Agentic Framework
 
-The Volere Requirements Specification Template (v15) by James & Suzanne Robertson — a structured framework for gathering and documenting software requirements.
+Structured requirements engineering and V-Model verification for agentic software development. Built on the Volere Requirements Template (v15) by James & Suzanne Robertson.
 
-## Contents
+## What This Is
+
+A Claude Code plugin that makes quality the default path for AI agents. Agents that jump to code without requirements produce monoliths, test theater, and interface drift. This framework enforces the same discipline that works for human teams — structured requirements with testable fit criteria, systematic verification at every V-Model level, and graduated rigour based on risk.
+
+## Quick Start
+
+```bash
+# Scaffold a new project
+cp -r plugin/templates/project-scaffold/* your-project/
+
+# Write your first requirement
+# (Use the write-requirement skill in Claude Code, or copy the template)
+cp plugin/templates/requirement-card.yaml your-project/docs/requirements/UR-001.yaml
+
+# Validate
+plugin/validate.sh your-project/docs/requirements/UR-001.yaml
+```
+
+## V-Model Decomposition
+
+```
+BUC  (Business Use Cases)     Why do these requirements exist?
+ └── PUC  (Product Use Cases) What does the user do?
+     └── UR  (User Requirements) What must the system do?
+         └── TC  (Technical Constraints) What must the implementation guarantee?
+```
+
+Each level has testable fit criteria. Each level traces to the next. Each level has a corresponding verification level (acceptance → system → integration → unit tests).
+
+## Framework Components
+
+| Component | What it does |
+|-----------|-------------|
+| `plugin/schema/` | JSON Schema for requirement cards and DAL profiles |
+| `plugin/skills/write-requirement/` | Guides agents through Volere card format |
+| `plugin/templates/` | Project scaffold, BUC/PUC/UR/TC card templates |
+| `plugin/validate.sh` | Card validator (Node.js, no external deps) |
+| `plugin/requirements/` | Framework's own requirements (dogfooding) |
+
+## Key Features
+
+- **Multi-dimensional fit criteria** — one requirement, multiple acceptance dimensions (user, security, operational, regulatory)
+- **DAL levels (A-E)** — scale verification effort to risk, from linting-only to full multi-agent review
+- **Autonomous verification mandate** — agents perform ALL testing, from unit through acceptance
+- **Evidence chain** — verification results stored with expiry triggers for audit readiness
+- **Compliance profiles** — FCC, RED, IEC 62443, IEC 61508 (v0.8)
+
+## Proven By
+
+- **thul-studio validation** — 26 URs strengthened to 43 URs + 12 TCs, 12,814 lines dead code removed, 23 security tests added via TDD
+- **Experiment 001** (thul-agentic-research) — skilled agent teams produce 100% testable fit criteria and self-organize for cross-document coherence
+
+## Original Volere Template
+
+The original template files (2010) are preserved in the repo root:
 
 | File | Description |
 |------|-------------|
-| `a Package Contents.pdf` | Table of contents for the kit |
-| `b Volere Template15.doc` | Main requirements specification template (editable) |
-| `c Volere Template15.pdf` | Main requirements specification template (PDF) |
-| `d Library Case Study.pdf` | Worked example — library system |
-| `e Library Case Study.2.pdf` | Library case study continued |
-| `f Controller Case Study.pdf` | Worked example — controller system |
-| `g Controller Case Study.2.pdf` | Controller case study continued |
-| `h Volere Atomic Requirements example.xls` | Sample individual requirement cards |
-| `i Volere Atomic Requirements Stationery.xls` | Blank template for writing requirement cards |
+| `a–c` | Volere Template v15 (PDF + DOC) |
+| `d–g` | Case studies (Library, Controller) |
+| `h–i` | Atomic requirement spreadsheets (XLS) |
 
-## About Volere
+## Design Philosophy
 
-Volere provides a repeatable process for requirements engineering. The template covers stakeholders, constraints, functional and non-functional requirements, fit criteria, and traceability — ensuring requirements are testable and complete.
+**Chesterton's fence** — Volere has been refined over 30 years. We keep every element until we've proven it's unnecessary, not the other way around.
 
-## Source
+See `ARCHITECTURE.md` for the full design principles, V-Model mapping, and design decisions.
 
-Originally distributed as the Volere Requirements Resources package (March 2010).
+## Roadmap
+
+| Version | Status | What ships |
+|---------|--------|-----------|
+| v0.1 | **Shipped** | Schema, scaffold, write-requirement skill |
+| v0.2 | Planned | Pre-commit hooks (secrets, traceability) |
+| v0.3 | Planned | Agent team review skill |
+| v0.4 | Planned | Codebase trace + test audit skills |
+| v0.5 | Planned | CLI (trace, coverage, impact) |
+| v0.6 | Planned | DAL profiles + risk classification |
+| v0.7 | Planned | Suspect link management |
+| v0.8 | Planned | Compliance profiles + evidence chain |
+| v1.0 | Planned | Full framework, production-ready |

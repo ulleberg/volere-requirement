@@ -1,0 +1,39 @@
+# Volere Business Use Case (BUC)
+# High-level business process the system supports.
+# BUCs give context to URs — they answer "why do these requirements exist?"
+# Multiple URs serve each BUC.
+
+id: BUC-001
+type: business-use-case
+title: ""                     # The business process (e.g., "Manage AI agent fleet across machines")
+
+description: >
+  What business goal does the user achieve through this system?
+  Describe the process, not the implementation.
+
+rationale: >
+  Why is this business process important? What happens without it?
+
+fit_criteria:
+  user:
+    criterion: ""             # How do you know this business goal is achievable?
+    verification: demonstration
+    # BUC fit criteria are typically verified by demonstration, not unit tests.
+    # "The user can manage 10+ agents across 3 machines from one interface."
+
+dal: C
+priority: must
+status: proposed
+
+origin:
+  stakeholder: ""
+  date: ""
+  trigger: ""
+
+decomposed_to: []            # PUCs or URs that implement this BUC
+# e.g., decomposed_to: [PUC-001, PUC-002, PUC-003]
+
+history:
+  - date: ""
+    action: created
+    by: ""

@@ -31,9 +31,13 @@ Guide the agent through writing a Volere requirement card in YAML format. Every 
    Find the next available number.
 
 3. **Determine the requirement level:**
-   - **UR** (User Requirement) — what the user needs from the system
-   - **TC** (Technical Constraint) — implementation contract that serves a UR
-   - **SHR** (Stakeholder Requirement) — high-level need (complex/regulated projects only)
+   - **BUC** (Business Use Case, Volere §7) — high-level business process the system supports. Answers "why do these requirements exist?" Decomposes into PUCs or URs.
+   - **PUC** (Product Use Case, Volere §8) — specific user-system interaction. Answers "what does the user do?" Decomposes into URs. Each PUC serves a BUC.
+   - **UR** (User Requirement, Volere §9-17) — what the user needs from the system. Implements a PUC or BUC. Decomposes into TCs.
+   - **TC** (Technical Constraint) — implementation contract that serves a UR. Emerged during development, not from user needs.
+   - **SHR** (Stakeholder Requirement, Volere §1-5) — high-level need (complex/regulated projects only)
+
+   **Decomposition rule:** Start with BUCs. If URs exist without a parent BUC, that's a gap — either the BUC is missing or the UR is orphaned. Not every project needs PUCs (the intermediate layer), but every project needs BUCs to give requirements context.
 
 ## Writing the Card
 

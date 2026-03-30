@@ -9,13 +9,13 @@
   "properties": {
     "id": {
       "type": "string",
-      "pattern": "^(UR|TC|SHR|SEC)-[0-9]{3}$",
-      "description": "Unique requirement identifier. Prefix: UR (user), TC (technical constraint), SHR (stakeholder), SEC (security catalog)"
+      "pattern": "^(UR|TC|SHR|SEC|BUC|PUC)-[0-9]{3}$",
+      "description": "Unique requirement identifier. Prefix: BUC (business use case), PUC (product use case), UR (user requirement), TC (technical constraint), SHR (stakeholder), SEC (security catalog)"
     },
     "type": {
       "type": "string",
-      "enum": ["functional", "performance", "look-and-feel", "usability", "operational", "maintainability", "security", "cultural", "legal", "technical-constraint"],
-      "description": "Volere requirement type (sections 9-17) or technical-constraint for derived requirements"
+      "enum": ["business-use-case", "product-use-case", "functional", "performance", "look-and-feel", "usability", "operational", "maintainability", "security", "cultural", "legal", "technical-constraint"],
+      "description": "Volere requirement type: business-use-case (§7), product-use-case (§8), functional (§9), non-functional (§10-17), or technical-constraint for derived requirements"
     },
     "title": {
       "type": "string",
@@ -91,22 +91,22 @@
     },
     "serves": {
       "type": "array",
-      "items": { "type": "string", "pattern": "^(UR|SHR)-[0-9]{3}$" },
+      "items": { "type": "string", "pattern": "^(UR|SHR|BUC|PUC)-[0-9]{3}$" },
       "description": "For TCs only — which UR(s) this technical constraint serves"
     },
     "depends_on": {
       "type": "array",
-      "items": { "type": "string", "pattern": "^(UR|TC|SHR|SEC)-[0-9]{3}$" },
+      "items": { "type": "string", "pattern": "^(UR|TC|SHR|SEC|BUC|PUC)-[0-9]{3}$" },
       "description": "Requirements that must be satisfied for this one to work"
     },
     "conflicts": {
       "type": "array",
-      "items": { "type": "string", "pattern": "^(UR|TC|SHR|SEC)-[0-9]{3}$" },
+      "items": { "type": "string", "pattern": "^(UR|TC|SHR|SEC|BUC|PUC)-[0-9]{3}$" },
       "description": "Requirements that cannot be implemented if this one is"
     },
     "decomposed_to": {
       "type": "array",
-      "items": { "type": "string", "pattern": "^(UR|TC|SHR|SEC)-[0-9]{3}$" },
+      "items": { "type": "string", "pattern": "^(UR|TC|SHR|SEC|BUC|PUC)-[0-9]{3}$" },
       "description": "Child requirements this decomposes into"
     },
     "history": {
