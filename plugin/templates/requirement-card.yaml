@@ -18,7 +18,7 @@ fit_criteria:
   user:
     criterion: ""             # Measurable, testable acceptance condition
     verification: test        # test | analysis | review | demonstration
-    test_type: unit           # unit | integration | e2e | performance | security | lab-test
+    test_type: unit           # unit | integration | system | performance | security | lab-test
   # Add more dimensions as needed:
   # security:
   #   criterion: ""
@@ -27,7 +27,7 @@ fit_criteria:
   # operational:
   #   criterion: ""
   #   verification: test
-  #   test_type: e2e
+  #   test_type: system
 
 dal: C                        # A=catastrophic B=critical C=moderate D=minor E=cosmetic
 priority: must                # must | should | could | wont

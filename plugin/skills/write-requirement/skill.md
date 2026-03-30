@@ -77,7 +77,7 @@ Ask: does this requirement have acceptance conditions beyond the user dimension?
 For each dimension, specify:
 - `criterion` — the measurable condition
 - `verification` — how it's verified: `test`, `analysis`, `review`, or `demonstration`
-- `test_type` — if verification is `test`: `unit`, `integration`, `e2e`, `performance`, `security`, or `lab-test`
+- `test_type` — if verification is `test`: `unit`, `integration`, `system`, `performance`, `security`, or `lab-test`
 
 ### 4. DAL Classification
 

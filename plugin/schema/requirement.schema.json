@@ -141,7 +141,7 @@
         },
         "test_type": {
           "type": "string",
-          "enum": ["unit", "integration", "e2e", "performance", "security", "lab-test"],
+          "enum": ["unit", "integration", "system", "performance", "security", "lab-test"],
           "description": "Type of test when verification is 'test'"
         },
         "lab": {

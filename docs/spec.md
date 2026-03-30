@@ -70,7 +70,7 @@ fit_criteria:
   operational:
     criterion: "State detection works during cross-machine deployment"
     verification: test
-    test_type: e2e
+    test_type: system
 
 dal: C                    # A=catastrophic B=critical C=moderate D=minor E=cosmetic
 priority: must            # must | should | could | wont
@@ -419,7 +419,7 @@ V-Model Level     Verification Tool           Agent Capability
 ─────────────     ─────────────────           ────────────────
 Unit              go test / npm test           Native — no excuses
 Integration       httptest / supertest         Native — no excuses
-System (E2E)      Playwright / gstack          Headless browser automation
+System            Playwright / gstack          Full system verification (functional, performance, security, failure modes)
 Acceptance        Playwright + assertions      Browser + API + state verification
 Performance       Benchmark tests / timing     Measurable — assert on metrics
 Visual            Screenshots + diff           gstack --diff baselines
@@ -454,7 +454,7 @@ profiles:
     verification:
       unit: required          # go test / npm test
       integration: required   # httptest
-      e2e: required           # Playwright or gstack
+      system: required          # Playwright / gstack — functional + failure modes
       acceptance: required    # Fit criteria assertions
       manual: forbidden       # No "please check manually"
 
@@ -462,7 +462,7 @@ profiles:
     verification:
       unit: required
       integration: required
-      e2e: required
+      system: required
       acceptance: required
       performance: required   # Benchmark assertions
       visual: required        # Screenshot diff baselines
@@ -496,7 +496,7 @@ The framework supports multiple browser automation approaches:
 
 | Tool | Strength | When to use |
 |------|----------|-------------|
-| **Playwright** | Full browser automation, network interception, multi-browser | E2E tests, CI pipelines |
+| **Playwright** | Full browser automation, network interception, multi-browser | System tests, CI pipelines |
 | **gstack** | CLI headless browser, ref-based selection, diff baselines, low token cost | Agent-driven acceptance testing, visual verification |
 | **Playwright MCP** | Browser automation via MCP protocol | Real-time debugging, exploratory testing |
 
@@ -578,7 +578,7 @@ fit_criteria:
 
 | Method | What it proves | Automated? |
 |--------|---------------|------------|
-| **Test** | Behavior matches criterion | Yes (unit, integration, e2e) |
+| **Test** | Behavior matches criterion | Yes (unit, integration, system) |
 | **Analysis** | Design satisfies criterion by reasoning | Partial (static analysis, formal methods) |
 | **Review** | Expert confirms criterion is met | No (agent team or human) |
 | **Demonstration** | System shown to work in representative conditions | Partial (lab tests, simulation) |

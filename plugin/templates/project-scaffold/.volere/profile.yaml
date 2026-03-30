@@ -12,7 +12,7 @@ profiles:
     verification:
       unit: optional
       integration: optional
-      e2e: optional
+      system: optional
       acceptance: optional
       manual: optional
 
@@ -23,7 +23,7 @@ profiles:
     verification:
       unit: required
       integration: optional
-      e2e: optional
+      system: optional
       acceptance: optional
       manual: optional
 
@@ -34,7 +34,7 @@ profiles:
     verification:
       unit: required
       integration: required
-      e2e: required
+      system: required
       acceptance: required
       manual: forbidden
 
@@ -45,7 +45,7 @@ profiles:
     verification:
       unit: required
       integration: required
-      e2e: required
+      system: required
       acceptance: required
       performance: required
       manual: forbidden
@@ -57,7 +57,7 @@ profiles:
     verification:
       unit: required
       integration: required
-      e2e: required
+      system: required
       acceptance: required
       performance: required
       visual: required
