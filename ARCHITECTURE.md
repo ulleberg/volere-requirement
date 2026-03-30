@@ -20,16 +20,38 @@ volere-requirement/
 │   ├── project-constitution.md      Minimum content standards for project docs
 │   ├── team-prompt-*.md             Proven agent team prompts
 │   └── execution-*.md              Phase execution prompts
-├── plugin/                          The Volere Agentic Framework (v0.1+)
-│   ├── schema/                      JSON Schema for requirement cards and profiles
-│   ├── skills/                      Claude Code skills
-│   │   └── write-requirement/       Guides agents through Volere card format
-│   ├── templates/                   Project scaffold, card templates
-│   │   ├── project-scaffold/        volere init output
+├── plugin/                          The Volere Agentic Framework (v0.1–v0.8)
+│   ├── schema/                      4 JSON Schemas
+│   │   ├── requirement.schema.json  Snow card (BUC/PUC/UR/TC/SEC/SHR)
+│   │   ├── profile.schema.json      DAL profiles (E through A)
+│   │   ├── compliance.schema.json   Compliance dimensions
+│   │   └── evidence.schema.json     Evidence lifecycle
+│   ├── skills/                      5 Claude Code skills
+│   │   ├── write-requirement/       Guide agents through Volere card format
+│   │   ├── review-requirements/     3 review types (full, validation, trace)
+│   │   ├── trace-codebase/          Map code→requirements, find dead code
+│   │   ├── audit-tests/             Classify VERIFIES/SUPPORTS/THEATER/REDUNDANT
+│   │   └── classify-risk/           Assign DAL via scoring method
+│   ├── hooks/                       4 git hooks
+│   │   ├── check-secrets.sh         Pre-commit: block secret patterns
+│   │   ├── check-traceability.sh    Commit-msg: warn/block missing requirement IDs
+│   │   ├── check-fit-criteria.sh    Pre-push: run tests at DAL-B+
+│   │   ├── install.sh               Hook installer with chaining
+│   │   └── test-hooks.sh            12/12 test suite
+│   ├── cli/                         CLI tooling
+│   │   ├── volere                   7 commands (init, new, validate, trace, coverage, impact, review)
+│   │   └── suspect.sh               Suspect link state management
+│   ├── catalogs/                    Shared requirement catalogs
+│   │   └── security-baseline.yaml   5 security requirements from thul-studio
+│   ├── templates/                   Project scaffold + card templates
+│   │   ├── project-scaffold/        volere init output (context, profile, boundaries)
 │   │   ├── requirement-card.yaml    UR template
 │   │   ├── technical-constraint.yaml TC template
 │   │   ├── business-use-case.yaml   BUC template
-│   │   └── product-use-case.yaml    PUC template
+│   │   ├── product-use-case.yaml    PUC template
+│   │   ├── compliance-profile.yaml  Compliance dimension template
+│   │   ├── imports.yaml             Catalog import template
+│   │   └── evidence/                Evidence record template
 │   ├── requirements/                Framework's own requirements (dogfooding)
 │   └── validate.sh                  Card validator (Node.js, no external deps)
 ├── CLAUDE.md

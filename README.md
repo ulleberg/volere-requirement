@@ -35,10 +35,12 @@ Each level has testable fit criteria. Each level traces to the next. Each level 
 
 | Component | What it does |
 |-----------|-------------|
-| `plugin/schema/` | JSON Schema for requirement cards and DAL profiles |
-| `plugin/skills/write-requirement/` | Guides agents through Volere card format |
-| `plugin/templates/` | Project scaffold, BUC/PUC/UR/TC card templates |
-| `plugin/validate.sh` | Card validator (Node.js, no external deps) |
+| `plugin/schema/` | JSON Schema for requirement cards, DAL profiles, compliance, evidence |
+| `plugin/skills/` | 5 skills: write-requirement, review-requirements, trace-codebase, audit-tests, classify-risk |
+| `plugin/hooks/` | 4 hooks: check-secrets, check-traceability, check-fit-criteria, installer |
+| `plugin/cli/volere` | CLI with 7 commands: init, new, validate, trace, coverage, impact, review |
+| `plugin/catalogs/` | Shared requirement catalogs (security-baseline) |
+| `plugin/templates/` | Project scaffold, BUC/PUC/UR/TC/evidence/compliance templates |
 | `plugin/requirements/` | Framework's own requirements (dogfooding) |
 
 ## Key Features
@@ -74,12 +76,13 @@ See `ARCHITECTURE.md` for the full design principles, V-Model mapping, and desig
 
 | Version | Status | What ships |
 |---------|--------|-----------|
-| v0.1 | **Shipped** | Schema, scaffold, write-requirement skill |
-| v0.2 | Planned | Pre-commit hooks (secrets, traceability) |
-| v0.3 | Planned | Agent team review skill |
-| v0.4 | Planned | Codebase trace + test audit skills |
-| v0.5 | Planned | CLI (trace, coverage, impact) |
-| v0.6 | Planned | DAL profiles + risk classification |
-| v0.7 | Planned | Suspect link management |
-| v0.8 | Planned | Compliance profiles + evidence chain |
-| v1.0 | Planned | Full framework, production-ready |
+| v0.1 | **Shipped** | Schema, scaffold, write-requirement skill, validator |
+| v0.2 | **Shipped** | Pre-commit hooks (secrets, traceability), installer, 12/12 tests |
+| v0.3 | **Shipped** | Agent team review skill (3 review types) |
+| v0.4 | **Shipped** | Codebase trace + test audit skills |
+| v0.5 | **Shipped** | CLI (init, new, validate, trace, coverage, impact, review) |
+| v0.6 | **Shipped** | DAL profiles + classify-risk skill + check-fit-criteria hook |
+| v0.7 | **Shipped** | Suspect link management (mark, resolve, auto, check) |
+| v0.8 | **Shipped** | Compliance profiles, evidence chain, security baseline catalog |
+| v0.9 | **Active** | Production hardening — validate on 3 real projects |
+| v1.0 | Planned | Publish to thul-plugins marketplace as `volere@ulleberg` |

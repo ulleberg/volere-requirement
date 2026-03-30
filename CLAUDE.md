@@ -5,10 +5,17 @@ Archive of the original Volere Requirements Template (v15) plus the Volere Agent
 ## Architecture
 
 - **Original Volere files (a–i)** — template, case studies, requirement stationery. Preserved as-is.
-- **docs/** — discovery-to-delivery documentation: problem, brief, options, decisions, spec, team prompts, execution plans.
-- **plugin/** — the framework itself: schema, skills, templates, validator, and its own requirements (dogfooding).
+- **docs/** — discovery-to-delivery documentation: problem, brief, options, decisions, spec, roadmap, team prompts, execution plans.
+- **plugin/** — the framework (v0.1–v0.8 shipped):
+  - `schema/` — 4 JSON schemas (requirement, profile, compliance, evidence)
+  - `skills/` — 5 skills (write-requirement, review-requirements, trace-codebase, audit-tests, classify-risk)
+  - `hooks/` — 4 hooks (check-secrets, check-traceability, check-fit-criteria, installer)
+  - `cli/` — CLI with 7 commands + suspect link manager
+  - `catalogs/` — shared requirement catalogs (security-baseline)
+  - `templates/` — project scaffold, BUC/PUC/UR/TC/evidence/compliance templates
+  - `requirements/` — framework's own requirements (dogfooding)
 
-See `ARCHITECTURE.md` for the full V-Model mapping, design principles (Chesterton's fence, soft+hard enforcement, autonomous verification), and design decisions.
+See `ARCHITECTURE.md` for the full V-Model mapping, design principles, and design decisions.
 
 ## Key Concepts
 
@@ -19,17 +26,30 @@ See `ARCHITECTURE.md` for the full V-Model mapping, design principles (Chesterto
 - **TC** (Technical Constraint) — what the implementation must guarantee
 - **DAL** (Design Assurance Level, A-E) — scales verification effort to risk
 - **Fit criterion** — measurable condition defining when a requirement is satisfied
+- **Suspect link** — a downstream requirement that needs re-verification after an upstream change
 
 ## Testing
 
-Validate requirement cards:
 ```bash
+# Validate requirement cards against schema
 plugin/validate.sh plugin/requirements/UR-001.yaml
+
+# Run hook test suite (12 tests)
+plugin/hooks/test-hooks.sh
+
+# CLI commands
+plugin/cli/volere help
+plugin/cli/volere validate
+plugin/cli/volere trace
+plugin/cli/volere coverage
+plugin/cli/volere impact UR-001
 ```
 
 ## Conventions
 
 - Requirement cards are individual YAML files, one per requirement
-- IDs follow the pattern: `{PREFIX}-{NNN}` (e.g., BUC-001, UR-042, TC-05)
+- IDs follow the pattern: `{PREFIX}-{NNN}` (e.g., BUC-001, UR-042, TC-005)
 - Every fit criterion must be measurable — no vague words (should, appropriate, reasonable)
 - Chesterton's fence: keep Volere elements until proven unnecessary, not the other way around
+- System testing (V-Model architecture level), not just e2e — includes performance, security, failure modes
+- Autonomous verification: agents test everything, "manually verified" is a bug in the process
