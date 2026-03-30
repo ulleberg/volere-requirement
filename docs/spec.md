@@ -129,7 +129,146 @@ profiles:
     review: [code-reviewer, test-engineer, architecture-reviewer, security-engineer]
 ```
 
-### 6. Project Constitution (built-in)
+### 6. Regulatory Compliance Framework
+
+Multi-dimensional acceptance is a core requirement (Pain Point 6 from discovery). A single requirement may need fit criteria across user, regulatory, security, and safety dimensions.
+
+#### How It Works
+
+**Compliance profiles** define which regulatory dimensions apply to a project:
+
+```yaml
+# .volere/compliance.yaml
+dimensions:
+  - id: fcc-part15
+    name: FCC Part 15 (Unintentional Radiators)
+    standard: 47 CFR Part 15
+    applies_to: [performance, operational]    # Volere requirement types
+    verification: [test, demonstration]       # DO-178C verification methods
+    evidence_required: true                   # Must produce audit trail
+    agent: rf-engineer                        # Specialist role for review
+
+  - id: red-2014-53
+    name: EU Radio Equipment Directive
+    standard: Directive 2014/53/EU
+    applies_to: [performance, security, operational]
+    verification: [test, demonstration, analysis]
+    evidence_required: true
+    agent: regulatory-specialist
+
+  - id: iec-62443
+    name: Industrial Cybersecurity
+    standard: IEC 62443
+    applies_to: [security]
+    verification: [test, analysis, review]
+    evidence_required: true
+    agent: security-engineer
+
+  - id: iec-61508
+    name: Functional Safety
+    standard: IEC 61508
+    applies_to: [functional, performance, operational, maintainability]
+    verification: [test, analysis, review, formal-methods]
+    evidence_required: true
+    sil: 2                                    # Safety Integrity Level
+    agent: compliance-officer
+```
+
+**Requirement cards carry per-dimension fit criteria:**
+
+```yaml
+id: UR-042
+fit_criteria:
+  user:
+    criterion: "Device responds to commands within 200ms"
+    verification: test
+    test_type: performance
+  fcc-part15:
+    criterion: "Conducted emissions below 47 CFR 15.107 limits at all operating modes"
+    verification: demonstration
+    test_type: lab-test
+    lab: accredited-test-lab              # Cannot be self-tested
+    evidence: test-report                 # Produces audit artifact
+  iec-62443:
+    criterion: "Command interface rejects unauthenticated requests"
+    verification: test
+    test_type: integration
+```
+
+**Verification methods** (from DO-178C, applicable across domains):
+
+| Method | What it proves | Automated? |
+|--------|---------------|------------|
+| **Test** | Behavior matches criterion | Yes (unit, integration, e2e) |
+| **Analysis** | Design satisfies criterion by reasoning | Partial (static analysis, formal methods) |
+| **Review** | Expert confirms criterion is met | No (agent team or human) |
+| **Demonstration** | System shown to work in representative conditions | Partial (lab tests, simulation) |
+
+**Evidence chain** (inspired by OSCAL):
+
+```
+Requirement (fit criterion)
+  → Verification plan (which method, who, when)
+  → Verification result (pass/fail, date, evidence)
+  → Evidence artifact (test report, analysis document, review record)
+```
+
+Each verification result is stored as a YAML file:
+
+```yaml
+# docs/evidence/UR-042-fcc-part15.yaml
+requirement: UR-042
+dimension: fcc-part15
+criterion: "Conducted emissions below 47 CFR 15.107 limits"
+method: demonstration
+status: passed
+date: 2026-04-15
+evidence:
+  type: test-report
+  lab: "TÜV Rheinland, ref: TR-2026-04-1234"
+  path: docs/evidence/reports/fcc-part15-conducted.pdf
+verified_by: rf-engineer
+notes: "All operating modes tested. Margin: 6dB at 150kHz."
+```
+
+**The `volere coverage` CLI shows compliance status per dimension:**
+
+```
+$ volere coverage --dimension fcc-part15
+
+FCC Part 15 Coverage
+  UR-042: ✓ passed (TÜV report 2026-04-15)
+  UR-043: ✗ not tested
+  UR-044: ○ not applicable
+
+  Coverage: 1/2 (50%)
+  Missing: UR-043 — conducted emissions at max power
+```
+
+**Agent team review includes compliance dimension:**
+
+When `review-requirements` runs on a project with compliance profiles, the compliance-officer and domain specialist (rf-engineer, security-engineer, etc.) are automatically included in the review team. They verify:
+1. Are all compliance dimensions covered by fit criteria?
+2. Are the verification methods appropriate for the standard?
+3. Is evidence sufficient for certification/audit?
+
+#### What Ships When
+
+| Version | Compliance feature |
+|---------|-------------------|
+| v0.1 | Multi-dimensional `fit_criteria` in YAML schema (the structure) |
+| v0.3 | Compliance agents included in review teams when profiles are active |
+| v0.8 | Compliance profiles, evidence chain, `volere coverage --dimension` |
+| v1.0 | Pre-built profiles for security baseline (IEC 62443), FCC Part 15, RED |
+
+#### What This Is NOT
+
+- Not a certification tool — it doesn't replace test labs or notified bodies
+- Not a regulatory database — it doesn't track which standards apply to which product category
+- Not legal advice — it structures the evidence, it doesn't interpret the law
+- It IS a traceability and evidence management system that makes audits predictable
+
+### 7. Project Constitution (built-in)
 
 Defines minimum content standards for:
 - `CLAUDE.md` — Architecture, Testing, Conventions sections
