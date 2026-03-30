@@ -1,0 +1,61 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/ulleberg/volere-requirement/plugin/schema/profile.schema.json",
+  "title": "Volere DAL Profile",
+  "description": "Design Assurance Level profile — scales verification effort to risk",
+  "type": "object",
+  "required": ["dal"],
+  "additionalProperties": false,
+  "properties": {
+    "dal": {
+      "type": "string",
+      "enum": ["A", "B", "C", "D", "E"],
+      "description": "Default DAL for this project"
+    },
+    "profiles": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "E": { "$ref": "#/$defs/profile_level" },
+        "D": { "$ref": "#/$defs/profile_level" },
+        "C": { "$ref": "#/$defs/profile_level" },
+        "B": { "$ref": "#/$defs/profile_level" },
+        "A": { "$ref": "#/$defs/profile_level" }
+      }
+    }
+  },
+  "$defs": {
+    "profile_level": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "hooks": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "Pre-commit/pre-push hooks active at this level"
+        },
+        "ci": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "CI checks required at this level"
+        },
+        "review": {
+          "oneOf": [
+            { "type": "string", "enum": ["none"] },
+            { "type": "string" },
+            { "type": "array", "items": { "type": "string" } }
+          ],
+          "description": "Review requirements — 'none', a single role, or array of roles"
+        },
+        "verification": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "string",
+            "enum": ["required", "recommended", "optional", "forbidden"]
+          },
+          "description": "Verification types and their enforcement level"
+        }
+      }
+    }
+  }
+}

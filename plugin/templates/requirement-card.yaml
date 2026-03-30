@@ -1,0 +1,55 @@
+# Volere Agentic Requirement Card
+# Fill in all required fields. Delete optional fields you don't need.
+# Validate with: volere validate --file <this-file>
+
+id: UR-001                    # UR-xxx, TC-xxx, SHR-xxx, or SEC-xxx
+type: functional              # functional | performance | look-and-feel | usability |
+                              # operational | maintainability | security | cultural | legal |
+                              # technical-constraint
+title: ""                     # One line, max 100 chars
+
+description: >
+  One-sentence statement of what the system must do.
+
+rationale: >
+  Why this requirement exists — the real-world pain that created it.
+
+fit_criteria:
+  user:
+    criterion: ""             # Measurable, testable acceptance condition
+    verification: test        # test | analysis | review | demonstration
+    test_type: unit           # unit | integration | e2e | performance | security | lab-test
+  # Add more dimensions as needed:
+  # security:
+  #   criterion: ""
+  #   verification: test
+  #   test_type: integration
+  # operational:
+  #   criterion: ""
+  #   verification: test
+  #   test_type: e2e
+
+dal: C                        # A=catastrophic B=critical C=moderate D=minor E=cosmetic
+priority: must                # must | should | could | wont
+status: proposed              # proposed | implemented | verified | deprecated
+
+# Optional — Kano model prioritization
+# satisfaction: 3             # 1-5 stakeholder happiness if implemented
+# dissatisfaction: 3          # 1-5 stakeholder unhappiness if missing
+
+origin:
+  stakeholder: ""             # Who requested this
+  date: ""                    # YYYY-MM-DD
+  trigger: ""                 # What event or pain triggered this
+  # source: UR-xxx            # Parent requirement if derived
+
+# Optional — traceability
+# depends_on: []              # Requirements that must be satisfied first
+# conflicts: []               # Requirements that conflict with this one
+# decomposed_to: []           # Child requirements
+# serves: []                  # For TCs only — which UR(s) this serves
+
+history:
+  - date: ""                  # YYYY-MM-DD
+    action: created
+    by: ""                    # Who created this (agent role or person name)

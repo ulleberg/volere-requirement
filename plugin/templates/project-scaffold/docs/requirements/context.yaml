@@ -1,0 +1,45 @@
+# Project Context — Volere sections 1-4
+# Edit this file to define scope, stakeholders, and shared vocabulary.
+
+project:
+  name: ""                    # Project name
+  purpose: >
+    One paragraph describing what this project does and why it exists.
+  scope:
+    in: []                    # What's inside the system boundary
+    out: []                   # What's explicitly outside (managed elsewhere)
+
+stakeholders:
+  - name: ""                  # Primary stakeholder
+    role: ""                  # Owner, operator, customer, regulator
+    interests: []             # What they care about
+
+constraints:
+  mandated: []                # Non-negotiable constraints ("must run on X", "no dependency on Y")
+  budget: null                # Budget constraint if applicable
+  schedule: null              # Deadline if applicable
+  platform: ""               # Target platform(s)
+
+glossary:
+  # Define terms that agents and humans must agree on.
+  # Ambiguous terms kill requirements quality.
+  # Example:
+  #   session: "A running instance of the application with its own state"
+  #   fit criterion: "A measurable condition defining when a requirement is satisfied"
+
+open_issues: []
+  # Unresolved questions that affect requirements.
+  # Format:
+  #   - id: OI-01
+  #     title: "Description of the open issue"
+  #     status: open          # open | resolved | parking-lot
+  #     affects: [UR-xxx]     # Which requirements are affected
+
+risks: []
+  # Known risks to the project.
+  # Format:
+  #   - id: RISK-01
+  #     title: "Description of the risk"
+  #     probability: high     # high | medium | low
+  #     impact: high          # high | medium | low
+  #     mitigation: "How to reduce the risk"

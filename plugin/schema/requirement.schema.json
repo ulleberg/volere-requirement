@@ -1,0 +1,158 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/ulleberg/volere-requirement/plugin/schema/requirement.schema.json",
+  "title": "Volere Agentic Requirement Card",
+  "description": "Machine-readable Volere snow card for agentic software development",
+  "type": "object",
+  "required": ["id", "type", "title", "description", "rationale", "fit_criteria", "dal", "priority", "status", "origin"],
+  "additionalProperties": false,
+  "properties": {
+    "id": {
+      "type": "string",
+      "pattern": "^(UR|TC|SHR|SEC)-[0-9]{3}$",
+      "description": "Unique requirement identifier. Prefix: UR (user), TC (technical constraint), SHR (stakeholder), SEC (security catalog)"
+    },
+    "type": {
+      "type": "string",
+      "enum": ["functional", "performance", "look-and-feel", "usability", "operational", "maintainability", "security", "cultural", "legal", "technical-constraint"],
+      "description": "Volere requirement type (sections 9-17) or technical-constraint for derived requirements"
+    },
+    "title": {
+      "type": "string",
+      "maxLength": 100,
+      "description": "One-line title summarizing the requirement"
+    },
+    "description": {
+      "type": "string",
+      "description": "One-sentence statement of what the system must do"
+    },
+    "rationale": {
+      "type": "string",
+      "description": "Why this requirement exists — the real-world pain that created it"
+    },
+    "fit_criteria": {
+      "type": "object",
+      "minProperties": 1,
+      "description": "Multi-dimensional acceptance criteria. At least one dimension required.",
+      "additionalProperties": {
+        "$ref": "#/$defs/fit_criterion"
+      }
+    },
+    "dal": {
+      "type": "string",
+      "enum": ["A", "B", "C", "D", "E"],
+      "description": "Design Assurance Level. A=catastrophic, B=critical, C=moderate, D=minor, E=cosmetic"
+    },
+    "priority": {
+      "type": "string",
+      "enum": ["must", "should", "could", "wont"],
+      "description": "MoSCoW priority"
+    },
+    "status": {
+      "type": "string",
+      "enum": ["proposed", "implemented", "verified", "deprecated"],
+      "description": "Requirement lifecycle status"
+    },
+    "satisfaction": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 5,
+      "description": "Stakeholder happiness if implemented (1=uninterested, 5=extremely pleased). Kano model."
+    },
+    "dissatisfaction": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 5,
+      "description": "Stakeholder unhappiness if missing (1=hardly matters, 5=extremely displeased). Kano model."
+    },
+    "origin": {
+      "type": "object",
+      "required": ["stakeholder", "date"],
+      "additionalProperties": false,
+      "properties": {
+        "stakeholder": {
+          "type": "string",
+          "description": "Who requested this requirement"
+        },
+        "date": {
+          "type": "string",
+          "format": "date",
+          "description": "When the requirement was created (ISO 8601 date)"
+        },
+        "trigger": {
+          "type": "string",
+          "description": "What event or pain triggered this requirement"
+        },
+        "source": {
+          "type": "string",
+          "description": "Parent requirement ID this was derived from (e.g., UR-007)"
+        }
+      }
+    },
+    "serves": {
+      "type": "array",
+      "items": { "type": "string", "pattern": "^(UR|SHR)-[0-9]{3}$" },
+      "description": "For TCs only — which UR(s) this technical constraint serves"
+    },
+    "depends_on": {
+      "type": "array",
+      "items": { "type": "string", "pattern": "^(UR|TC|SHR|SEC)-[0-9]{3}$" },
+      "description": "Requirements that must be satisfied for this one to work"
+    },
+    "conflicts": {
+      "type": "array",
+      "items": { "type": "string", "pattern": "^(UR|TC|SHR|SEC)-[0-9]{3}$" },
+      "description": "Requirements that cannot be implemented if this one is"
+    },
+    "decomposed_to": {
+      "type": "array",
+      "items": { "type": "string", "pattern": "^(UR|TC|SHR|SEC)-[0-9]{3}$" },
+      "description": "Child requirements this decomposes into"
+    },
+    "history": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["date", "action", "by"],
+        "additionalProperties": false,
+        "properties": {
+          "date": { "type": "string", "format": "date" },
+          "action": { "type": "string", "enum": ["created", "modified", "verified", "deprecated"] },
+          "by": { "type": "string" },
+          "note": { "type": "string" }
+        }
+      }
+    }
+  },
+  "$defs": {
+    "fit_criterion": {
+      "type": "object",
+      "required": ["criterion", "verification"],
+      "additionalProperties": false,
+      "properties": {
+        "criterion": {
+          "type": "string",
+          "description": "Measurable, testable acceptance condition"
+        },
+        "verification": {
+          "type": "string",
+          "enum": ["test", "analysis", "review", "demonstration"],
+          "description": "DO-178C verification method"
+        },
+        "test_type": {
+          "type": "string",
+          "enum": ["unit", "integration", "e2e", "performance", "security", "lab-test"],
+          "description": "Type of test when verification is 'test'"
+        },
+        "lab": {
+          "type": "string",
+          "description": "Required test lab when test_type is 'lab-test'"
+        },
+        "evidence": {
+          "type": "string",
+          "description": "Type of evidence artifact produced (e.g., test-report)"
+        }
+      }
+    }
+  }
+}

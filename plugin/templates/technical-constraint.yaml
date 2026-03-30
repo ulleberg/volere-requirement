@@ -1,0 +1,36 @@
+# Volere Agentic Technical Constraint Card
+# Derived requirement — serves one or more URs at the design level.
+# Verified by unit/integration tests.
+
+id: TC-001
+type: technical-constraint
+title: ""
+
+description: >
+  What the implementation must guarantee.
+
+rationale: >
+  Why this constraint exists — the failure mode it prevents.
+
+serves: []                    # Required — which UR(s) this TC serves (e.g., [UR-003, UR-016])
+
+fit_criteria:
+  user:
+    criterion: ""             # Measurable, testable condition
+    verification: test
+    test_type: unit
+
+dal: C
+priority: must
+status: proposed
+
+origin:
+  stakeholder: ""
+  date: ""
+  trigger: ""
+  source: ""                  # The UR this was derived from
+
+history:
+  - date: ""
+    action: created
+    by: ""

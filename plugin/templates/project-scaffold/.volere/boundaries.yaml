@@ -1,0 +1,27 @@
+# Module Boundary Rules
+# Defines which modules can import from which.
+# Enforced by architectural fitness functions in CI (e.g., dependency-cruiser, eslint-plugin-boundaries).
+
+# Example for a layered architecture:
+#
+# modules:
+#   domain:
+#     allowed_imports: []
+#     description: "Pure business logic — no framework dependencies"
+#   application:
+#     allowed_imports: [domain]
+#     description: "Use cases, orchestration"
+#   infrastructure:
+#     allowed_imports: [domain, application]
+#     description: "Database, API, external services"
+#   ui:
+#     allowed_imports: [application]
+#     description: "Presentation layer"
+#
+# rules:
+#   - "domain must not import from infrastructure"
+#   - "ui must not import from infrastructure directly"
+
+modules: {}
+
+rules: []
