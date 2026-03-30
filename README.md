@@ -66,6 +66,10 @@ The original template files (2010) are preserved in the repo root:
 | `d–g` | Case studies (Library, Controller) |
 | `h–i` | Atomic requirement spreadsheets (XLS) |
 
+## Design Philosophy
+
+**Chesterton's fence** — Volere has been refined over 30 years. We keep every element until we've proven it's unnecessary, not the other way around. BUCs, PUCs, satisfaction scores, 9 non-functional types — all included because they were included for a reason. Projects discover what they need; the framework doesn't pre-judge.
+
 ## Key Insights
 
 These insights emerged from building and validating the framework on a real project (thul-studio: 43 URs, 12 TCs, 12,814 lines dead code removed, 23 security tests added).
