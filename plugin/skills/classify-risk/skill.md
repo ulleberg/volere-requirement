@@ -76,6 +76,9 @@ Regardless of score:
 - **Any DB migration or schema change → minimum DAL-B**
 - **Pure documentation or comments → DAL-E** (even if the file is in a critical module)
 - **Requirement's own DAL field** — the change's DAL cannot be lower than the affected requirement's DAL
+- **Any UR with browser-facing fit criteria → minimum DAL-C, recommend system-level verification**
+  Keywords: "user can see", "user can hear", "renders", "displays", "plays", "shows", "browser", "page", "screen"
+  Rationale: `curl` returns 200 with valid HTML while the page is black. Browser-facing criteria cannot be verified below system level.
 
 ## Verification Requirements Per DAL
 
@@ -193,6 +196,14 @@ The check-fit-criteria hook (v0.6) enforces this at push time.
 - Q2: Irreversible (existing tokens invalid) → +2
 - Q3: Security UR → +2
 - Total: 6 → **DAL-A**
+
+### Example 6: Add grid page for session management
+- Q1: Affects one feature used frequently → +1
+- Q2: Easy to reverse → 0
+- Q3: Functional UR → 0
+- Total: 1 → **DAL-C**
+- Override: browser-facing fit criteria ("user can see sessions in a grid") → minimum DAL-C ✓
+- Note: system-level verification required (Playwright or browser check, not just API test)
 
 ## Integration
 
