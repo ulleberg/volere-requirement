@@ -45,6 +45,7 @@ REQS_DIR="$PROJECT_ROOT/docs/requirements"
 # ============================================================
 cmd_init() {
   local dal="${1:-C}"
+  local NO_HOOKS=0
 
   # Strip -- prefix if present
   dal="${dal#--dal=}"
@@ -55,6 +56,7 @@ cmd_init() {
     case "$1" in
       --dal) dal="$2"; shift 2 ;;
       --dal=*) dal="${1#--dal=}"; shift ;;
+      --no-hooks) NO_HOOKS=1; shift ;;
       *) shift ;;
     esac
   done
@@ -98,9 +100,11 @@ cmd_init() {
     echo "  Exists:  .volere/boundaries.yaml"
   fi
 
-  # Install hooks
+  # Install hooks (default: yes, opt-out with --no-hooks)
   echo ""
-  if [ -d ".git" ]; then
+  if [ "$NO_HOOKS" -eq 1 ]; then
+    echo "  Hooks: skipped (--no-hooks). Not recommended for DAL-C+."
+  elif [ -d ".git" ]; then
     "$VOLERE_DIR/hooks/install.sh" --hooks-dir ".git/hooks" 2>/dev/null || \
       echo "  Hooks: install manually with: $VOLERE_DIR/hooks/install.sh"
   else
