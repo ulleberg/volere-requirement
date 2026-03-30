@@ -259,7 +259,84 @@ catalogs:
     version: 1.0
 ```
 
-Catalogs are YAML files containing requirement cards. Projects import them with optional tailoring (exclude, override) — the same pattern as OSCAL profiles.
+#### Catalog Format
+
+A catalog is a YAML file containing requirement cards and metadata:
+
+```yaml
+# catalogs/security-baseline.yaml
+catalog:
+  name: security-baseline
+  version: "1.0"
+  description: "Security baseline for thul-* ecosystem projects"
+  author: Thomas Ulleberg
+  date: 2026-04-01
+  derived_from: "thul-studio UR-27, UR-28, UR-33 (proven patterns)"
+
+requirements:
+  - id: SEC-001
+    type: security
+    title: CORS restricted to mesh origins
+    description: >
+      API routes restrict CORS to configured mesh hostnames.
+      No wildcard origins on routes that return sensitive data.
+    fit_criteria:
+      security:
+        criterion: "Non-mesh origin requests receive no CORS headers"
+        verification: test
+        test_type: integration
+    dal: B
+    priority: must
+    tailorable: true          # Projects can override DAL or exclude
+
+  - id: SEC-002
+    type: security
+    title: Input validation at API boundaries
+    # ... full snow card format
+    tailorable: true
+
+  - id: SEC-003
+    type: security
+    title: Secrets management
+    # ...
+    tailorable: false         # Cannot be excluded — always applies
+```
+
+#### Import Resolution
+
+When a project imports a catalog:
+
+```yaml
+# .volere/imports.yaml
+catalogs:
+  - name: security-baseline
+    source: volere@ulleberg/catalogs/security-baseline.yaml
+    version: "1.0"
+    tailoring:
+      - exclude: [SEC-012]
+      - override:
+          SEC-003:
+            dal: A              # Raise severity for this project
+```
+
+**Resolution rules:**
+1. Catalog requirements are merged into the project's requirement set with their original IDs
+2. `exclude` removes requirements marked `tailorable: true` — cannot exclude `tailorable: false`
+3. `override` replaces specific fields — cannot override `id`, `type`, or `title`
+4. Version pinning: projects pin to a catalog version. `volere validate` warns if a newer version exists
+5. **No transitive imports** — catalogs don't import other catalogs (keeps the graph flat)
+
+**Conflict resolution:**
+- If a project has UR-027 "CORS restriction" and imports SEC-001 "CORS restricted to mesh origins", `volere validate` flags the overlap
+- Resolution: project requirement takes precedence. The catalog requirement is marked `superseded_by: UR-027`
+- `volere coverage` shows both and notes the supersession
+
+**Catalog versioning:**
+- Catalogs use semantic versioning (major.minor)
+- Major version bump: requirement added or removed, fit criterion changed
+- Minor version bump: description clarified, metadata updated
+- Projects pin to major version (`"1.x"`) or exact version (`"1.0"`)
+- `volere validate` warns on major version mismatch: "security-baseline v2.0 available, you're on v1.0"
 
 **Ships in v0.8** alongside compliance profiles. The security baseline catalog is built from the patterns proven on thul-studio.
 
@@ -554,13 +631,114 @@ When `review-requirements` runs on a project with compliance profiles, the compl
 2. Are the verification methods appropriate for the standard?
 3. Is evidence sufficient for certification/audit?
 
+#### Evidence Lifecycle
+
+Evidence is proof that a fit criterion was verified. The lifecycle:
+
+```
+1. PLANNED    — fit criterion exists, verification method chosen, no evidence yet
+2. COLLECTED  — evidence artifact exists (test report, analysis doc, review record)
+3. VERIFIED   — evidence reviewed and accepted (by agent or human)
+4. EXPIRED    — requirement or code changed since evidence was collected → re-verify
+```
+
+**Directory structure:**
+
+```
+docs/evidence/
+├── index.yaml                           # Evidence manifest — all evidence records
+├── automated/                           # From CI/test runs (generated, not hand-written)
+│   ├── UR-027-cors-2026-03-30.yaml     # Auto-generated from test results
+│   └── UR-028-validation-2026-03-30.yaml
+├── manual/                              # From lab tests, reviews, demonstrations
+│   ├── UR-042-fcc-part15-2026-04-15.yaml
+│   └── UR-042-red-2026-04-20.yaml
+└── reports/                             # Binary evidence artifacts (PDFs, images)
+    ├── fcc-part15-conducted.pdf
+    └── red-essential-requirements.pdf
+```
+
+**Evidence record format:**
+
+```yaml
+# docs/evidence/automated/UR-027-cors-2026-03-30.yaml
+requirement: UR-027
+dimension: security
+criterion: "Non-mesh origin requests receive no CORS headers"
+method: test
+status: verified              # planned | collected | verified | expired
+
+collected:
+  date: 2026-03-30T14:23:00Z
+  by: steve (CTO agent)
+  source: go test ./internal/auth/ -run TestCORS -v
+  result: PASS
+  tests_run: 6
+  tests_passed: 6
+
+verified:
+  date: 2026-03-30T14:25:00Z
+  by: steve (CTO agent)
+  method: automated            # automated | human-review | lab-test
+
+expires_when:
+  - file_changed: internal/auth/cors.go
+  - requirement_changed: UR-027
+  # When either condition is true, status → expired, re-verification required
+```
+
+**Automated evidence collection:**
+
+For fit criteria verified by tests (`verification: test`), evidence is generated automatically:
+1. `volere validate` runs the tests
+2. If tests pass, creates/updates the evidence record in `docs/evidence/automated/`
+3. Sets `expires_when` triggers based on affected files
+4. On next `volere validate`, checks if triggers fired → marks expired if so
+
+**Manual evidence collection:**
+
+For fit criteria verified by demonstration, review, or lab test:
+1. Agent or human creates evidence record in `docs/evidence/manual/`
+2. Attaches report artifact in `docs/evidence/reports/` (PDF, image, etc.)
+3. `volere coverage --dimension` shows the evidence status
+4. Expiry is tracked the same way — code/requirement changes expire the evidence
+
+**Evidence retention:**
+- Evidence records are git-committed (YAML files, small)
+- Binary reports (PDFs) are git-committed if < 10MB, otherwise referenced by external URL
+- Old evidence is never deleted — git history preserves it. Current evidence is what's in HEAD.
+- `volere evidence prune` removes evidence for deleted/deprecated requirements
+
+**Audit output:**
+
+```
+$ volere evidence --dimension fcc-part15
+
+FCC Part 15 Evidence — thul-product
+
+  UR-042  Conducted emissions:
+    Status: VERIFIED
+    Lab: TÜV Rheinland (ref: TR-2026-04-1234)
+    Date: 2026-04-15
+    Report: docs/evidence/reports/fcc-part15-conducted.pdf
+    Expires when: UR-042 changes or hardware revision
+
+  UR-043  Radiated emissions:
+    Status: PLANNED
+    Lab: (not yet scheduled)
+    Next action: Schedule test at accredited lab
+
+  Summary: 1/2 verified (50%)
+```
+
 #### What Ships When
 
 | Version | Compliance feature |
 |---------|-------------------|
 | v0.1 | Multi-dimensional `fit_criteria` in YAML schema (the structure) |
 | v0.3 | Compliance agents included in review teams when profiles are active |
-| v0.8 | Compliance profiles, evidence chain, `volere coverage --dimension` |
+| v0.8 | Compliance profiles, evidence chain, `volere coverage --dimension`, evidence lifecycle |
+| v0.9 | Automated evidence collection from CI, `volere evidence` CLI |
 | v1.0 | Pre-built profiles for security baseline (IEC 62443), FCC Part 15, RED |
 
 #### What This Is NOT
@@ -591,6 +769,218 @@ volere impact <UR-id>              # What breaks if this requirement changes?
 volere validate                    # Run all verification checks
 volere review                      # Generate team review prompt
 ```
+
+#### CLI Output Specifications
+
+**`volere trace`** — Traceability matrix showing requirement → code → test linkage:
+
+```
+$ volere trace
+
+Traceability Matrix — thul-studio (43 URs, 12 TCs)
+
+UR-01  Browser access to sessions
+  ├── Code: internal/api/terminal.go, internal/api/static.go
+  ├── Tests: test/go-server.go-e2e.js (surface loading)
+  ├── Fit criteria: 3/3 covered
+  └── Status: ✓ TRACED
+
+UR-02  Multiple concurrent sessions
+  ├── Code: internal/session/manager.go, internal/session/port.go
+  ├── Tests: internal/session/manager_test.go (5), internal/api/sessions_test.go (3)
+  ├── Fit criteria: 4/4 covered
+  └── Status: ✓ TRACED
+
+UR-27  CORS and CSP hardening
+  ├── Code: internal/auth/cors.go
+  ├── Tests: internal/auth/cors_test.go (6)
+  ├── Fit criteria: 3/3 covered
+  └── Status: ✓ TRACED
+
+TC-05  Idle state debounce
+  ├── Code: internal/session/tmux.go:81-83
+  ├── Tests: (none)
+  ├── Fit criteria: 0/1 covered
+  └── Status: ✗ GAP — DAL-A priority
+
+Summary: 43 URs + 12 TCs = 55 requirements
+  Traced: 48 (87%)    Gaps: 7 (13%)    Orphaned code: 0
+```
+
+**`volere coverage`** — Fit criteria coverage with per-dimension breakdown:
+
+```
+$ volere coverage
+
+Fit Criteria Coverage — thul-studio
+
+                          User  Security  Operational  Regulatory
+  Total fit criteria:      43       8          12          0
+  With automated tests:    38       7           9          0
+  With manual evidence:     0       0           0          0
+  Uncovered:                5       1           3          0
+
+  Overall: 54/63 (86%)
+
+  Uncovered (prioritized by DAL):
+    DAL-A  TC-05   Idle debounce (user)
+    DAL-B  UR-22   Crash recovery — launchd restart (operational)
+    DAL-B  UR-35   Session reconciliation (operational)
+    DAL-C  UR-14   CLI latency < 5s (user)
+    DAL-C  TC-08   STUDIO_SESSION_ID env var (user)
+    DAL-C  TC-09   Context persistence through idle (user)
+    DAL-D  UR-24   Response latency < 25s (user)
+    DAL-D  UR-13   Browser close/reopen persistence (operational)
+    DAL-D  UR-07   Cross-machine peer health (operational)
+
+$ volere coverage --dimension security
+
+Security Coverage — thul-studio
+
+  UR-21   HMAC verification:     ✓ tested (internal/a2a/handler_test.go)
+  UR-23   Bearer token auth:     ✓ tested (internal/auth/middleware_test.go)
+  UR-27   CORS restriction:      ✓ tested (internal/auth/cors_test.go)
+  UR-27   CSP headers:           ✓ tested (internal/auth/cors_test.go)
+  UR-28   Input validation:      ✓ tested (internal/api/sessions_test.go)
+  UR-28   Broadcast size limit:  ✓ tested (internal/api/sessions_test.go)
+  UR-33   Secrets in source:     ✗ no pre-commit hook installed
+  TC-04   Cache-Control:         ✓ tested (internal/api/static_test.go)
+
+  Coverage: 7/8 (88%)
+```
+
+**`volere impact`** — Dependency graph traversal with suspect link identification:
+
+```
+$ volere impact UR-03
+
+Impact Analysis — UR-03 (Session state at a glance)
+
+  Direct dependents:
+    ├── UR-16  Response extraction (depends_on: UR-03)
+    ├── UR-19  Context summary (uses state detection)
+    └── TC-05  Idle debounce (serves: UR-03)
+
+  Transitive dependents:
+    ├── UR-24  Chat response latency (depends on UR-16 → UR-03)
+    └── TC-09  Context persistence (serves: UR-19 → UR-03)
+
+  Affected tests:
+    ├── internal/session/state_test.go (18 tests)
+    ├── internal/a2a/handler_test.go (idle debounce)
+    └── test/go-server.go-e2e.js (state rendering)
+
+  Affected code:
+    ├── internal/session/state.go
+    ├── internal/session/tmux.go:81-83 (debounce logic)
+    └── grid/index.html (state badge rendering)
+
+  If UR-03 changes:
+    → 5 requirements become SUSPECT (review for consistency)
+    → 3 test files must be re-run
+    → 3 code files may need updates
+
+  Run: volere validate --suspects to check resolution status
+```
+
+**`volere validate`** — Runs all verification checks and reports status:
+
+```
+$ volere validate
+
+Volere Validation — thul-studio (DAL-C)
+
+  Schema validation:
+    ✓ 43 URs pass schema validation
+    ✓ 12 TCs pass schema validation
+    ✓ context.yaml is valid
+
+  Traceability:
+    ✓ All URs have at least one code file
+    ✗ 7 fit criteria have no test (see volere coverage)
+    ✓ All TCs trace to at least one UR
+
+  Suspect links:
+    ✓ No unresolved suspect links
+
+  Project constitution:
+    ✓ CLAUDE.md has required sections
+    ✓ ARCHITECTURE.md has required sections
+    ✓ README.md has required sections
+    ✗ ARCHITECTURE.md is 45 days stale (last code change: 2 days ago)
+
+  Hooks:
+    ✓ check-secrets installed
+    ✓ check-traceability installed
+    ✗ check-fit-criteria not installed (required for DAL-C)
+
+  Overall: 3 issues found
+    1. 7 uncovered fit criteria (run volere coverage)
+    2. ARCHITECTURE.md stale (update documentation)
+    3. check-fit-criteria hook not installed (run volere hooks install)
+```
+
+**`volere init`** — Interactive scaffold with output:
+
+```
+$ volere init --dal C
+
+Scaffolding project with DAL-C profile...
+
+  Created: docs/requirements/README.md
+  Created: docs/requirements/context.yaml (edit stakeholders, scope, glossary)
+  Created: .volere/profile.yaml (DAL-C)
+  Created: .volere/boundaries.yaml (edit module rules)
+  Created: CLAUDE.md (skeleton — fill in Architecture, Testing, Conventions)
+  Created: ARCHITECTURE.md (skeleton — fill in system diagram, decisions)
+
+  Installed hooks:
+    ✓ check-secrets (pre-commit)
+    ✓ check-traceability (pre-commit)
+
+  Not installed (DAL-C optional):
+    ○ check-fit-criteria (install with: volere hooks install fit-criteria)
+
+  Next steps:
+    1. Edit docs/requirements/context.yaml (stakeholders, scope, glossary)
+    2. Run: volere new --type functional (write your first requirement)
+    3. Edit CLAUDE.md and ARCHITECTURE.md with project details
+
+  Run: volere validate to check project health
+```
+
+**`volere new`** — Creates a requirement card:
+
+```
+$ volere new --type functional
+
+Created: docs/requirements/UR-001.yaml
+
+  Edit the file to fill in:
+    - title (one line)
+    - description (what the system must do)
+    - rationale (why — the pain that created it)
+    - fit_criteria (measurable acceptance conditions)
+    - dal (A-E based on risk)
+    - priority (must/should/could/wont)
+    - origin (who requested, when, trigger)
+
+  Validate: volere validate --file docs/requirements/UR-001.yaml
+
+$ volere new --type technical-constraint --serves UR-003
+
+Created: docs/requirements/TC-001.yaml (serves: [UR-003])
+```
+
+#### CLI Storage Format
+
+The traceability matrix is not stored — it's computed on demand from:
+- YAML requirement cards (source of truth for requirements)
+- Git (source of truth for code)
+- Test files (source of truth for verification)
+- `.volere/trace-cache.json` (optional cache, regenerated by `volere trace --rebuild`)
+
+This avoids the stale-matrix problem. The matrix is always fresh because it reads from the actual artifacts.
 
 ## Incremental Delivery
 
