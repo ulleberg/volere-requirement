@@ -1,8 +1,8 @@
 # Session Insights: Studio Hardening & Pass 2 Trace
 
 **Date:** 2026-03-30
-**Source:** 8-hour session — Phase 5 consolidation, Pass 2 codebase trace, 33 cleanup actions, browser acceptance testing
-**Project:** thul-studio (43 URs, 12 TCs, 437 tests)
+**Source:** 10-hour session — Phase 5 consolidation, Pass 2 codebase trace, 33 cleanup actions, browser acceptance testing, voice loopback testing, M4 deployment
+**Project:** thul-studio (43 URs, 12 TCs, 441 tests, 41 acceptance verifications per push)
 
 ---
 
@@ -112,3 +112,49 @@ For v1.0 marketplace publication, every path, agent name, and workflow assumptio
 4. Build one complete example on a small open-source project (not thul-*)
 5. Remove or implement the regulatory claims (FCC, RED, IEC 61508)
 6. Test the `volere init` → `volere trace` → `volere coverage` pipeline on a project that isn't thul-studio
+
+---
+
+## Insight 7: Agents are smart junior engineers — they need the same industrialization discipline
+
+AI agents are brilliant at implementation. They write clean code, solve complex problems, and work fast. But they ship broken products for the same reason smart junior engineers do: they optimize for "does the code work?" instead of "does the user get value?"
+
+437 tests passed. The grid was black. TTS was silent. STT was broken. An agent wrote all those tests, ran them, saw green, and said "done." A junior engineer would do exactly the same thing. The blind spot is identical: **confusing implementation correctness with user value.**
+
+The entire testing pyramid (unit → integration → system → acceptance) exists because the software industry learned this lesson with humans over 50 years. The V-Model codified it: the left side builds, the right side verifies — and each level answers a different question:
+
+| Level | Question | Who cares |
+|-------|----------|-----------|
+| Unit tests | Does the function work? | The developer |
+| Integration tests | Do the components connect? | The architect |
+| System tests | Does the system behave correctly? | The team |
+| Acceptance tests | Does the user get value? | **The user** |
+
+The user doesn't care if `TestDetectState` passes. They care if they can talk to Albert from their phone while walking the dog. They care if TTS speaks the response. They care if the grid shows their sessions. They pay for outcomes, not test coverage.
+
+Agents need the same industrialization that junior engineers need:
+- **Code review** → agent team reviews (synthesis lead challenges the tracers)
+- **Mandatory testing at the right level** → pre-push hooks that verify fit criteria, not just unit tests
+- **Deployment discipline** → config validation, auto-rebuild, version verification
+- **Acceptance criteria** → fit criteria written from the user's perspective, verified by browser automation
+
+The Volere framework is not a documentation exercise. It's the engineering manager layer that agents are missing. It's the same layer that turns a smart junior engineer into a reliable senior engineer: the discipline to ask "does the user get value?" before shipping.
+
+**Framework action:** Position the framework not as "requirements management for agents" but as "the industrialization layer that makes agents reliable." The value proposition isn't writing better requirements — it's shipping products that work. Every insight from this session traces back to the same root cause: agents (like juniors) need structure, verification, and the discipline to test what the user actually experiences.
+
+---
+
+## Insight 8: You can test what you can't touch
+
+STT was broken — the WebSocket connected but never transcribed. We couldn't test it with headless browsers (no microphone). But we could test it by looping TTS output into STT input: generate speech, pipe the MP3 bytes into the WebSocket, verify Deepgram transcribes it back.
+
+Full round-trip, no hardware, no human: TTS → ElevenLabs → MP3 → STT WebSocket → Deepgram → "The quick brown fox jumps over the lazy dog" — 5/5 keywords matched.
+
+This pattern — **testing hardware-dependent features by looping service outputs into service inputs** — is generalizable:
+- Camera upload: generate a test image → POST to inbox → verify file received
+- Voice commands: TTS a command → STT transcribe → verify intent parsed
+- Multi-machine health: mock peer health endpoint → verify dashboard renders
+
+The constraint "we can't test this because it needs hardware" is usually false. The real question is: "what's the minimum loop that exercises the full pipeline without physical devices?"
+
+**Framework action:** Add a "loopback testing" pattern to the `audit-tests` skill. When a fit criterion involves hardware (microphone, camera, speaker), the skill should suggest a loopback approach: identify the service boundary, generate synthetic input, feed it through the pipeline, verify the output. The acceptance test doesn't need to verify the hardware — it needs to verify the software handles the hardware's output correctly.
