@@ -1,6 +1,7 @@
 #!/bin/bash
 # Volere pre-push hook: check that affected fit criteria have passing tests
-# Reads DAL level from .volere/profile.yaml and affected requirements.
+# Reads DAL level and verification commands from .volere/profile.yaml.
+# Uses configured verification_commands if present, falls back to auto-detection.
 # Only blocks at DAL-B and above by default.
 #
 # Exit 0 = pass, exit 1 = blocked
@@ -95,28 +96,78 @@ echo "🔍 Volere check-fit-criteria (DAL-$DAL): verifying affected requirements
 echo "  Affected: $AFFECTED_IDS"
 echo ""
 
-# Detect test runner
-if [ -f "go.mod" ]; then
-  echo "  Running: go test ./... -count=1"
-  if ! go test ./... -count=1 > /dev/null 2>&1; then
-    echo ""
-    echo "  ✗ Tests failed. Push blocked (DAL-$DAL requires passing tests)."
-    echo "  Run 'go test ./... -v' to see failures."
-    exit 1
-  fi
-  echo "  ✓ Go tests pass"
+# Read verification commands from profile
+VERIFICATION_CMDS=""
+if [ -f "$PROFILE" ]; then
+  # Extract verification_commands for current DAL level
+  IN_DAL_SECTION=0
+  IN_COMMANDS=0
+  while IFS= read -r line; do
+    if echo "$line" | grep -qE "^  $DAL:"; then
+      IN_DAL_SECTION=1
+      continue
+    fi
+    if [ "$IN_DAL_SECTION" -eq 1 ] && echo "$line" | grep -qE "^  [A-E]:"; then
+      IN_DAL_SECTION=0
+      IN_COMMANDS=0
+      continue
+    fi
+    if [ "$IN_DAL_SECTION" -eq 1 ] && echo "$line" | grep -q "verification_commands:"; then
+      IN_COMMANDS=1
+      continue
+    fi
+    if [ "$IN_COMMANDS" -eq 1 ] && echo "$line" | grep -qE "^    [a-z]"; then
+      IN_COMMANDS=0
+      continue
+    fi
+    if [ "$IN_COMMANDS" -eq 1 ] && echo "$line" | grep -qE '^\s*- "'; then
+      cmd=$(echo "$line" | sed 's/.*- "\(.*\)"/\1/')
+      VERIFICATION_CMDS="$VERIFICATION_CMDS|$cmd"
+    fi
+  done < "$PROFILE"
 fi
 
-if [ -f "package.json" ]; then
-  if grep -q '"test"' package.json 2>/dev/null; then
-    echo "  Running: npm test"
-    if ! npm test > /dev/null 2>&1; then
+# Run verification commands
+if [ -n "$VERIFICATION_CMDS" ]; then
+  # Use configured commands
+  FAIL=0
+  echo "$VERIFICATION_CMDS" | tr '|' '\n' | grep -v '^$' | while read -r cmd; do
+    echo "  Running: $cmd"
+    if ! eval "$cmd" > /dev/null 2>&1; then
       echo ""
-      echo "  ✗ Tests failed. Push blocked (DAL-$DAL requires passing tests)."
-      echo "  Run 'npm test' to see failures."
+      echo "  ✗ Verification failed: $cmd"
+      echo "  Push blocked (DAL-$DAL requires passing verification)."
       exit 1
     fi
-    echo "  ✓ Node tests pass"
+    echo "  ✓ $cmd passed"
+  done || FAIL=$?
+  if [ "$FAIL" -ne 0 ]; then
+    exit 1
+  fi
+else
+  # Fallback: auto-detect test runner (original behavior)
+  if [ -f "go.mod" ]; then
+    echo "  Running: go test ./... -count=1"
+    if ! go test ./... -count=1 > /dev/null 2>&1; then
+      echo ""
+      echo "  ✗ Tests failed. Push blocked (DAL-$DAL requires passing tests)."
+      echo "  Run 'go test ./... -v' to see failures."
+      exit 1
+    fi
+    echo "  ✓ Go tests pass"
+  fi
+
+  if [ -f "package.json" ]; then
+    if grep -q '"test"' package.json 2>/dev/null; then
+      echo "  Running: npm test"
+      if ! npm test > /dev/null 2>&1; then
+        echo ""
+        echo "  ✗ Tests failed. Push blocked (DAL-$DAL requires passing tests)."
+        echo "  Run 'npm test' to see failures."
+        exit 1
+      fi
+      echo "  ✓ Node tests pass"
+    fi
   fi
 fi
 
