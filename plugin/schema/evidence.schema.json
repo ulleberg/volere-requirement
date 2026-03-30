@@ -4,7 +4,7 @@
   "title": "Volere Evidence Record",
   "description": "Proof that a fit criterion was verified — with lifecycle tracking and expiry",
   "type": "object",
-  "required": ["requirement", "dimension", "criterion", "method", "status"],
+  "required": ["requirement", "dimension", "criterion", "method", "status", "verification_level"],
   "additionalProperties": false,
   "properties": {
     "requirement": {
@@ -23,6 +23,11 @@
       "type": "string",
       "enum": ["test", "analysis", "review", "demonstration", "formal-methods"],
       "description": "Verification method used"
+    },
+    "verification_level": {
+      "type": "string",
+      "enum": ["unit", "integration", "system", "acceptance"],
+      "description": "V-Model level at which this evidence was collected. DAL-B requires system minimum, DAL-A requires acceptance."
     },
     "status": {
       "type": "string",

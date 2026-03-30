@@ -7,6 +7,7 @@ dimension: user                # Fit criteria dimension
 criterion: ""                  # The specific fit criterion text
 
 method: test                   # test | analysis | review | demonstration | formal-methods
+verification_level: unit       # unit | integration | system | acceptance — V-Model level
 status: planned                # planned | collected | verified | expired
 
 collected:
