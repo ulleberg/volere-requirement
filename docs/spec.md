@@ -319,6 +319,118 @@ profiles:
     review: [code-reviewer, test-engineer, architecture-reviewer, security-engineer]
 ```
 
+### 6a. Autonomous Verification Mandate
+
+**Agents perform ALL verification — from unit tests through acceptance — without human intervention.** The tools are now good enough. No "please verify manually." No "I can't test browser behavior." No lazy shortcuts.
+
+#### The Problem This Solves
+
+Agents are lazy. They consistently choose the easiest verification path:
+- "Tests pass" (but the tests don't verify fit criteria — test theater)
+- "Please check the browser" (avoiding browser automation they're capable of)
+- "I verified visually" (unverifiable, unreproducible)
+- "This can't be automated" (it almost always can)
+
+This laziness was the root cause of the JS monolith degradation that triggered this entire framework. The V-Model only works if verification actually happens at every level.
+
+#### The Verification Stack
+
+Every V-Model level has tools that agents MUST use — not "should use" or "can use."
+
+```
+V-Model Level     Verification Tool           Agent Capability
+─────────────     ─────────────────           ────────────────
+Unit              go test / npm test           Native — no excuses
+Integration       httptest / supertest         Native — no excuses
+System (E2E)      Playwright / gstack          Headless browser automation
+Acceptance        Playwright + assertions      Browser + API + state verification
+Performance       Benchmark tests / timing     Measurable — assert on metrics
+Visual            Screenshots + diff           gstack --diff baselines
+```
+
+#### How It's Enforced
+
+**In CLAUDE.md (soft constraint):**
+```markdown
+## Verification Protocol (mandatory)
+
+After ANY code change, the agent MUST:
+1. Run unit tests: `go test ./... -count=1`
+2. Run browser tests: `npx playwright test` or `gstack browse`
+3. Verify affected surfaces load and function
+4. If a fit criterion is testable, write an automated test — NEVER ask the user to verify
+
+"I can't automate this" is not acceptable unless:
+- It requires physical hardware (RF emissions, thermal testing)
+- It requires a human judgment call (UX feel, brand consistency)
+- It requires external service credentials the agent doesn't have
+
+Everything else is automatable. Use Playwright, gstack, curl, WebSocket clients,
+or custom scripts. The agent has the tools — use them.
+```
+
+**In DAL profiles (hard constraint):**
+
+```yaml
+profiles:
+  C:  # moderate
+    verification:
+      unit: required          # go test / npm test
+      integration: required   # httptest
+      e2e: required           # Playwright or gstack
+      acceptance: required    # Fit criteria assertions
+      manual: forbidden       # No "please check manually"
+
+  A:  # catastrophic
+    verification:
+      unit: required
+      integration: required
+      e2e: required
+      acceptance: required
+      performance: required   # Benchmark assertions
+      visual: required        # Screenshot diff baselines
+      mutation: required      # Stryker / go-mutesting
+      manual: forbidden
+```
+
+**In the `verify-change` skill (enforced workflow):**
+
+```
+After any code change:
+1. Identify affected URs and TCs (from volere trace)
+2. For each affected fit criterion:
+   a. Does an automated test exist? → Run it
+   b. No test exists? → Write one (TDD)
+   c. Can't be automated? → Document WHY with specific reason
+3. Run full verification stack for the DAL level
+4. Report: which fit criteria verified, which need human review (with justification)
+```
+
+**In hooks (blocking):**
+
+The `check-fit-criteria` pre-push hook verifies that:
+- Changed code has corresponding test coverage
+- Tests actually run (not just exist)
+- No fit criterion is marked "manually verified" without a documented exception
+
+#### Browser Testing Tools
+
+The framework supports multiple browser automation approaches:
+
+| Tool | Strength | When to use |
+|------|----------|-------------|
+| **Playwright** | Full browser automation, network interception, multi-browser | E2E tests, CI pipelines |
+| **gstack** | CLI headless browser, ref-based selection, diff baselines, low token cost | Agent-driven acceptance testing, visual verification |
+| **Playwright MCP** | Browser automation via MCP protocol | Real-time debugging, exploratory testing |
+
+Agents choose the right tool for the job. The framework doesn't prescribe which — it prescribes that browser verification MUST happen, not "should" happen.
+
+#### The Rule
+
+> **If a fit criterion is testable, it MUST have an automated test. "Manually verified" is a bug in the verification process, not a valid status.**
+>
+> Exceptions require documented justification: physical hardware, human judgment, or missing credentials. "It's hard to automate" is not a justification — it's a skill gap the agent must close.
+
 ### 7. Regulatory Compliance Framework
 
 Multi-dimensional acceptance is a core requirement (Pain Point 6 from discovery). A single requirement may need fit criteria across user, regulatory, security, and safety dimensions.
