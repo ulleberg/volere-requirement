@@ -181,6 +181,7 @@ v1.0 merges both tracks.
 3. Automated evidence collection from CI (GitHub Actions integration)
 4. Performance optimisation — `volere trace` and `volere coverage` on large requirement sets
 5. Error messages and edge case handling
+6. `extract-requirements` skill — scan arbitrary codebases, draft UR/TC cards, owner review workflow
 
 **Acceptance test:** Three different projects (varying size, DAL level, with/without compliance) use the framework for one week without manual workarounds.
 
