@@ -1,6 +1,6 @@
 ---
 name: trace-codebase
-description: Map code files and tests to requirements — identifies dead code, test theater, coverage gaps, and orphaned features using agent team trace
+description: Maps code files and tests to requirements — identifies dead code, test theater, coverage gaps, and orphaned features using agent team trace. Use when tracing code to requirements, finding dead code, identifying untested fit criteria, or before major refactoring.
 ---
 
 # Trace Codebase

@@ -1,6 +1,6 @@
 ---
 name: review-requirements
-description: Run agent team reviews on requirements — detects review type (full, validation, trace) and generates parameterised team prompts from proven patterns
+description: Runs agent team reviews on requirements — detects review type (full, validation, trace) and generates parameterised team prompts from proven patterns. Use when reviewing requirements, validating changes to URs, tracing code to requirements, or finding dead code and test theater.
 ---
 
 # Review Requirements

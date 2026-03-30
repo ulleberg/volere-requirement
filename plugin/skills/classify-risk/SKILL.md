@@ -1,6 +1,6 @@
 ---
 name: classify-risk
-description: Assign DAL level (A-E) to a change based on blast radius, reversibility, and affected requirements — scales verification effort to risk
+description: Assigns DAL level (A-E) to a change based on blast radius, reversibility, and affected requirements — scales verification effort to risk. Use when determining verification depth for a change, writing a new requirement, or deciding if tests can be skipped.
 ---
 
 # Classify Risk

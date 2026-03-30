@@ -1,6 +1,6 @@
 ---
 name: audit-tests
-description: Classify tests as VERIFIES, SUPPORTS, THEATER, or REDUNDANT against fit criteria — detects test theater and coverage gaps
+description: Classifies tests as VERIFIES, SUPPORTS, THEATER, or REDUNDANT against fit criteria — detects test theater and coverage gaps. Use when auditing test quality, finding test theater, checking if tests actually verify requirements, or before trusting an "all tests pass" claim.
 ---
 
 # Audit Tests

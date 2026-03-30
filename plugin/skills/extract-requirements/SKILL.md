@@ -1,6 +1,6 @@
 ---
 name: extract-requirements
-description: Extract requirements from an existing codebase — scans code, tests, and docs to draft UR/TC cards grouped by module, then guides the owner through review where BUCs surface naturally
+description: Extracts requirements from an existing codebase — scans code, tests, and docs to draft UR/TC cards grouped by module, then guides the owner through review where BUCs surface naturally. Use when retrofitting Volere to an existing project, onboarding to a new codebase, or analyzing what a system does.
 ---
 
 # Extract Requirements

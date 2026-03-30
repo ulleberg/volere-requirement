@@ -1,6 +1,6 @@
 ---
 name: write-requirement
-description: Write a Volere requirement card — guides through snow card format with multi-dimensional fit criteria, DAL classification, and traceability
+description: Writes a Volere requirement card — guides through snow card format with multi-dimensional fit criteria, DAL classification, and traceability. Use when adding a requirement, creating a UR or TC, or when a new requirement is identified during work.
 ---
 
 # Write Requirement
