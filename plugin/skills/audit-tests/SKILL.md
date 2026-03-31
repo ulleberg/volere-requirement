@@ -5,7 +5,7 @@ description: Classifies tests as VERIFIES, SUPPORTS, THEATER, or REDUNDANT again
 
 # Audit Tests
 
-Classify every test in the project against the requirement fit criteria it claims to verify. Detects test theater (tests that pass but prove nothing), redundant tests (duplicated coverage), and coverage gaps (fit criteria without tests).
+Classify every test in the project against the requirement fit criteria it claims to verify. Detects test theater (tests that pass but prove nothing), redundant tests (duplicated coverage), and coverage gaps (fit criteria without tests). For terminology reference, run `/glossary`.
 
 ## When to Use
 
@@ -144,6 +144,20 @@ If a fit criterion matches signals from this table but only has verification bel
   Current verification: unit (TestTokenValidation with mocked gateway)
   Required verification: integration (real auth service → real gateway → verified response)
   Action: Add integration test that exercises the actual service boundary
+```
+
+### Classification Legend
+
+Always include this legend at the top of audit results so the reader doesn't have to look it up:
+
+```
+Classification legend:
+  VERIFIES   — Test directly asserts the fit criterion condition. This is a real acceptance test. Keep.
+  SUPPORTS   — Test checks implementation that serves a criterion, but doesn't assert the criterion itself. Keep, consider strengthening.
+  THEATER    — Test has no connection to any fit criterion. Inflates coverage without adding verification. Remove.
+  REDUNDANT  — Test duplicates another's coverage of the same criterion. Remove the weaker one.
+
+For full terminology reference, run /glossary
 ```
 
 ### Classification Table
