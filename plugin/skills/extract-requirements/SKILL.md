@@ -201,7 +201,7 @@ docs/requirements/draft/TC-001.yaml
 
 ### Draft Summary
 
-After writing all cards, present the summary:
+After writing all cards, present the summary with a proposed review order:
 
 ```
 Extraction complete:
@@ -213,9 +213,21 @@ Extraction complete:
 Modules:
   module-a/  — N URs, N TCs
   module-b/  — N URs, N TCs
-
-Ready for owner review. Start with which module?
 ```
+
+### Proposed Review Order
+
+Propose a review order following the V-Model bottom-up principle, with rationale:
+
+1. **TCs and enforcement first** — Implementation constraints, hooks, validation rules, schema enforcement. These define what the system *guarantees*. Getting these right first means URs can accurately reference them in `depends_on`.
+
+2. **Core features second** — CLI commands, APIs, user-facing operations. These are concrete and testable. Reviewing them second lets you link each feature to the TCs it depends on.
+
+3. **Guidance and orchestration last** — Skills, templates, catalogs, documentation. These are softer — they guide agent behavior rather than mechanically enforce it. Reviewing last means the full TC/UR foundation exists for accurate `depends_on` and `cross_verify`.
+
+**The principle:** Review bottom-up through the V-Model. Constraints anchor to code. Features build on constraints. Guidance orchestrates everything above. This ensures each layer's dependencies are confirmed before the layer that depends on them.
+
+Present this order with module-specific rationale. The owner can override it, but the default should always be bottom-up.
 
 ## Phase 3: Owner Review
 
