@@ -276,10 +276,47 @@ else
   log_fail "Should pass with no profile"
 fi
 
+# Test 40: DAL-B blocks when verification command fails (TC-003)
+mkdir -p .volere
+cat > .volere/profile.yaml << 'PROFILE'
+dal: B
+verification_commands:
+  B:
+    verification_commands:
+      - "false"
+PROFILE
+echo '// UR-005: code change' > app2.js
+git add app2.js .volere/profile.yaml
+git commit --quiet -m "Code change at DAL-B (UR-005)"
+if ! "$SCRIPT_DIR/check-fit-criteria.sh" >/dev/null 2>&1; then
+  log_pass "DAL-B blocks when verification command fails (TC-003)"
+else
+  log_fail "DAL-B should block when verification fails"
+fi
+rm -f app2.js
+
+# Test 41: DAL-B passes when verification command succeeds (TC-003)
+cat > .volere/profile.yaml << 'PROFILE'
+dal: B
+verification_commands:
+  B:
+    verification_commands:
+      - "true"
+PROFILE
+echo '// UR-005: another code change' > app3.js
+git add app3.js .volere/profile.yaml
+git commit --quiet -m "Another code change at DAL-B (UR-005)"
+if "$SCRIPT_DIR/check-fit-criteria.sh" >/dev/null 2>&1; then
+  log_pass "DAL-B passes when verification command succeeds (TC-003)"
+else
+  log_fail "DAL-B should pass when verification succeeds"
+fi
+rm -f app3.js
+
 # Clean up
 git checkout --quiet main 2>/dev/null || git checkout --quiet master
 git branch -D fit-test-branch --quiet 2>/dev/null || true
-rm -rf .volere go.mod main.go app.js README.md
+rm -rf .volere go.mod main.go app.js app2.js app3.js README.md
 
 echo ""
 
@@ -594,6 +631,16 @@ if [ "$ALL_PASS" -eq 1 ]; then
   log_pass "all project requirement cards validate with zero errors (BUC-006)"
 else
   log_fail "some requirement cards failed schema validation"
+fi
+
+# Test 42: security catalog has 5 requirements with tailorable flags (UR-016)
+CATALOG="$SCRIPT_DIR/../catalogs/security-baseline.yaml"
+SEC_COUNT=$(grep -c "^  - id: SEC-" "$CATALOG" 2>/dev/null || echo 0)
+HAS_TAILORABLE=$(grep -c "tailorable:" "$CATALOG" 2>/dev/null || echo 0)
+if [ "$SEC_COUNT" -eq 5 ] && [ "$HAS_TAILORABLE" -ge 5 ]; then
+  log_pass "security catalog has 5 requirements with tailorable flags (UR-016)"
+else
+  log_fail "security catalog should have 5 SEC requirements with tailorable flags (got $SEC_COUNT reqs, $HAS_TAILORABLE tailorable)"
 fi
 
 # Clean up
