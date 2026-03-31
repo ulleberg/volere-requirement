@@ -1,0 +1,28 @@
+id: UR-007
+type: functional
+title: "Report fit criteria coverage with volere coverage"
+
+description: >
+  The system must measure and report fit criteria test coverage per requirement
+  and per dimension when volere coverage is run.
+
+rationale: "Pending owner review"
+
+fit_criteria:
+  user:
+    criterion: >
+      volere coverage reports coverage percentage per requirement and per
+      dimension. --dimension filters the report to a single dimension.
+    verification: test
+    test_type: system
+    verification_method: system
+
+dal: C
+priority: should
+status: proposed
+
+origin:
+  stakeholder: extract-requirements
+  date: "2026-03-31"
+  trigger: "Codebase extraction"
+  source: "plugin/cli/volere (cmd_coverage)"

@@ -1,0 +1,34 @@
+id: TC-007
+type: technical-constraint
+title: "Requirement card schema validation"
+
+description: >
+  The system must define and enforce a JSON Schema for requirement snow cards
+  covering all required fields, ID patterns, and enum constraints.
+
+rationale: "Pending owner review"
+
+fit_criteria:
+  user:
+    criterion: >
+      Schema validates: required fields (id, type, title, description,
+      rationale, fit_criteria, dal, priority, status, origin), ID pattern
+      ^(UR|TC|SHR|SEC|BUC|PUC)-[0-9]{3}$, enum constraints on
+      type/dal/priority/status, at least one fit criteria dimension with
+      criterion and verification method.
+    verification: test
+    test_type: integration
+    verification_method: integration
+
+dal: B
+priority: must
+status: proposed
+
+origin:
+  stakeholder: extract-requirements
+  date: "2026-03-31"
+  trigger: "Codebase extraction"
+  source: "plugin/schema/requirement.schema.json"
+
+serves:
+  - UR-005

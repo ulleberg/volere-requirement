@@ -1,0 +1,30 @@
+id: TC-011
+type: technical-constraint
+title: "Vague language detection test coverage"
+description: >
+  The system must have dedicated tests for the vague language detection
+  in validate.sh.
+rationale: >
+  TC-008 (vague language detection) has no dedicated test. The validator
+  logic exists but test-hooks.sh doesn't exercise it. Gap flagged during
+  extraction review.
+fit_criteria:
+  user:
+    criterion: >
+      Test suite includes tests that: create a card with each vague word
+      (should, appropriate, reasonable, adequate, sufficient, user-friendly)
+      in fit criteria, verify the validator flags each one, verify cards
+      without vague words pass.
+    verification: test
+    test_type: integration
+    verification_method: integration
+dal: C
+priority: should
+status: proposed
+origin:
+  stakeholder: extract-requirements
+  date: "2026-03-31"
+  trigger: "Test gap flagged during extraction review"
+  source: "plugin/validate.sh"
+serves:
+  - TC-008

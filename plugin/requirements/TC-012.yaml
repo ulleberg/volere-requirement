@@ -1,0 +1,32 @@
+id: TC-012
+type: technical-constraint
+title: "suspect.sh subcommand test coverage"
+description: >
+  The system must have dedicated tests for all 5 suspect.sh subcommands
+  (mark, resolve, list, check, auto).
+rationale: >
+  TC-009 (suspect link lifecycle) has no individual subcommand tests.
+  suspect.sh is exercised indirectly by the post-merge hook (tests 15-16)
+  but its 5 subcommands are untested individually. Significant gap given
+  DAL-B. Gap flagged during extraction review.
+fit_criteria:
+  user:
+    criterion: >
+      Test suite includes tests that: mark a requirement as suspect and
+      verify it appears in suspects.yaml, resolve a suspect and verify
+      status changes, list shows only unresolved, check exits 1 when
+      unresolved exist and 0 when all resolved, auto marks dependents
+      of changed requirements.
+    verification: test
+    test_type: integration
+    verification_method: integration
+dal: B
+priority: must
+status: proposed
+origin:
+  stakeholder: extract-requirements
+  date: "2026-03-31"
+  trigger: "Test gap flagged during extraction review"
+  source: "plugin/cli/suspect.sh"
+serves:
+  - TC-009

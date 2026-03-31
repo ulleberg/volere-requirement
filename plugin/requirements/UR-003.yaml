@@ -1,0 +1,30 @@
+id: UR-003
+type: functional
+title: "Scaffold a new project with volere init"
+
+description: >
+  The system must scaffold a new project with a DAL profile, requirements
+  directory, documentation templates, and installed hooks when volere init
+  is run.
+
+rationale: "Pending owner review"
+
+fit_criteria:
+  user:
+    criterion: >
+      volere init creates docs/requirements/, .volere/profile.yaml,
+      .volere/boundaries.yaml, and installs 5 hooks. --dal flag sets the
+      profile level. --no-hooks skips hook installation.
+    verification: test
+    test_type: system
+    verification_method: system
+
+dal: C
+priority: must
+status: proposed
+
+origin:
+  stakeholder: extract-requirements
+  date: "2026-03-31"
+  trigger: "Codebase extraction"
+  source: "plugin/cli/volere (cmd_init)"

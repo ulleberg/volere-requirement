@@ -1,0 +1,32 @@
+id: TC-013
+type: technical-constraint
+title: "volere validate integration test"
+description: >
+  The system must have an integration test for the volere validate command
+  covering all health checks.
+rationale: >
+  UR-005 (project health validation) has no dedicated test for the
+  cmd_validate function as a whole. Schema validation is tested via
+  validate.sh, but the CLI command's 7 health checks are untested.
+  Gap flagged during extraction review.
+fit_criteria:
+  user:
+    criterion: >
+      Test creates a project with known issues (missing context.yaml,
+      stale ARCHITECTURE.md, uninstalled hooks, unresolved suspects)
+      and verifies volere validate reports each one. Test verifies
+      --file flag validates a single card. Test verifies --suspects
+      flag exits 1 on unresolved suspects.
+    verification: test
+    test_type: integration
+    verification_method: integration
+dal: B
+priority: must
+status: proposed
+origin:
+  stakeholder: extract-requirements
+  date: "2026-03-31"
+  trigger: "Test gap flagged during extraction review"
+  source: "plugin/cli/volere"
+serves:
+  - UR-005

@@ -1,0 +1,31 @@
+id: BUC-001
+type: business-use-case
+title: "Prevent security incidents from agentic commits"
+description: >
+  Agents must not be able to commit secrets, bypass security requirements,
+  or ship code that violates security baselines.
+rationale: >
+  Agents write and commit code autonomously. A single leaked API key is
+  irreversible once pushed. Unlike human developers who might notice a
+  secret in a diff, agents optimize for task completion. The framework
+  must make insecure commits mechanically impossible, not just discouraged.
+fit_criteria:
+  user:
+    criterion: >
+      Zero secrets committed to any Volere-enabled project. Pre-commit hook
+      blocks 100% of known secret patterns. Security baseline catalog
+      adopted by default on all new projects.
+    verification: test
+    test_type: system
+    verification_method: system
+dal: B
+priority: must
+status: proposed
+origin:
+  stakeholder: "Thomas Ulleberg"
+  date: "2026-03-31"
+  trigger: "Extraction review — dogfooding session"
+decomposed_to:
+  - TC-001
+  - UR-005
+  - UR-016

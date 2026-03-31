@@ -1,0 +1,30 @@
+id: UR-014
+type: functional
+title: "Test quality audit"
+
+description: >
+  The system must classify tests against fit criteria and report verification
+  levels using the audit-tests skill.
+
+rationale: "Pending owner review"
+
+fit_criteria:
+  user:
+    criterion: >
+      Classifies each test as VERIFIES/SUPPORTS/THEATER/REDUNDANT. Reports
+      highest verification level (unit/integration/system/acceptance) per fit
+      criterion. Flags browser-facing criteria with only unit tests. Suggests
+      loopback testing for hardware-dependent criteria.
+    verification: test
+    test_type: system
+    verification_method: system
+
+dal: C
+priority: must
+status: proposed
+
+origin:
+  stakeholder: extract-requirements
+  date: "2026-03-31"
+  trigger: "Codebase extraction"
+  source: "plugin/skills/audit-tests/SKILL.md"

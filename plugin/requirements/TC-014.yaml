@@ -1,0 +1,29 @@
+id: TC-014
+type: technical-constraint
+title: "volere trace integration test"
+description: >
+  The system must have an integration test for the volere trace command.
+rationale: >
+  UR-006 (traceability matrix) has no dedicated test. The command greps
+  for requirement IDs in source and test files but this behavior is
+  untested. Gap flagged during extraction review.
+fit_criteria:
+  user:
+    criterion: >
+      Test creates a project with source files referencing requirement IDs
+      and verifies volere trace lists each requirement with TRACED status.
+      Test includes a requirement with no code reference and verifies
+      GAP status. Test verifies coverage percentage calculation.
+    verification: test
+    test_type: integration
+    verification_method: integration
+dal: C
+priority: should
+status: proposed
+origin:
+  stakeholder: extract-requirements
+  date: "2026-03-31"
+  trigger: "Test gap flagged during extraction review"
+  source: "plugin/cli/volere"
+serves:
+  - UR-006

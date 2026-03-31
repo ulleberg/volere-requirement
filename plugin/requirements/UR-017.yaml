@@ -1,0 +1,30 @@
+id: UR-017
+type: functional
+title: "Project scaffold templates"
+
+description: >
+  The system must provide starting-point templates for all card types and
+  project configuration.
+
+rationale: "Pending owner review"
+
+fit_criteria:
+  user:
+    criterion: >
+      Templates exist for: UR, TC, BUC, PUC, compliance profile, evidence
+      record, catalog import. Project scaffold includes: context.yaml,
+      profile.yaml, boundaries.yaml. Retrofit guide (RETROFIT.md) covers
+      existing project onboarding.
+    verification: test
+    test_type: system
+    verification_method: system
+
+dal: D
+priority: should
+status: proposed
+
+origin:
+  stakeholder: extract-requirements
+  date: "2026-03-31"
+  trigger: "Codebase extraction"
+  source: "plugin/templates/"

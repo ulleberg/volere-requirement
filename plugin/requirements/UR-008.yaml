@@ -1,0 +1,30 @@
+id: UR-008
+type: functional
+title: "Analyse change impact with volere impact"
+
+description: >
+  The system must show the ripple effects of a requirement change and manage
+  suspect links when volere impact is run.
+
+rationale: "Pending owner review"
+
+fit_criteria:
+  user:
+    criterion: >
+      volere impact <ID> shows direct dependents, affected code files, and
+      affected test files. --mark creates a suspect link. --resolve closes it.
+      --auto detects suspect links from git history. --suspects exits 1 on
+      unresolved suspect links.
+    verification: test
+    test_type: system
+    verification_method: system
+
+dal: B
+priority: must
+status: proposed
+
+origin:
+  stakeholder: extract-requirements
+  date: "2026-03-31"
+  trigger: "Codebase extraction"
+  source: "plugin/cli/volere (cmd_impact)"

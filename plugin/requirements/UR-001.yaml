@@ -24,7 +24,7 @@ fit_criteria:
 
 dal: C
 priority: must
-status: proposed
+status: deprecated
 satisfaction: 5
 dissatisfaction: 4
 
@@ -41,3 +41,7 @@ history:
   - date: "2026-03-30"
     action: created
     by: claude-opus
+  - date: "2026-03-31"
+    action: deprecated
+    by: extract-requirements
+    note: "Superseded by UR-003 which covers --no-hooks flag and 5-hook installation"

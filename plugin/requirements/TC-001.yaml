@@ -1,0 +1,32 @@
+id: TC-001
+type: technical-constraint
+title: "Secret pattern detection"
+
+description: >
+  The system must block commits that contain API keys, AWS keys, private keys,
+  DB connection strings with passwords, or long hex tokens.
+
+rationale: "Pending owner review"
+
+fit_criteria:
+  user:
+    criterion: >
+      Pre-commit hook blocks 5 secret patterns (api_key assignments, AKIA AWS keys,
+      40+ char hex tokens, PEM private keys, DB URIs with passwords). Skips test
+      files, .env.example, schema files, and markdown. Runs in < 2 seconds.
+    verification: test
+    test_type: integration
+    verification_method: integration
+
+dal: A
+priority: must
+status: proposed
+
+origin:
+  stakeholder: extract-requirements
+  date: "2026-03-31"
+  trigger: "Codebase extraction"
+  source: "plugin/hooks/check-secrets.sh"
+
+serves:
+  - UR-005

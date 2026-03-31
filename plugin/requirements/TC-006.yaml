@@ -1,0 +1,33 @@
+id: TC-006
+type: technical-constraint
+title: "Hook chaining installation"
+
+description: >
+  The system must install all Volere hooks while preserving any existing
+  project hooks by chaining them.
+
+rationale: "Pending owner review"
+
+fit_criteria:
+  user:
+    criterion: >
+      Installer installs 5 hooks (pre-commit, commit-msg, pre-push,
+      post-checkout, post-merge). Preserves existing hooks by chaining —
+      existing hook runs first, then Volere hook. --hooks-dir overrides
+      target directory.
+    verification: test
+    test_type: integration
+    verification_method: integration
+
+dal: C
+priority: must
+status: proposed
+
+origin:
+  stakeholder: extract-requirements
+  date: "2026-03-31"
+  trigger: "Codebase extraction"
+  source: "plugin/hooks/install.sh"
+
+serves:
+  - UR-003

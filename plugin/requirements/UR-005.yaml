@@ -1,0 +1,32 @@
+id: UR-005
+type: functional
+title: "Validate project health with volere validate"
+
+description: >
+  The system must check schema compliance, DAL profile presence, documentation
+  presence, staleness, hook installation status, and unresolved suspects when
+  volere validate is run.
+
+rationale: "Pending owner review"
+
+fit_criteria:
+  user:
+    criterion: >
+      volere validate reports: schema errors, missing context.yaml, missing
+      DAL profile, missing CLAUDE.md/ARCHITECTURE.md/README.md,
+      ARCHITECTURE.md staleness > 30 days, uninstalled hooks, unresolved
+      suspects. --file validates a single card. --suspects exits 1 on
+      unresolved suspects.
+    verification: test
+    test_type: system
+    verification_method: system
+
+dal: B
+priority: must
+status: proposed
+
+origin:
+  stakeholder: extract-requirements
+  date: "2026-03-31"
+  trigger: "Codebase extraction"
+  source: "plugin/cli/volere (cmd_validate)"

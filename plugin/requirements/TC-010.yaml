@@ -1,0 +1,30 @@
+id: TC-010
+type: technical-constraint
+title: "check-fit-criteria hook test coverage"
+description: >
+  The system must have dedicated tests for the check-fit-criteria pre-push
+  hook verifying DAL-gated blocking behavior.
+rationale: >
+  TC-003 (DAL-gated test verification) has no direct test in test-hooks.sh.
+  The hook requires a DAL-B profile and a test runner to exercise, which
+  makes it harder to test in the temp repo fixture. Gap flagged during
+  extraction review.
+fit_criteria:
+  user:
+    criterion: >
+      test-hooks.sh includes tests that: create a DAL-B profile, stage code
+      changes, verify the hook blocks push when tests fail, verify the hook
+      passes when tests pass, verify docs-only changes are skipped.
+    verification: test
+    test_type: integration
+    verification_method: integration
+dal: B
+priority: must
+status: proposed
+origin:
+  stakeholder: extract-requirements
+  date: "2026-03-31"
+  trigger: "Test gap flagged during extraction review"
+  source: "plugin/hooks/check-fit-criteria.sh"
+serves:
+  - TC-003

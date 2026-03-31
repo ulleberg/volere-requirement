@@ -1,0 +1,32 @@
+id: BUC-004
+type: business-use-case
+title: "Upstream changes trigger downstream re-verification"
+description: >
+  When a requirement changes, every downstream requirement, code file,
+  and test that depends on it must be flagged for re-verification.
+rationale: >
+  CSP hardening was implemented correctly for security but broke the grid
+  page and TTS audio. The code change was right. The impact analysis was
+  missing. Suspect links make change propagation explicit — when something
+  upstream changes, everything downstream is marked suspect until re-verified.
+fit_criteria:
+  user:
+    criterion: >
+      Every requirement change marks downstream dependents as suspect within
+      one git operation. volere impact traverses the full dependency graph
+      including cross_verify targets. Unresolved suspect links block CI
+      when --suspects flag is set.
+    verification: test
+    test_type: system
+    verification_method: system
+dal: B
+priority: must
+status: proposed
+origin:
+  stakeholder: "Thomas Ulleberg"
+  date: "2026-03-31"
+  trigger: "Extraction review — dogfooding session"
+decomposed_to:
+  - TC-005
+  - TC-009
+  - UR-008

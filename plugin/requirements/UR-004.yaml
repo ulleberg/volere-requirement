@@ -1,0 +1,29 @@
+id: UR-004
+type: functional
+title: "Create a requirement card with volere new"
+
+description: >
+  The system must create a requirement card from a template with an
+  auto-incremented ID when volere new is run.
+
+rationale: "Pending owner review"
+
+fit_criteria:
+  user:
+    criterion: >
+      volere new --type functional creates UR-{next} from template.
+      --type technical-constraint creates TC-{next}. --serves links the
+      TC to parent URs.
+    verification: test
+    test_type: system
+    verification_method: system
+
+dal: C
+priority: must
+status: proposed
+
+origin:
+  stakeholder: extract-requirements
+  date: "2026-03-31"
+  trigger: "Codebase extraction"
+  source: "plugin/cli/volere (cmd_new)"

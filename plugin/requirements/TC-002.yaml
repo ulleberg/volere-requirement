@@ -1,0 +1,32 @@
+id: TC-002
+type: technical-constraint
+title: "Commit traceability enforcement"
+
+description: >
+  The system must warn or block commits that do not reference a requirement ID
+  in their commit message.
+
+rationale: "Pending owner review"
+
+fit_criteria:
+  user:
+    criterion: >
+      Commit-msg hook recognizes UR/TC/BUC/PUC/SEC/SHR-NNN patterns. Advisory
+      mode: warns, exit 0. Strict mode (VOLERE_TRACEABILITY_STRICT=1): blocks,
+      exit 1. Skips merge commits and initial commits.
+    verification: test
+    test_type: integration
+    verification_method: integration
+
+dal: C
+priority: must
+status: proposed
+
+origin:
+  stakeholder: extract-requirements
+  date: "2026-03-31"
+  trigger: "Codebase extraction"
+  source: "plugin/hooks/check-traceability.sh"
+
+serves:
+  - UR-005

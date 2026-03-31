@@ -1,0 +1,30 @@
+id: UR-009
+type: functional
+title: "Orchestrate team reviews with volere review"
+
+description: >
+  The system must detect the appropriate review type and recommend a team
+  composition when volere review is run.
+
+rationale: "Pending owner review"
+
+fit_criteria:
+  user:
+    criterion: >
+      With < 5 requirements: recommends write-requirement skill. No previous
+      reviews: recommends Full Review (5 agents). Requirements changed since
+      last review: recommends Validation Review (3 agents). Otherwise:
+      recommends Trace Review (4 agents).
+    verification: test
+    test_type: system
+    verification_method: system
+
+dal: C
+priority: should
+status: proposed
+
+origin:
+  stakeholder: extract-requirements
+  date: "2026-03-31"
+  trigger: "Codebase extraction"
+  source: "plugin/cli/volere (cmd_review)"

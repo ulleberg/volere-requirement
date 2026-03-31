@@ -1,0 +1,32 @@
+id: TC-003
+type: technical-constraint
+title: "DAL-gated test verification"
+
+description: >
+  The system must block pushes at DAL-B or higher if the project's verification
+  commands fail.
+
+rationale: "Pending owner review"
+
+fit_criteria:
+  user:
+    criterion: >
+      Pre-push hook reads DAL from .volere/profile.yaml. Blocks at DAL A and B
+      only. Reads verification_commands from profile; falls back to
+      auto-detecting go test or npm test. Skips docs-only changes.
+    verification: test
+    test_type: integration
+    verification_method: integration
+
+dal: B
+priority: must
+status: proposed
+
+origin:
+  stakeholder: extract-requirements
+  date: "2026-03-31"
+  trigger: "Codebase extraction"
+  source: "plugin/hooks/check-fit-criteria.sh"
+
+serves:
+  - UR-005

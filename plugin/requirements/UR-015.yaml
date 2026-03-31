@@ -1,0 +1,30 @@
+id: UR-015
+type: functional
+title: "Risk-based DAL classification"
+
+description: >
+  The system must assign DAL via a scoring method using the classify-risk
+  skill.
+
+rationale: "Pending owner review"
+
+fit_criteria:
+  user:
+    criterion: >
+      Scores blast radius (+2 to -1), reversibility (+2 to -1), requirement
+      type (+2 to -1). Maps total to DAL (5-6=A, 3-4=B, 1-2=C, -1 to 0=D,
+      -2 to -3=E). Overrides: auth/encryption/secrets → minimum B.
+      Browser-facing → minimum C.
+    verification: test
+    test_type: system
+    verification_method: system
+
+dal: C
+priority: must
+status: proposed
+
+origin:
+  stakeholder: extract-requirements
+  date: "2026-03-31"
+  trigger: "Codebase extraction"
+  source: "plugin/skills/classify-risk/SKILL.md"

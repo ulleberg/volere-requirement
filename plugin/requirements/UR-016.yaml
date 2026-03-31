@@ -1,0 +1,30 @@
+id: UR-016
+type: functional
+title: "Reusable security baseline catalog"
+
+description: >
+  The system must provide 5 importable security requirements through the
+  security baseline catalog.
+
+rationale: "Pending owner review"
+
+fit_criteria:
+  user:
+    criterion: >
+      Catalog contains 5 requirements (SEC-001 through SEC-005): CORS
+      restriction, CSP headers, input validation, no secrets in code,
+      authenticated routes. Tailorable flag controls which can be customized.
+      Version-pinned import with override support.
+    verification: test
+    test_type: system
+    verification_method: system
+
+dal: B
+priority: should
+status: proposed
+
+origin:
+  stakeholder: extract-requirements
+  date: "2026-03-31"
+  trigger: "Codebase extraction"
+  source: "plugin/catalogs/security-baseline.yaml"

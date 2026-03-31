@@ -1,0 +1,29 @@
+id: UR-010
+type: functional
+title: "Guided requirement authoring"
+
+description: >
+  The system must guide agents through snow card creation with quality checks
+  using the write-requirement skill.
+
+rationale: "Pending owner review"
+
+fit_criteria:
+  user:
+    criterion: >
+      Skill walks through all required fields, prompts for multi-dimensional
+      fit criteria, validates measurability, prompts for cross-impact
+      verification (cross_verify), and runs quality checklist before commit.
+    verification: test
+    test_type: system
+    verification_method: system
+
+dal: C
+priority: must
+status: proposed
+
+origin:
+  stakeholder: extract-requirements
+  date: "2026-03-31"
+  trigger: "Codebase extraction"
+  source: "plugin/skills/write-requirement/SKILL.md"

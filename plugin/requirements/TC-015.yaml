@@ -1,0 +1,29 @@
+id: TC-015
+type: technical-constraint
+title: "volere coverage integration test"
+description: >
+  The system must have an integration test for the volere coverage command.
+rationale: >
+  UR-007 (fit criteria coverage) has no dedicated test. The command counts
+  fit criteria dimensions and checks for test references but this behavior
+  is untested. Gap flagged during extraction review.
+fit_criteria:
+  user:
+    criterion: >
+      Test creates a project with requirements having multi-dimensional
+      fit criteria and verifies volere coverage reports correct percentages.
+      Test verifies --dimension flag filters output. Test includes
+      requirements with and without test coverage.
+    verification: test
+    test_type: integration
+    verification_method: integration
+dal: C
+priority: should
+status: proposed
+origin:
+  stakeholder: extract-requirements
+  date: "2026-03-31"
+  trigger: "Test gap flagged during extraction review"
+  source: "plugin/cli/volere"
+serves:
+  - UR-007

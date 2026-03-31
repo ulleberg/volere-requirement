@@ -1,0 +1,33 @@
+id: BUC-002
+type: business-use-case
+title: "Every code change traces to a requirement"
+description: >
+  Every commit, every file, and every test must be traceable to a requirement
+  so that nothing is built without purpose and nothing is changed without
+  impact awareness.
+rationale: >
+  Without traceability, code accumulates without purpose. Thul-studio had
+  12,814 lines of dead code serving no requirement. Traceability makes
+  impact analysis possible — you can't know what breaks when a requirement
+  changes if you don't know which code serves it.
+fit_criteria:
+  user:
+    criterion: >
+      Every requirement has at least one code reference (TRACED status).
+      Every commit message references at least one requirement ID.
+      volere trace reports > 90% traced coverage on all Volere-enabled projects.
+    verification: test
+    test_type: system
+    verification_method: system
+dal: C
+priority: must
+status: proposed
+origin:
+  stakeholder: "Thomas Ulleberg"
+  date: "2026-03-31"
+  trigger: "Extraction review — dogfooding session"
+decomposed_to:
+  - TC-002
+  - TC-004
+  - UR-006
+  - UR-013

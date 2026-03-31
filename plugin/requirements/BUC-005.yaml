@@ -1,0 +1,34 @@
+id: BUC-005
+type: business-use-case
+title: "Framework adopts incrementally without disrupting existing workflows"
+description: >
+  Teams must be able to adopt the framework gradually without replacing
+  their existing tools, hooks, or processes.
+rationale: >
+  A framework that says "replace everything with mine" won't get adopted.
+  Real projects have existing hooks, tests, and docs. The installer chains
+  hooks instead of replacing them. The extraction skill reads existing code
+  instead of requiring greenfield. Adoption is a spectrum, not a switch.
+fit_criteria:
+  user:
+    criterion: >
+      Hook installer preserves existing hooks via chaining — zero existing
+      hooks destroyed. volere init works in projects with existing code,
+      tests, and hooks. extract-requirements produces draft cards from
+      existing codebases without code changes. Retrofit guide covers the
+      existing-project workflow in 6 steps.
+    verification: test
+    test_type: system
+    verification_method: system
+dal: C
+priority: must
+status: proposed
+origin:
+  stakeholder: "Thomas Ulleberg"
+  date: "2026-03-31"
+  trigger: "Extraction review — dogfooding session"
+decomposed_to:
+  - TC-006
+  - UR-003
+  - UR-011
+  - UR-017

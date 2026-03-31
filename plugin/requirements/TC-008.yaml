@@ -1,0 +1,31 @@
+id: TC-008
+type: technical-constraint
+title: "Vague language detection"
+
+description: >
+  The system must flag the use of vague or unverifiable language in fit
+  criteria text during validation.
+
+rationale: "Pending owner review"
+
+fit_criteria:
+  user:
+    criterion: >
+      Validator flags use of 'should', 'appropriate', 'reasonable', 'adequate',
+      'sufficient', 'user-friendly' in fit criteria text.
+    verification: test
+    test_type: integration
+    verification_method: integration
+
+dal: C
+priority: should
+status: proposed
+
+origin:
+  stakeholder: extract-requirements
+  date: "2026-03-31"
+  trigger: "Codebase extraction"
+  source: "plugin/validate.sh"
+
+serves:
+  - UR-005

@@ -1,0 +1,29 @@
+id: UR-012
+type: functional
+title: "Multi-agent requirement review"
+
+description: >
+  The system must detect the review type and generate team prompts using the
+  review-requirements skill.
+
+rationale: "Pending owner review"
+
+fit_criteria:
+  user:
+    criterion: >
+      Detects 3 review types: Full (5 agents), Validation (3 agents), Trace
+      (4 agents). Works in zero-agent mode (sequential perspectives in one
+      session). Produces synthesis with scoring criteria.
+    verification: test
+    test_type: system
+    verification_method: system
+
+dal: C
+priority: should
+status: proposed
+
+origin:
+  stakeholder: extract-requirements
+  date: "2026-03-31"
+  trigger: "Codebase extraction"
+  source: "plugin/skills/review-requirements/SKILL.md"

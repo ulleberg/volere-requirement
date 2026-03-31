@@ -1,0 +1,37 @@
+id: BUC-006
+type: business-use-case
+title: "Requirements are machine-readable and trustworthy"
+description: >
+  Every requirement must be structured, validated, and precise enough that
+  agents and tools can process it without human interpretation — and humans
+  can trust the output without second-guessing.
+rationale: >
+  The snow card format is 30 years old and already agent-ready — but only
+  if enforced. Without schema validation, agents write free-form YAML.
+  Without vague language detection, fit criteria say "should be fast."
+  Trust is built in layers: schema enforces structure, validator enforces
+  quality, skill enforces completeness, reviews enforce coherence.
+fit_criteria:
+  user:
+    criterion: >
+      All requirement cards validate against JSON Schema with zero errors.
+      Zero fit criteria contain vague words. Every card has a non-restated
+      rationale and at least one measurable fit criterion. Cards are
+      machine-parseable by volere trace, coverage, and impact.
+    verification: test
+    test_type: system
+    verification_method: system
+dal: B
+priority: must
+status: proposed
+origin:
+  stakeholder: "Thomas Ulleberg"
+  date: "2026-03-31"
+  trigger: "Extraction review — dogfooding session"
+decomposed_to:
+  - TC-007
+  - TC-008
+  - UR-004
+  - UR-005
+  - UR-010
+  - UR-012

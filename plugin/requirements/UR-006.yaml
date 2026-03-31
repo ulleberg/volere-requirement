@@ -1,0 +1,28 @@
+id: UR-006
+type: functional
+title: "Show traceability matrix with volere trace"
+
+description: >
+  The system must show which requirements link to code and test files, with
+  coverage status per requirement, when volere trace is run.
+
+rationale: "Pending owner review"
+
+fit_criteria:
+  user:
+    criterion: >
+      volere trace lists each requirement with code references, test references,
+      and TRACED/GAP status. Coverage percentage is reported.
+    verification: test
+    test_type: system
+    verification_method: system
+
+dal: C
+priority: must
+status: proposed
+
+origin:
+  stakeholder: extract-requirements
+  date: "2026-03-31"
+  trigger: "Codebase extraction"
+  source: "plugin/cli/volere (cmd_trace)"

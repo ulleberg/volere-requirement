@@ -1,0 +1,33 @@
+id: BUC-003
+type: business-use-case
+title: "Verification effort scales to risk"
+description: >
+  Critical changes get rigorous verification. Cosmetic changes get light
+  verification. No change gets zero verification, and no change gets
+  disproportionate ceremony.
+rationale: >
+  Without graduated rigour, frameworks are either too heavy (every CSS fix
+  needs multi-agent review) or too light (database migrations get the same
+  treatment as typo fixes). DAL levels make the right amount of verification
+  the required amount.
+fit_criteria:
+  user:
+    criterion: >
+      Every requirement has a DAL assignment (A-E). Verification depth at
+      each level matches the profile definition. DAL-B+ changes are blocked
+      by pre-push hook if verification fails. DAL-E changes require only linting.
+    verification: test
+    test_type: system
+    verification_method: system
+dal: C
+priority: must
+status: proposed
+origin:
+  stakeholder: "Thomas Ulleberg"
+  date: "2026-03-31"
+  trigger: "Extraction review — dogfooding session"
+decomposed_to:
+  - TC-003
+  - UR-007
+  - UR-014
+  - UR-015

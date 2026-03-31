@@ -1,0 +1,29 @@
+id: TC-016
+type: technical-constraint
+title: "volere review integration test"
+description: >
+  The system must have an integration test for the volere review command.
+rationale: >
+  UR-009 (team review orchestration) has no dedicated test. The command
+  detects review type based on project state but this logic is untested.
+  Gap flagged during extraction review.
+fit_criteria:
+  user:
+    criterion: >
+      Test verifies: with < 5 requirements, recommends write-requirement
+      skill. With no reviews directory, recommends Full Review. With
+      requirements newer than last review, recommends Validation Review.
+      Otherwise recommends Trace Review.
+    verification: test
+    test_type: integration
+    verification_method: integration
+dal: C
+priority: should
+status: proposed
+origin:
+  stakeholder: extract-requirements
+  date: "2026-03-31"
+  trigger: "Test gap flagged during extraction review"
+  source: "plugin/cli/volere"
+serves:
+  - UR-009

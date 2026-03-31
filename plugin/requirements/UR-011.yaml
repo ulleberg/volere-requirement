@@ -1,0 +1,30 @@
+id: UR-011
+type: functional
+title: "Codebase requirement extraction"
+
+description: >
+  The system must scan code and produce draft UR/TC cards for owner review
+  using the extract-requirements skill.
+
+rationale: "Pending owner review"
+
+fit_criteria:
+  user:
+    criterion: >
+      Skill scans source files, tests, docs, and config. Produces draft YAML
+      cards in docs/requirements/draft/ grouped by module. Owner reviews per
+      module with confirm/reject/edit. BUCs surface from owner's 'why'
+      answers. Confirmed cards move to docs/requirements/.
+    verification: test
+    test_type: system
+    verification_method: system
+
+dal: C
+priority: must
+status: proposed
+
+origin:
+  stakeholder: extract-requirements
+  date: "2026-03-31"
+  trigger: "Codebase extraction"
+  source: "plugin/skills/extract-requirements/SKILL.md"
