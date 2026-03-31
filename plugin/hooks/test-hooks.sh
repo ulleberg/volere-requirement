@@ -509,6 +509,18 @@ else
   log_fail "volere impact --suspects should exit 1 with unresolved suspects"
 fi
 
+# Test 35: suspect auto marks dependents of changed requirements (TC-009)
+rm -f .volere/suspects.yaml
+echo "# changed" >> docs/requirements/UR-050.yaml
+git add docs/requirements/UR-050.yaml
+git commit -m "test: modify UR-050" --quiet
+"$SUSPECT_CMD" auto >/dev/null 2>&1 || true
+if [ -f .volere/suspects.yaml ] && grep -q "UR-051" .volere/suspects.yaml 2>/dev/null; then
+  log_pass "suspect auto marks dependents of changed requirements (TC-009)"
+else
+  log_fail "suspect auto should mark UR-051 when UR-050 changed"
+fi
+
 # Clean up
 rm -rf docs/requirements .volere
 rm -f docs/requirements/UR-050.yaml docs/requirements/context.yaml

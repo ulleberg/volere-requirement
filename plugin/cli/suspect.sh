@@ -126,7 +126,10 @@ cmd_check() {
 # Auto-detect suspects from git changes
 cmd_auto() {
   # Find requirements changed in recent commits (since last tag or last 10 commits)
-  local changed_reqs=$(git diff --name-only HEAD~5..HEAD 2>/dev/null | grep "docs/requirements/.*\.yaml" | grep -v context.yaml || true)
+  local depth=$(git rev-list --count HEAD 2>/dev/null || echo 0)
+  [ "$depth" -gt 5 ] && depth=5
+  [ "$depth" -eq 0 ] && { echo "No git history."; return 0; }
+  local changed_reqs=$(git diff --name-only HEAD~$depth..HEAD 2>/dev/null | grep "docs/requirements/.*\.yaml" | grep -v context.yaml || true)
 
   if [ -z "$changed_reqs" ]; then
     echo "No requirement changes in recent commits."
