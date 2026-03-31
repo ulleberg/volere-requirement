@@ -97,16 +97,19 @@ Implementation                          Static Analysis
 
 ## Design Principles
 
-### Chesterton's Fence
+### Chesterton's Fence + Simplicity Criterion
 
-> "Don't remove a fence until you know why it was built."
+> "Don't remove a fence until you know why it was built. Once you know why, ask whether the reason still holds and whether the cost is justified."
 
-The Volere framework has been refined over 30 years (1995-2025). When we modernise it for agentic development, we keep every element until we've proven it's unnecessary — not the other way around.
+Two counterbalancing principles:
 
-Specific applications:
-- **BUCs and PUCs are included** even though small projects may not need them. Volere included them for a reason (business context and user flow decomposition). We don't remove them because "our projects are small." We include them and let projects discover whether they need them.
-- **All 9 non-functional requirement types** (§10-17) are in the schema even though most projects use only 3-4. Removing "cultural" or "legal" because they seem rare means you won't have them when you need them.
-- **Satisfaction/dissatisfaction scores** (Kano model) are in the schema because Volere included them for prioritisation. We haven't proven they're unnecessary.
+**Chesterton's Fence:** The Volere framework has been refined over 30 years (1995-2025). We keep every element until we've proven it's unnecessary — not the other way around. BUCs, PUCs, 9 non-functional types, satisfaction scores — all included because Volere included them for reasons developed over decades.
+
+**Simplicity Criterion:** Every line of code and every document is a liability until verified, and a compounding liability if not maintained. Dead code traps agents into assuming it matters. Stale docs teach the wrong thing with authority. Every skill, hook, schema field, and CLI command must answer: "What breaks if this is removed?" If the answer is "nothing," it's a candidate for removal.
+
+These aren't contradictions — they're a protocol. First ask "why was this built?" (Chesterton's Fence). Then ask "does that reason still justify the complexity cost?" (Simplicity Criterion). The first prevents premature removal. The second prevents permanent accumulation.
+
+Learned from: karpathy/autoresearch achieves rigorous autonomous operation with 3 files and a 115-line skill. Radical constraint beats comprehensive coverage.
 
 ### Soft + Hard at Every Level
 
