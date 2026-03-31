@@ -1,33 +1,44 @@
 id: BUC-002
 type: business-use-case
-title: "Every code change traces to a requirement"
+title: "Every code change traces to a requirement and propagates impact"
 description: >
-  Every commit, every file, and every test must be traceable to a requirement
-  so that nothing is built without purpose and nothing is changed without
-  impact awareness.
+  Every commit, file, and test must be traceable to a requirement. When a
+  requirement changes, downstream dependents must be flagged for re-verification.
+  Nothing is built without purpose, nothing is changed without impact awareness.
 rationale: >
-  Without traceability, code accumulates without purpose. Thul-studio had
-  12,814 lines of dead code serving no requirement. Traceability makes
-  impact analysis possible — you can't know what breaks when a requirement
-  changes if you don't know which code serves it.
+  Without traceability, code accumulates without purpose (thul-studio: 12,814
+  lines dead code). Without impact propagation, upstream changes silently break
+  downstream features (CSP hardening broke grid page and TTS audio).
+  Traceability and change propagation are the same concern — you can't
+  propagate impact if you don't know what traces to what.
 fit_criteria:
   user:
     criterion: >
       Every requirement has at least one code reference (TRACED status).
       Every commit message references at least one requirement ID.
-      volere trace reports > 90% traced coverage on all Volere-enabled projects.
+      volere trace reports > 90% traced coverage. Every requirement change
+      marks downstream dependents as suspect within one git operation.
+      volere impact traverses the full dependency graph including cross_verify
+      targets. Unresolved suspect links block CI when --suspects flag is set.
     verification: test
     test_type: system
     verification_method: system
-dal: C
+dal: B
 priority: must
 status: proposed
 origin:
   stakeholder: "Thomas Ulleberg"
   date: "2026-03-31"
-  trigger: "Extraction review — dogfooding session"
+  trigger: "Extraction review — merged BUC-002 + BUC-004"
 decomposed_to:
   - TC-002
   - TC-004
+  - TC-009
   - UR-006
-  - UR-013
+  - UR-008
+
+history:
+  - date: "2026-03-31"
+    action: modified
+    by: simplify-requirements
+    note: "Merged BUC-002 (traceability) + BUC-004 (change propagation) — traceability subsumes impact propagation. DAL escalated to B (from BUC-004)."

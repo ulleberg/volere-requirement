@@ -1,19 +1,23 @@
 id: TC-004
 type: technical-constraint
-title: "Branch requirement drift detection"
+title: "Post-git advisory hooks for requirement impact"
 
 description: >
-  The system must warn when requirement cards or DAL configuration differ
-  between the branch being checked out and the current branch.
+  The system must surface requirement impacts after git operations —
+  drift detection on branch switch, suspect link marking on merge.
 
-rationale: "Pending owner review"
+rationale: >
+  Git operations silently change requirement state. Without advisory hooks,
+  agents work with stale assumptions after checkout or merge changed cards.
 
 fit_criteria:
   user:
     criterion: >
       Post-checkout hook detects DAL mismatch and changed requirement cards
-      between branches. Advisory only — always exits 0. Skips file checkouts
-      and initial checkouts.
+      between branches. Post-merge hook finds changed cards, marks dependents
+      as suspect, flags cross_verify targets, runs validation. Both advisory
+      only — always exit 0. Post-checkout skips file checkouts and initial
+      checkouts.
     verification: test
     test_type: integration
     verification_method: integration
@@ -25,8 +29,15 @@ status: proposed
 origin:
   stakeholder: extract-requirements
   date: "2026-03-31"
-  trigger: "Codebase extraction"
-  source: "plugin/hooks/check-checkout.sh"
+  trigger: "Codebase extraction — merged TC-004 + TC-005"
+  source: "plugin/hooks/check-checkout.sh, plugin/hooks/check-merge.sh"
 
 serves:
   - UR-005
+  - UR-008
+
+history:
+  - date: "2026-03-31"
+    action: modified
+    by: simplify-requirements
+    note: "Merged TC-004 (branch drift) + TC-005 (post-merge suspects) — same concern: advisory post-git hooks"
