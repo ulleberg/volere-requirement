@@ -22,7 +22,7 @@ fit_criteria:
     verification_method: system
 dal: C
 priority: must
-status: proposed
+status: implemented
 origin:
   stakeholder: "Thomas Ulleberg"
   date: "2026-03-31"
