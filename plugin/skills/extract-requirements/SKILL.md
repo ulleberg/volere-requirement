@@ -235,18 +235,36 @@ Present one module at a time. Let the owner choose which module to start with.
 
 ### Per-Card Review
 
-For each card in the module:
+Present each card one at a time in this structured format. The agent leads — the owner verifies and accepts.
 
 ```
-UR-001: [Title]
-  "[Description]"
-  Fit criterion: "[criterion]" (source: test / inferred)
-  DAL: [level] | Priority: [priority]
-  Found in: [file path]
+TC-001: [Title]
 
-  1. Confirm / Reject / Edit?
-  2. Why does this feature exist?
-  3. Is DAL-[level] right for this?
+  "[Description]"
+
+  Fit criterion: [criterion]
+  DAL: [level] | Priority: [priority] | Serves: [parent IDs]
+  Tested: [Yes (test N-M) / Inferred]
+
+  Assessment: [Agent's judgment on whether DAL and priority are right, with reasoning]
+
+  Why this exists: [Agent's best understanding of the real-world pain or
+  principle that created this requirement — traced to project insights,
+  docs, or code patterns. Not invented — derived from evidence.]
+
+  Proposed BUC link: [If the "why" points to a broader business need,
+  name it here. BUC will be drafted after the TC/UR pass.]
+
+  Confirm?
+```
+
+**The agent leads the review.** Don't just present data and ask three questions — provide your assessment, explain why it exists, and propose the BUC link. The owner's job is to verify and correct, not to do the analysis.
+
+**Pacing:** One card per message. Wait for the owner's response before presenting the next card. The owner can say:
+- "confirm" — accept as-is, move to next
+- "edit [field]: [value]" — update and re-present
+- "reject" — delete, move to next
+- "confirm 2-5" — batch confirm (skip individual presentation)
 ```
 
 ### Handling Responses

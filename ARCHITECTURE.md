@@ -26,13 +26,14 @@ volere-requirement/
 │   │   ├── profile.schema.json      DAL profiles + verification_commands
 │   │   ├── compliance.schema.json   Compliance dimensions
 │   │   └── evidence.schema.json     Evidence lifecycle + verification_level
-│   ├── skills/                      6 Claude Code skills
+│   ├── skills/                      7 Claude Code skills
 │   │   ├── extract-requirements/    Scan codebase → draft UR/TC cards → owner review
 │   │   ├── write-requirement/       Card format + cross-impact prompt
 │   │   ├── review-requirements/     3 review types + zero-agent mode
 │   │   ├── trace-codebase/          Map code→requirements, find dead code
 │   │   ├── audit-tests/             VERIFIES/SUPPORTS/THEATER + verification levels + loopback
-│   │   └── classify-risk/           DAL scoring + browser-facing escalation
+│   │   ├── classify-risk/           DAL scoring + browser-facing escalation
+│   │   └── glossary/                Abbreviations, DAL levels, terminology reference
 │   ├── hooks/                       6 git hooks (full lifecycle)
 │   │   ├── check-secrets.sh         Pre-commit: block secret patterns
 │   │   ├── check-traceability.sh    Commit-msg: warn/block missing requirement IDs
