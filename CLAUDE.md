@@ -6,6 +6,7 @@ Archive of the original Volere Requirements Template (v15) plus the Volere Agent
 
 - **Original Volere files (a–i)** — template, case studies, requirement stationery. Preserved as-is.
 - **docs/** — discovery-to-delivery documentation: problem, brief, options, decisions, spec, roadmap, team prompts, execution plans.
+  - **docs/insights/** — session insights from applying the framework to real projects. Research findings with framework action items. Read these before proposing changes to the framework — they contain lessons from production use.
 - **plugin/** — the framework (v0.1–v0.8 shipped, v0.9 hardening):
   - `schema/` — 4 JSON schemas (requirement with cross_verify + verification_method, profile with verification_commands, compliance, evidence with verification_level)
   - `skills/` — 7 skills (extract-requirements, write-requirement, review-requirements, trace-codebase, audit-tests, classify-risk, glossary)
