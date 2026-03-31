@@ -215,6 +215,38 @@ Modules:
   module-b/  — N URs, N TCs
 ```
 
+### Simplification Pass (Musk's Five Steps)
+
+Before presenting to the owner, reduce. The best requirement is no requirement. The best card is the one you don't need because a tighter constraint makes it redundant.
+
+Run these steps in order. The order matters — delete before you simplify, simplify before you optimize:
+
+**Step 1: Question every card.** For each draft card, ask: "If I remove this, what breaks?" If the answer is "nothing" or "another card already covers it," mark it for deletion. Implementation details masquerading as requirements are the most common offenders — "agent commits before training" is a step in the experiment loop (UR-001), not a separate requirement.
+
+**Step 2: Merge overlapping cards.** Cards that share the same BUC and have overlapping fit criteria should be one card, not two. A system with 3 real constraints shouldn't produce 11 cards. Look for:
+- TCs that are really sub-points of one constraint ("only edit train.py" + "don't install packages" + "don't modify prepare.py" = one constraint: "agent scope is limited to train.py")
+- URs that describe the same workflow from different angles
+- Cards whose fit criteria would be tested by the same test
+
+**Step 3: Check the card-to-constraint ratio.** Count the real constraints (things that, if violated, would break the system). Count your cards. If the ratio is > 3:1, you're over-specifying. Ask what can be merged or removed to get closer to 2:1.
+
+**Step 4: Present the reduction.** Show the owner what was removed and why:
+
+```
+Simplification:
+  Raw extraction: 11 cards (6 URs, 5 TCs)
+  After reduction: 7 cards (4 URs, 3 TCs)
+  Merged: TC-001 + TC-002 → TC-001 (single scope constraint)
+  Removed: UR-002 (setup steps are part of UR-001 experiment loop)
+  Removed: TC-004 (simplicity is a judgment call, not a testable constraint)
+  Ratio: 7 cards / 3 core constraints = 2.3:1
+
+  Principle: fewer, tighter cards > comprehensive coverage.
+  The owner can restore any removed card during review.
+```
+
+**If in doubt, delete.** The owner can always add a card back during review. They cannot easily remove one the agent convinced them to keep through detailed justification. Bias toward reduction.
+
 ### Proposed Review Order
 
 Propose a review order following the V-Model bottom-up principle, with rationale:
@@ -370,6 +402,13 @@ After extraction, suggest:
 3. **Fill gaps** — write missing fit criteria for confirmed URs (owner flagged "Owner to define")
 4. **Team review** — run `review-requirements` for a multi-perspective review of the extracted set
 
+## Principles
+
+- **Justify complexity, don't justify simplicity.** Adding a card needs a reason. Removing one doesn't. Bias toward fewer, tighter cards.
+- **The best requirement is no requirement.** If a constraint makes failure impossible, you don't need a card to test for it.
+- **Delete before simplify, simplify before optimize.** Musk's order. Most agents start at optimize.
+- **Comprehensive coverage is not the goal.** Correct coverage is. 7 cards that trace to 3 real constraints is better than 39 cards that trace to the same 3 constraints.
+
 ## What This Skill Does NOT Do
 
 - **No code changes** — read-only codebase analysis
@@ -379,3 +418,4 @@ After extraction, suggest:
 - **No automatic commit** — everything passes through owner review
 - **No fit criteria fabrication** — criteria come from tests or are marked "Owner to define"
 - **No DAL override** — tentative DAL is presented, owner has final say
+- **No complexity for completeness** — fewer cards is a better outcome than more cards
