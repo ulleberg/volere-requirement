@@ -770,6 +770,22 @@ else
   log_fail "should have extract-requirements skill and RETROFIT.md"
 fi
 
+# Test 54: extract-requirements skill covers scan, draft, review workflow (UR-011)
+EXTRACT_SKILL="$SCRIPT_DIR/../skills/extract-requirements/SKILL.md"
+if [ -f "$EXTRACT_SKILL" ] && grep -q "draft" "$EXTRACT_SKILL" && grep -q "confirm" "$EXTRACT_SKILL" && grep -q "BUC" "$EXTRACT_SKILL"; then
+  log_pass "extract-requirements skill covers scan, draft, and review workflow (UR-011)"
+else
+  log_fail "extract-requirements skill should cover draft output, confirm/reject, and BUC surfacing"
+fi
+
+# Test 55: audit-tests skill defines VERIFIES/SUPPORTS/THEATER/REDUNDANT classification (UR-014)
+AUDIT_SKILL="$SCRIPT_DIR/../skills/audit-tests/SKILL.md"
+if [ -f "$AUDIT_SKILL" ] && grep -q "VERIFIES" "$AUDIT_SKILL" && grep -q "THEATER" "$AUDIT_SKILL" && grep -q "REDUNDANT" "$AUDIT_SKILL"; then
+  log_pass "audit-tests skill defines test classification categories (UR-014)"
+else
+  log_fail "audit-tests skill should define VERIFIES/SUPPORTS/THEATER/REDUNDANT classifications"
+fi
+
 # Clean up
 rm -rf docs/requirements .volere src
 

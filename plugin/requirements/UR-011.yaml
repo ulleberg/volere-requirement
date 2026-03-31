@@ -21,7 +21,7 @@ fit_criteria:
 
 dal: C
 priority: must
-status: proposed
+status: implemented
 
 origin:
   stakeholder: extract-requirements

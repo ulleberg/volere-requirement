@@ -203,6 +203,12 @@ v1.0 merges both tracks.
 
 **Acceptance test:** Full framework applied to a new project from scratch. Project goes from zero to structured requirements, enforced architecture, and traced tests in one session. Install via marketplace works.
 
+**Release gate — skill end-to-end verification:**
+Skills verified by structure in v0.9 (skill file contains required elements) must pass subagent pressure tests before v1.0 release:
+- `extract-requirements`: dispatch subagent on a test codebase, verify draft YAML cards are produced with correct structure, confirm/reject workflow works
+- `audit-tests`: dispatch subagent with test files, verify VERIFIES/SUPPORTS/THEATER/REDUNDANT classification output matches known-correct answers
+These are non-deterministic (prompt-based) so they require multiple runs to establish confidence. Structure verification (v0.9) proves the instructions exist; pressure testing (v1.0) proves they work.
+
 **Depends on:** v0.9 (hardened through real use)
 **Effort:** Medium (2-3 sessions)
 
