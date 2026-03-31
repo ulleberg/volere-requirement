@@ -234,6 +234,226 @@ rm -f docs/requirements/UR-001.yaml docs/requirements/UR-002.yaml docs/requireme
 echo ""
 
 # ============================================================
+echo "check-fit-criteria:"
+# ============================================================
+
+# Create a DAL-B profile
+mkdir -p .volere
+cat > .volere/profile.yaml << 'PROFILE'
+dal: B
+PROFILE
+
+# We need an upstream to diff against for the hook
+git checkout --quiet -b fit-test-branch
+
+# Test 17: Hook skips docs-only changes at DAL-B (TC-010)
+echo "docs only" > README.md
+git add README.md
+git commit --quiet -m "docs update"
+# The hook skips docs-only changes
+if "$SCRIPT_DIR/check-fit-criteria.sh" >/dev/null 2>&1; then
+  log_pass "Skips docs-only changes at DAL-B (TC-010)"
+else
+  log_fail "Should skip docs-only changes"
+fi
+
+# Test 18: Hook passes when DAL-C (below blocking threshold) (TC-010)
+echo 'dal: C' > .volere/profile.yaml
+echo 'const y = 1;' > app.js
+git add app.js .volere/profile.yaml
+git commit --quiet -m "Code change at DAL-C (UR-005)"
+if "$SCRIPT_DIR/check-fit-criteria.sh" >/dev/null 2>&1; then
+  log_pass "Passes at DAL-C (below blocking threshold) (TC-010)"
+else
+  log_fail "Should pass at DAL-C"
+fi
+
+# Test 19: Hook passes when no profile exists (defaults to C) (TC-010)
+rm -f .volere/profile.yaml
+if "$SCRIPT_DIR/check-fit-criteria.sh" >/dev/null 2>&1; then
+  log_pass "Passes with no profile (defaults to DAL-C) (TC-010)"
+else
+  log_fail "Should pass with no profile"
+fi
+
+# Clean up
+git checkout --quiet main 2>/dev/null || git checkout --quiet master
+git branch -D fit-test-branch --quiet 2>/dev/null || true
+rm -rf .volere go.mod main.go app.js README.md
+
+echo ""
+
+# ============================================================
+echo "validate (vague language):"
+# ============================================================
+
+# Test 20: Card with vague word should be flagged (TC-011)
+cat > vague-card.yaml << 'CARD'
+id: UR-099
+type: functional
+title: "Test vague language"
+description: "The system should be user-friendly"
+rationale: "Testing vague detection"
+fit_criteria:
+  user:
+    criterion: "The system should respond appropriately"
+    verification: test
+dal: C
+priority: must
+status: proposed
+origin:
+  stakeholder: test
+  date: "2026-03-31"
+CARD
+VAGUE_OUT=$("$SCRIPT_DIR/../validate.sh" vague-card.yaml 2>&1 || true)
+if echo "$VAGUE_OUT" | grep -qi "vague\|should\|appropriate"; then
+  log_pass "Flags vague words in fit criteria (TC-011)"
+else
+  log_fail "Should flag vague words"
+fi
+rm -f vague-card.yaml
+
+# Test 21: Card without vague words should pass (TC-011)
+cat > clean-card.yaml << 'CARD'
+id: UR-098
+type: functional
+title: "Test clean language"
+description: "The system must respond within 200ms"
+rationale: "Testing clean criteria"
+fit_criteria:
+  user:
+    criterion: "95% of API responses complete within 200ms"
+    verification: test
+dal: C
+priority: must
+status: proposed
+origin:
+  stakeholder: test
+  date: "2026-03-31"
+CARD
+CLEAN_OUT=$("$SCRIPT_DIR/../validate.sh" clean-card.yaml 2>&1 || true)
+if echo "$CLEAN_OUT" | grep -qi "vague\|should\|appropriate"; then
+  log_fail "Should not flag clean language"
+else
+  log_pass "Passes card without vague words (TC-011)"
+fi
+rm -f clean-card.yaml
+
+echo ""
+
+# ============================================================
+echo "suspect.sh:"
+# ============================================================
+
+SUSPECT_CMD="$SCRIPT_DIR/../cli/suspect.sh"
+mkdir -p .volere
+
+# Test 22: suspect mark creates entry (TC-012)
+"$SUSPECT_CMD" mark UR-003 --reason "test marking" --source UR-027 >/dev/null 2>&1 || true
+if [ -f .volere/suspects.yaml ] && grep -q "UR-003" .volere/suspects.yaml 2>/dev/null; then
+  log_pass "suspect mark creates entry in suspects.yaml (TC-012)"
+else
+  log_fail "suspect mark should create entry"
+fi
+
+# Test 23: suspect check exits 1 when unresolved exist (TC-012)
+if ! "$SUSPECT_CMD" check >/dev/null 2>&1; then
+  log_pass "suspect check exits 1 with unresolved suspects (TC-012)"
+else
+  log_fail "suspect check should exit 1 with unresolved"
+fi
+
+# Test 24: suspect resolve changes status (TC-012)
+"$SUSPECT_CMD" resolve UR-003 >/dev/null 2>&1 || true
+if grep -q "resolved" .volere/suspects.yaml 2>/dev/null; then
+  log_pass "suspect resolve marks as resolved (TC-012)"
+else
+  log_fail "suspect resolve should change status"
+fi
+
+# Test 25: suspect check exits 0 when all resolved (TC-012)
+if "$SUSPECT_CMD" check >/dev/null 2>&1; then
+  log_pass "suspect check exits 0 when all resolved (TC-012)"
+else
+  log_fail "suspect check should exit 0 when resolved"
+fi
+
+# Clean up
+rm -f .volere/suspects.yaml
+
+echo ""
+
+# ============================================================
+echo "volere CLI:"
+# ============================================================
+
+VOLERE_CMD="$SCRIPT_DIR/../cli/volere"
+
+# Set up a minimal project for CLI tests
+mkdir -p docs/requirements .volere
+cat > .volere/profile.yaml << 'PROFILE'
+dal: C
+PROFILE
+cat > docs/requirements/context.yaml << 'CTX'
+project: test-project
+CTX
+cat > docs/requirements/UR-050.yaml << 'CARD'
+id: UR-050
+type: functional
+title: "Test requirement"
+description: "The system must pass tests"
+rationale: "Testing CLI commands"
+fit_criteria:
+  user:
+    criterion: "All tests pass"
+    verification: test
+dal: C
+priority: must
+status: proposed
+origin:
+  stakeholder: test
+  date: "2026-03-31"
+CARD
+
+# Test 26: volere validate runs and reports (TC-013)
+VALIDATE_OUT=$("$VOLERE_CMD" validate 2>&1 || true)
+if echo "$VALIDATE_OUT" | grep -qiE "validat|check|pass|warn"; then
+  log_pass "volere validate runs and produces output (TC-013)"
+else
+  log_fail "volere validate should produce output"
+fi
+
+# Test 27: volere trace runs and reports (TC-014)
+TRACE_OUT=$("$VOLERE_CMD" trace 2>&1 || true)
+if echo "$TRACE_OUT" | grep -qiE "UR-050|trace|coverage|gap"; then
+  log_pass "volere trace runs and finds requirements (TC-014)"
+else
+  log_fail "volere trace should find UR-050"
+fi
+
+# Test 28: volere coverage runs and reports (TC-015)
+COVERAGE_OUT=$("$VOLERE_CMD" coverage 2>&1 || true)
+if echo "$COVERAGE_OUT" | grep -qiE "coverage|UR-050|percent|%"; then
+  log_pass "volere coverage runs and reports coverage (TC-015)"
+else
+  log_fail "volere coverage should report coverage"
+fi
+
+# Test 29: volere review detects review type (TC-016)
+REVIEW_OUT=$("$VOLERE_CMD" review 2>&1 || true)
+if echo "$REVIEW_OUT" | grep -qiE "review|full|validation|trace|recommend"; then
+  log_pass "volere review detects review type (TC-016)"
+else
+  log_fail "volere review should detect review type"
+fi
+
+# Clean up
+rm -rf docs/requirements .volere
+rm -f docs/requirements/UR-050.yaml docs/requirements/context.yaml
+
+echo ""
+
+# ============================================================
 echo "Results:"
 echo "  $PASS passed, $FAIL failed"
 # ============================================================
