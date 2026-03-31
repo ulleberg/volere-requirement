@@ -522,8 +522,7 @@ else
 fi
 
 # Clean up
-rm -rf docs/requirements .volere
-rm -f docs/requirements/UR-050.yaml docs/requirements/context.yaml
+rm -rf docs/requirements .volere src
 
 echo ""
 
