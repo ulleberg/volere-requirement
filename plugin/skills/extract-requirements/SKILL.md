@@ -306,18 +306,32 @@ origin:
 3. Link URs to the BUC: add `depends_on: [BUC-001]` to the URs that serve it
 4. Present the BUC for confirmation in the same review pass
 
-### Module Complete
+### Module Summary
 
-After reviewing all cards in a module:
+After reviewing all cards in a module, present a structured summary:
 
 ```
 Module [name] review complete:
   Confirmed: N URs, N TCs
   Rejected: N cards
-  New BUCs: N
+  New BUCs: N (list them)
+  BUCs reinforced: N (existing BUCs that new cards map to — no duplication)
+
+  Dependencies noted: [UR-X depends_on TC-Y, etc.]
+  Supersedes: [any existing cards that new cards replace]
+  Test gaps flagged: N
+    - [ID]: [what's missing]
 
 Next module: [name] (N URs, N TCs) — or "done" to commit confirmed cards
 ```
+
+**Track across modules.** Maintain a running tally of:
+
+1. **BUC registry** — All BUCs surfaced so far. When a new card's "why" maps to an existing BUC, note "BUC reinforced" rather than creating a duplicate. New BUCs only when the rationale is genuinely different.
+
+2. **Test gap accumulator** — Running count of cards lacking dedicated tests, carried across modules. Present the running total at each module summary (e.g., "7 test gaps total: 3 from hooks, 4 from CLI"). This becomes the input for the post-extraction coverage pass.
+
+3. **Cross-module dependencies** — When a UR in module B depends on a TC confirmed in module A, note it explicitly. This is why V-Model bottom-up review order matters — dependencies point downward to already-confirmed cards.
 
 ## Phase 4: Commit
 
