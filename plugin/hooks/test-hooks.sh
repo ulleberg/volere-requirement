@@ -594,7 +594,7 @@ fi
 
 # Test 44: volere trace shows TRACED/GAP status and coverage percentage (UR-006)
 if echo "$TRACE_OUT" | grep -qE "GAP|Traced:.*[0-9]+%"; then
-  log_pass "volere trace shows TRACED/GAP status and coverage percentage (UR-006)"
+  log_pass "volere trace shows TRACED/GAP status and coverage percentage (TC-014, UR-006)"
 else
   log_fail "volere trace should show GAP status and coverage percentage"
 fi
@@ -602,7 +602,7 @@ fi
 # Test 45: volere coverage reports per-requirement coverage percentage (UR-007)
 COVERAGE_OUT=$("$VOLERE_CMD" coverage 2>&1 || true)
 if echo "$COVERAGE_OUT" | grep -qE "Coverage:.*[0-9]+/[0-9]+"; then
-  log_pass "volere coverage reports per-requirement coverage percentage (UR-007)"
+  log_pass "volere coverage reports per-requirement coverage percentage (TC-015, UR-007)"
 else
   log_fail "volere coverage should report coverage fraction"
 fi
@@ -636,7 +636,7 @@ rm -f vague-tc008.yaml
 # Test 47: volere review recommends review type based on project state (UR-009)
 REVIEW_OUT=$("$VOLERE_CMD" review 2>&1 || true)
 if echo "$REVIEW_OUT" | grep -qiE "Full Review|Validation Review|Trace Review|write-requirement"; then
-  log_pass "volere review recommends review type based on project state (UR-009)"
+  log_pass "volere review recommends review type based on project state (TC-016, UR-009)"
 else
   log_fail "volere review should recommend a review type"
 fi
