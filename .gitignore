@@ -12,3 +12,7 @@ Thumbs.db
 # Temp
 *.tmp
 ~$*
+
+# Runtime
+.volere/
+.studio/
