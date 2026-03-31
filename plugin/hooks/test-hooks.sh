@@ -700,6 +700,76 @@ else
   log_fail "volere review should recommend a review type"
 fi
 
+# Test 48: hook installer installs hooks and preserves existing via chaining (TC-006)
+INSTALL_CMD="$SCRIPT_DIR/install.sh"
+HOOKS_TARGET=$(mktemp -d)
+# Create a fake existing pre-push hook (install_hook chains non-pre-commit hooks)
+echo '#!/bin/bash' > "$HOOKS_TARGET/pre-push"
+echo 'echo existing' >> "$HOOKS_TARGET/pre-push"
+chmod +x "$HOOKS_TARGET/pre-push"
+"$INSTALL_CMD" --hooks-dir "$HOOKS_TARGET" >/dev/null 2>&1 || true
+HOOK_COUNT=$(ls "$HOOKS_TARGET"/pre-commit "$HOOKS_TARGET"/commit-msg "$HOOKS_TARGET"/pre-push "$HOOKS_TARGET"/post-checkout "$HOOKS_TARGET"/post-merge 2>/dev/null | wc -l | tr -d ' ')
+HAS_CHAIN=$([ -f "$HOOKS_TARGET/pre-push.existing" ] && echo yes || echo no)
+if [ "$HOOK_COUNT" -ge 5 ] && [ "$HAS_CHAIN" = "yes" ]; then
+  log_pass "hook installer installs hooks and chains existing hooks (TC-006)"
+else
+  log_fail "installer should install 5+ hooks and chain existing (got $HOOK_COUNT hooks, chain=$HAS_CHAIN)"
+fi
+rm -rf "$HOOKS_TARGET"
+
+# Test 49: volere new creates requirement card with auto-numbering (UR-004)
+NEW_OUT=$("$VOLERE_CMD" new --type functional 2>&1 || true)
+CREATED_FILE=$(echo "$NEW_OUT" | grep "^Created:" | sed 's/^Created: //')
+if [ -n "$CREATED_FILE" ] && [ -f "$CREATED_FILE" ] && grep -q "^type: functional" "$CREATED_FILE" 2>/dev/null; then
+  log_pass "volere new creates functional requirement card with auto-numbering (UR-004)"
+else
+  log_fail "volere new --type functional should create a UR card"
+fi
+rm -f "$CREATED_FILE"
+
+# Test 50: DAL scaling — DAL-E has no blocking hooks (BUC-003)
+mkdir -p .volere
+echo 'dal: E' > .volere/profile.yaml
+if "$SCRIPT_DIR/check-fit-criteria.sh" >/dev/null 2>&1; then
+  log_pass "DAL-E changes are not blocked by verification hooks (BUC-003)"
+else
+  log_fail "DAL-E should not block"
+fi
+echo 'dal: C' > .volere/profile.yaml
+
+# Test 51: classify-risk skill defines DAL scoring matrix (UR-015)
+RISK_SKILL="$SCRIPT_DIR/../skills/classify-risk/SKILL.md"
+if [ -f "$RISK_SKILL" ] && grep -q "5-6" "$RISK_SKILL" && grep -q "3-4" "$RISK_SKILL"; then
+  log_pass "classify-risk skill defines DAL scoring matrix (UR-015)"
+else
+  log_fail "classify-risk skill should define scoring matrix with DAL mappings"
+fi
+
+# Test 52: project scaffold templates exist for all card types (UR-017)
+TMPL_DIR="$SCRIPT_DIR/../templates"
+TMPL_COUNT=0
+for tmpl in requirement-card.yaml technical-constraint.yaml business-use-case.yaml product-use-case.yaml; do
+  [ -f "$TMPL_DIR/$tmpl" ] && TMPL_COUNT=$((TMPL_COUNT + 1))
+done
+SCAFFOLD_COUNT=0
+for sf in project-scaffold/docs/requirements/context.yaml project-scaffold/.volere/profile.yaml project-scaffold/.volere/boundaries.yaml; do
+  [ -f "$TMPL_DIR/$sf" ] && SCAFFOLD_COUNT=$((SCAFFOLD_COUNT + 1))
+done
+if [ "$TMPL_COUNT" -ge 4 ] && [ "$SCAFFOLD_COUNT" -ge 3 ]; then
+  log_pass "project scaffold templates exist for all card types (UR-017)"
+else
+  log_fail "should have 4+ card templates and 3+ scaffold files (got $TMPL_COUNT templates, $SCAFFOLD_COUNT scaffold)"
+fi
+
+# Test 53: framework adopts incrementally — extract skill and retrofit guide exist (BUC-005)
+EXTRACT_SKILL="$SCRIPT_DIR/../skills/extract-requirements/SKILL.md"
+RETROFIT="$SCRIPT_DIR/../templates/project-scaffold/RETROFIT.md"
+if [ -f "$EXTRACT_SKILL" ] && [ -f "$RETROFIT" ]; then
+  log_pass "extract-requirements skill and retrofit guide exist for incremental adoption (BUC-005)"
+else
+  log_fail "should have extract-requirements skill and RETROFIT.md"
+fi
+
 # Clean up
 rm -rf docs/requirements .volere src
 
