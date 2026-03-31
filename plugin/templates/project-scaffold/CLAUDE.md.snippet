@@ -7,6 +7,29 @@ The `SessionStart` hook reports acceptance coverage. **When you see this hook ou
 
 Don't wait to be asked — this is the session briefing.
 
+## Simplicity Protocol
+
+Every action in this project follows the simplicity protocol. This is not optional.
+
+**Before creating anything** (file, card, test, skill, hook, function):
+1. Can this be accomplished by modifying something that already exists?
+2. If not, what is the minimum that achieves the goal?
+3. After creating it, what existing thing can now be removed or merged?
+
+**Before committing:**
+4. Did you add more than you removed? If yes, justify why.
+5. Can any new code be replaced by a tighter constraint that makes the code unnecessary?
+6. Would someone reading this in 3 months understand it without context?
+
+**After completing a task:**
+7. What did you create that the user didn't ask for? Remove it.
+8. Can any new files be merged into existing files?
+9. Is there a simpler way to achieve the same result?
+
+**The default is removal, not addition.** Adding requires justification. Removing doesn't. If you're unsure whether something should exist, it probably shouldn't.
+
+When the pre-commit hook reports your diff stats, use them: a commit that removes more than it adds is a good commit. A commit that only adds is suspect.
+
 ## Post-Implementation Checklist
 
 After completing any feature or fix driven by a requirement:

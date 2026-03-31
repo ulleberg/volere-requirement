@@ -68,8 +68,38 @@ CHAIN
 echo "Volere hook installer"
 echo ""
 
-# Install pre-commit (check-secrets)
-install_hook "$SCRIPT_DIR/check-secrets.sh" "$HOOKS_DIR/pre-commit" "pre-commit (check-secrets)"
+# Install pre-commit (check-secrets + check-simplicity)
+# Create a combined pre-commit that runs both
+cat > "$HOOKS_DIR/pre-commit" << 'COMBINED'
+#!/bin/bash
+# Volere pre-commit: check-secrets (blocks) + check-simplicity (advisory)
+SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
+VOLERE_HOOKS="$(cd "$SCRIPT_DIR/../../plugin/hooks" 2>/dev/null && pwd || echo "")"
+
+# Find hook scripts — try relative to project, then absolute
+if [ -n "$VOLERE_HOOKS" ] && [ -f "$VOLERE_HOOKS/check-secrets.sh" ]; then
+  SECRETS_HOOK="$VOLERE_HOOKS/check-secrets.sh"
+  SIMPLICITY_HOOK="$VOLERE_HOOKS/check-simplicity.sh"
+else
+  # Fallback: look for scripts in the same directory
+  SECRETS_HOOK="$SCRIPT_DIR/check-secrets.sh"
+  SIMPLICITY_HOOK="$SCRIPT_DIR/check-simplicity.sh"
+fi
+
+# Run check-secrets (blocking)
+if [ -x "$SECRETS_HOOK" ]; then
+  "$SECRETS_HOOK" "$@"
+  EXIT=$?
+  if [ $EXIT -ne 0 ]; then exit $EXIT; fi
+fi
+
+# Run check-simplicity (advisory, never blocks)
+if [ -x "$SIMPLICITY_HOOK" ]; then
+  "$SIMPLICITY_HOOK" "$@" || true
+fi
+COMBINED
+chmod +x "$HOOKS_DIR/pre-commit"
+echo "  Installed: pre-commit (check-secrets + check-simplicity)"
 
 # Install commit-msg (check-traceability)
 install_hook "$SCRIPT_DIR/check-traceability.sh" "$HOOKS_DIR/commit-msg" "commit-msg (check-traceability)"
@@ -92,8 +122,8 @@ if [ "$STRICT" -eq 1 ]; then
 fi
 
 echo ""
-echo "Done. 5 hooks installed in $HOOKS_DIR"
-echo "  pre-commit:    check-secrets (blocks)"
+echo "Done. 6 hooks installed in $HOOKS_DIR"
+echo "  pre-commit:    check-secrets (blocks) + check-simplicity (advisory)"
 echo "  commit-msg:    check-traceability (advisory or strict)"
 echo "  pre-push:      check-fit-criteria (blocks at DAL-B+)"
 echo "  post-checkout: check-checkout (advisory)"
