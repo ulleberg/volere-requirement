@@ -471,6 +471,44 @@ else
   log_fail "volere review should detect review type"
 fi
 
+# Test 30: volere impact shows direct dependents (UR-008)
+IMPACT_OUT=$("$VOLERE_CMD" impact UR-050 2>&1 || true)
+if echo "$IMPACT_OUT" | grep -q "UR-051"; then
+  log_pass "volere impact shows direct dependents (UR-008)"
+else
+  log_fail "volere impact should show UR-051 as dependent of UR-050"
+fi
+
+# Test 31: volere impact shows affected code files (UR-008)
+if echo "$IMPACT_OUT" | grep -q "feature.js"; then
+  log_pass "volere impact shows affected code files (UR-008)"
+else
+  log_fail "volere impact should show feature.js"
+fi
+
+# Test 32: volere impact shows affected test files (UR-008)
+if echo "$IMPACT_OUT" | grep -q "feature.test.js"; then
+  log_pass "volere impact shows affected test files (UR-008)"
+else
+  log_fail "volere impact should show feature.test.js"
+fi
+
+# Test 33: volere impact --mark creates suspect links (UR-008)
+rm -f .volere/suspects.yaml
+"$VOLERE_CMD" impact --mark UR-050 >/dev/null 2>&1 || true
+if [ -f .volere/suspects.yaml ] && grep -q "UR-051" .volere/suspects.yaml 2>/dev/null; then
+  log_pass "volere impact --mark creates suspect links (UR-008)"
+else
+  log_fail "volere impact --mark should mark UR-051 as suspect"
+fi
+
+# Test 34: volere impact --suspects exits 1 on unresolved (UR-008)
+if ! "$VOLERE_CMD" impact --suspects >/dev/null 2>&1; then
+  log_pass "volere impact --suspects exits 1 on unresolved (UR-008)"
+else
+  log_fail "volere impact --suspects should exit 1 with unresolved suspects"
+fi
+
 # Clean up
 rm -rf docs/requirements .volere
 rm -f docs/requirements/UR-050.yaml docs/requirements/context.yaml
