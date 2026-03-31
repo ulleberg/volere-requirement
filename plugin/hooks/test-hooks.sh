@@ -521,6 +521,81 @@ else
   log_fail "suspect auto should mark UR-051 when UR-050 changed"
 fi
 
+# Test 36: valid card passes schema validation (TC-007)
+VALIDATE_CMD="$SCRIPT_DIR/../validate.sh"
+VALIDATE_OUT=$("$VALIDATE_CMD" docs/requirements/UR-050.yaml 2>&1 || true)
+if echo "$VALIDATE_OUT" | grep -q "PASS"; then
+  log_pass "valid card passes schema validation (TC-007)"
+else
+  log_fail "valid card should pass schema validation"
+fi
+
+# Test 37: card missing required field fails validation (TC-007)
+cat > bad-card-missing.yaml << 'CARD'
+id: UR-099
+type: functional
+title: "Missing rationale"
+description: "The system must do something"
+fit_criteria:
+  user:
+    criterion: "Something measurable"
+    verification: test
+dal: C
+priority: must
+status: proposed
+origin:
+  stakeholder: test
+  date: "2026-03-31"
+CARD
+BAD_OUT=$("$VALIDATE_CMD" bad-card-missing.yaml 2>&1 || true)
+if echo "$BAD_OUT" | grep -q "FAIL"; then
+  log_pass "card missing required field fails validation (TC-007)"
+else
+  log_fail "card missing rationale should fail validation"
+fi
+rm -f bad-card-missing.yaml
+
+# Test 38: card with invalid ID pattern fails validation (TC-007)
+cat > bad-card-id.yaml << 'CARD'
+id: INVALID-001
+type: functional
+title: "Bad ID"
+description: "The system must fail"
+rationale: "Testing validation"
+fit_criteria:
+  user:
+    criterion: "Should fail"
+    verification: test
+dal: C
+priority: must
+status: proposed
+origin:
+  stakeholder: test
+  date: "2026-03-31"
+CARD
+ID_OUT=$("$VALIDATE_CMD" bad-card-id.yaml 2>&1 || true)
+if echo "$ID_OUT" | grep -q "FAIL"; then
+  log_pass "card with invalid ID pattern fails validation (TC-007)"
+else
+  log_fail "card with INVALID-001 should fail validation"
+fi
+rm -f bad-card-id.yaml
+
+# Test 39: all project requirement cards validate with zero errors (BUC-006)
+ALL_PASS=1
+for card in "$SCRIPT_DIR"/../requirements/*.yaml; do
+  [ "$(basename "$card")" = "context.yaml" ] && continue
+  if ! "$VALIDATE_CMD" "$card" >/dev/null 2>&1; then
+    echo "    FAIL: $(basename "$card")"
+    ALL_PASS=0
+  fi
+done
+if [ "$ALL_PASS" -eq 1 ]; then
+  log_pass "all project requirement cards validate with zero errors (BUC-006)"
+else
+  log_fail "some requirement cards failed schema validation"
+fi
+
 # Clean up
 rm -rf docs/requirements .volere src
 
