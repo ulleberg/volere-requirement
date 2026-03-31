@@ -359,12 +359,13 @@ cmd_trace() {
 
     # Find code files referencing this ID
     local code_files=$(grep -rl "$id" "$PROJECT_ROOT" \
-      --include="*.go" --include="*.js" --include="*.ts" --include="*.py" \
-      2>/dev/null | grep -v node_modules | grep -v _test | grep -v ".test." | grep -v vendor | head -5 || true)
+      --include="*.go" --include="*.js" --include="*.ts" --include="*.py" --include="*.sh" --include="*.rs" \
+      2>/dev/null | grep -v node_modules | grep -v _test | grep -v ".test." | grep -v "test-hooks\|test_" | grep -v vendor | head -5 || true)
 
     # Find test files referencing this ID
     local test_files=$(grep -rl "$id" "$PROJECT_ROOT" \
       --include="*_test.go" --include="*.test.js" --include="*.test.ts" --include="*.spec.*" \
+      --include="*test*.sh" --include="*_test.py" --include="*_test.rs" \
       2>/dev/null | grep -v node_modules | head -5 || true)
 
     echo -e "  ${CYAN}$id${NC}  $title"
@@ -442,6 +443,7 @@ cmd_coverage() {
     # Check if tests reference this ID
     local has_tests=$(grep -rl "$id" "$PROJECT_ROOT" \
       --include="*_test.go" --include="*.test.js" --include="*.test.ts" --include="*.spec.*" \
+      --include="*test*.sh" --include="*_test.py" --include="*_test.rs" \
       2>/dev/null | grep -v node_modules | head -1 || true)
 
     if [ -n "$has_tests" ]; then
