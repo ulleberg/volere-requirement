@@ -69,9 +69,13 @@ for f in "$REQS_DIR"/*.yaml; do
   if [ -n "$has_test" ]; then
     TESTED=$((TESTED + 1))
   else
+    # Extract first fit criterion for context
+    fit_text=$(grep -A1 "criterion:" "$f" 2>/dev/null | tail -1 | sed 's/^[[:space:]]*//' | head -c 120 || true)
+    [ -z "$fit_text" ] && fit_text="(no fit criterion)"
+
     UNTESTED_LIST="$UNTESTED_LIST  - $id: $title (DAL-$dal)\n"
     if [ "$dal" = "A" ] || [ "$dal" = "B" ]; then
-      DAL_B_GAPS="$DAL_B_GAPS  - $id: $title (DAL-$dal)\n"
+      DAL_B_GAPS="$DAL_B_GAPS  - $id: $title (DAL-$dal)\n    Fit: $fit_text\n"
     fi
   fi
 done

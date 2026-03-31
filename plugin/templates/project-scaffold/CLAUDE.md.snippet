@@ -2,7 +2,18 @@
 
 The `SessionStart` hook reports acceptance coverage. **When you see this hook output, proactively brief:**
 
-- **Gaps exist (X < Y):** Summarize X/Y coverage, list uncovered gaps ranked by DAL level (DAL-A/B first), and propose which gaps to close — consider impact, feasibility, and what the user is likely working on today.
+- **Gaps exist (X < Y):** Summarize X/Y coverage, list uncovered gaps ranked by DAL level (DAL-A/B first), and propose which gaps to close — consider impact, feasibility, and what the user is likely working on today. When proposing gap closure, pass the requirement's fit criterion into `/brainstorm` as the acceptance target — don't start from scratch.
 - **Full coverage (X = Y):** Report X/Y, then ask whether the user wants to work on new features, add new requirements, or something else.
 
 Don't wait to be asked — this is the session briefing.
+
+## Post-Implementation Checklist
+
+After completing any feature or fix driven by a requirement:
+
+1. **Verify fit criteria:** Run `volere coverage` — did coverage improve?
+2. **Audit new tests:** Do they VERIFY fit criteria, or just SUPPORT implementation?
+3. **Check impact:** Run `volere impact` on changed requirements — any suspect links?
+4. **Update card status:** Move requirement from `proposed` → `implemented` if fit criteria are now verified.
+
+If the implementation wasn't driven by a requirement, ask: should it have been? Missing requirements are how code becomes untraceable.
