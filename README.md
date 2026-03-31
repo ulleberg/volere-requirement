@@ -36,12 +36,12 @@ Each level has testable fit criteria. Each level traces to the next. Each level 
 | Component | What it does |
 |-----------|-------------|
 | `plugin/schema/` | JSON Schema for requirement cards, DAL profiles, compliance, evidence |
-| `plugin/skills/` | 7 skills: extract-requirements, write-requirement, review-requirements, trace-codebase, audit-tests, classify-risk, glossary |
-| `plugin/hooks/` | 6 hooks: check-secrets, check-traceability, check-fit-criteria, check-checkout, check-merge, installer |
+| `plugin/skills/` | 8 skills: extract-requirements, simplify-requirements, write-requirement, review-requirements, trace-codebase, audit-tests, classify-risk, glossary |
+| `plugin/hooks/` | 7 hooks: check-secrets, check-simplicity, check-traceability, check-fit-criteria, check-checkout, check-merge, coverage-gaps + installer |
 | `plugin/cli/volere` | CLI with 7 commands: init, new, validate, trace, coverage, impact, review |
 | `plugin/catalogs/` | Shared requirement catalogs (security-baseline) |
 | `plugin/templates/` | Project scaffold, BUC/PUC/UR/TC/evidence/compliance templates, retrofit guide |
-| `plugin/requirements/` | 39 cards dogfooding the framework (6 BUCs, 15 URs, 16 TCs), 29/29 tests, 41% coverage |
+| `plugin/requirements/` | 32 cards dogfooding the framework (5 BUCs, 12 URs, 15 TCs), 52 tests, 100% coverage |
 
 ## Key Features
 
@@ -54,7 +54,7 @@ Each level has testable fit criteria. Each level traces to the next. Each level 
 ## Proven By
 
 - **thul-studio validation** — 26 URs strengthened to 43 URs + 12 TCs, 12,814 lines dead code removed, 23 security tests added via TDD
-- **Self-dogfooding** — framework's own codebase extracted and reviewed: 6 BUCs, 15 URs, 16 TCs, 29/29 tests, 5 framework improvements discovered during the process
+- **Self-dogfooding** — framework's own codebase extracted and reviewed: 5 BUCs, 12 URs, 15 TCs, 52 tests at 100% coverage, 5 framework improvements discovered during the process
 - **Experiment 001** (thul-agentic-research) — skilled agent teams produce 100% testable fit criteria and self-organize for cross-document coherence
 
 ## Original Volere Template
@@ -119,6 +119,7 @@ See `ARCHITECTURE.md` for the full design principles, V-Model mapping, and desig
 | v0.6 | **Shipped** | DAL profiles + classify-risk skill + check-fit-criteria hook |
 | v0.7 | **Shipped** | Suspect link management (mark, resolve, auto, check) |
 | v0.8 | **Shipped** | Compliance profiles, evidence chain, security baseline catalog |
-| v0.9 | **Active** | Production hardening — validate on 3 real projects |
-| v1.0 | Planned | Publish to thul-plugins marketplace as `volere@ulleberg` |
+| v0.9 | **Shipped** | Production hardening — 52 tests, 32/32 coverage, CI/CD sync |
+| v0.9.1 | **Shipped** | Published to thul-plugins marketplace as `volere@ulleberg` |
+| v1.0 | **Active** | Subagent pressure tests, plugin packaging, getting started guide |
 | v1.1 | Planned | Pre-built compliance profiles (FCC Part 15, RED 2014/53/EU, IEC 61508) |

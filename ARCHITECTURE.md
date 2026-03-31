@@ -35,14 +35,16 @@ volere-requirement/
 │   │   ├── audit-tests/             VERIFIES/SUPPORTS/THEATER + verification levels + loopback
 │   │   ├── classify-risk/           DAL scoring + browser-facing escalation
 │   │   └── glossary/                Abbreviations, DAL levels, terminology reference
-│   ├── hooks/                       6 git hooks (full lifecycle)
+│   ├── hooks/                       7 git hooks (full lifecycle)
 │   │   ├── check-secrets.sh         Pre-commit: block secret patterns
+│   │   ├── check-simplicity.sh      Pre-commit: diff stats + simplicity check
 │   │   ├── check-traceability.sh    Commit-msg: warn/block missing requirement IDs
 │   │   ├── check-fit-criteria.sh    Pre-push: configurable verification commands
 │   │   ├── check-checkout.sh        Post-checkout: requirement drift detection
 │   │   ├── check-merge.sh           Post-merge: suspect links + cross-verify
-│   │   ├── install.sh               Hook installer with chaining (5 hooks)
-│   │   └── test-hooks.sh            16/16 test suite
+│   │   ├── coverage-gaps.sh         SessionStart: report acceptance coverage
+│   │   ├── install.sh               Hook installer with chaining
+│   │   └── test-hooks.sh            52-test suite
 │   ├── cli/                         CLI tooling
 │   │   ├── volere                   7 commands (init, new, validate, trace, coverage, impact, review)
 │   │   └── suspect.sh               Suspect link state management

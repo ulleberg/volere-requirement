@@ -10,11 +10,11 @@ Archive of the original Volere Requirements Template (v15) plus the Volere Agent
 - **plugin/** — the framework (v0.1–v0.8 shipped, v0.9 hardening):
   - `schema/` — 4 JSON schemas (requirement with cross_verify + verification_method, profile with verification_commands, compliance, evidence with verification_level)
   - `skills/` — 8 skills (extract-requirements, simplify-requirements, write-requirement, review-requirements, trace-codebase, audit-tests, classify-risk, glossary)
-  - `hooks/` — 8 hooks (check-secrets, check-simplicity, check-traceability, check-fit-criteria, check-checkout, check-merge, coverage-gaps, installer)
+  - `hooks/` — 7 hooks (check-secrets, check-simplicity, check-traceability, check-fit-criteria, check-checkout, check-merge, coverage-gaps) + installer
   - `cli/` — CLI with 7 commands + suspect link manager
   - `catalogs/` — shared requirement catalogs (security-baseline)
   - `templates/` — project scaffold, BUC/PUC/UR/TC/evidence/compliance templates, retrofit guide
-  - `requirements/` — 39 cards dogfooding the framework (6 BUCs, 15 URs, 16 TCs), 29/29 tests, 41% coverage
+  - `requirements/` — 32 cards dogfooding the framework (5 BUCs, 12 URs, 15 TCs), 52 tests, 100% coverage
 
 See `ARCHITECTURE.md` for the full V-Model mapping, design principles, and design decisions.
 
@@ -37,7 +37,7 @@ See `ARCHITECTURE.md` for the full V-Model mapping, design principles, and desig
 # Validate requirement cards against schema
 plugin/validate.sh plugin/requirements/UR-001.yaml
 
-# Run hook + CLI + validator test suite (29 tests)
+# Run hook + CLI + validator test suite (52 tests)
 plugin/hooks/test-hooks.sh
 
 # CLI commands
