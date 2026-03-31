@@ -114,6 +114,12 @@
       "items": { "type": "string", "pattern": "^(UR|TC|SHR|SEC|BUC|PUC)-[0-9]{3}$" },
       "description": "Requirements whose fit criteria must be re-verified when this requirement changes — catches cross-requirement breakage (e.g., CSP hardening breaking CDN-dependent pages)"
     },
+    "testability": {
+      "type": "string",
+      "enum": ["automatable", "operational", "hardware-dependent", "not-yet-implemented"],
+      "default": "automatable",
+      "description": "How this requirement can be verified. Default: automatable. Other values require justification. 'operational' = requires live infrastructure. 'hardware-dependent' = requires physical device (consider loopback testing). 'not-yet-implemented' = requirement exists but feature not built yet. Coverage denominator uses only automatable + operational."
+    },
     "history": {
       "type": "array",
       "items": {

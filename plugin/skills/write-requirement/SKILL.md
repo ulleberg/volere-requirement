@@ -139,6 +139,19 @@ cross_verify:
 
 **Test:** If this requirement changes, would someone know which OTHER requirements to re-verify? If not, `cross_verify` is incomplete.
 
+### 9. Testability
+
+Default: `automatable`. Only change if you can justify why this requirement cannot be verified by running code.
+
+| Value | When to use | Justification required? |
+|-------|-------------|------------------------|
+| `automatable` | Fit criterion can be asserted by a test | No (default) |
+| `operational` | Requires live infrastructure (cross-machine, deployment) | Yes — what specifically requires live infra? |
+| `hardware-dependent` | Requires physical device | Yes — and consider loopback testing first |
+| `not-yet-implemented` | Requirement exists but feature not built yet | No — but update when implemented |
+
+**"Manual-only" is not an option.** If you think a requirement can only be verified manually, reconsider. Mobile PWA can be tested with Playwright device emulation. Crash recovery can be tested with SSH kill/restart scripts. STT can be tested with TTS loopback. The question is not "can a human verify this?" but "what observable state change proves this criterion is met?"
+
 ## Output
 
 Write the requirement card to:

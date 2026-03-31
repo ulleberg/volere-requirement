@@ -292,12 +292,35 @@ The synthesis agent evaluates review quality using these metrics:
 
 If the synthesis scores below target, the review should be re-run with more specific instructions to the underperforming reviewer.
 
+## Review Findings Are Hypotheses, Not Evidence
+
+Agent reviewers make false claims about implementation state. In thul-studio, 3 independent reviewers reported UR-35 (session reconciliation) as "not implemented — the helper function exists but is never called during startup." It was fully wired.
+
+**Rule:** Every review finding that claims "X is/isn't implemented" or "function X is never called" must include verification evidence:
+
+| Claim type | Required evidence |
+|-----------|-------------------|
+| "Function X is never called" | `grep -rn "FunctionX(" --include="*.go"` output showing zero results |
+| "Feature X is not implemented" | File:line references showing the gap |
+| "Test X doesn't verify criterion Y" | The test code + the criterion text, showing the mismatch |
+| "Code X is dead" | Trace showing no caller and no requirement reference |
+
+A finding without evidence is a hypothesis. Label it as such in the review output:
+
+```
+⚠ HYPOTHESIS (unverified): UR-35 appears unimplemented — AdoptOrphans() defined but no call site found
+  → Verify: grep -rn "AdoptOrphans(" --include="*.go" cmd/ internal/
+```
+
+Do not include unverified claims in the synthesis recommendations. The synthesis lead should flag any finding missing evidence and request verification before including it.
+
 ## After the Review
 
-1. **Work through the synthesis questions** — these are decisions only the stakeholder can make
-2. **Update requirements** based on decisions (use write-requirement skill for new URs)
-3. **If changes are significant** — run a validation review (Pass 1.5) to check consistency
-4. **When requirements are stable** — run a trace review (Pass 2) to map code and plan cleanup
+1. **Verify hypotheses** — run the suggested verification commands before acting on findings
+2. **Work through the synthesis questions** — these are decisions only the stakeholder can make
+3. **Update requirements** based on decisions (use write-requirement skill for new URs)
+4. **If changes are significant** — run a validation review (Pass 1.5) to check consistency
+5. **When requirements are stable** — run a trace review (Pass 2) to map code and plan cleanup
 
 ## Quality Checklist
 
