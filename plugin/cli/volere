@@ -111,11 +111,22 @@ cmd_init() {
     echo "  Hooks: not a git repo — install hooks after git init"
   fi
 
+  # Copy .claude/settings.json for SessionStart hook
+  if [ ! -f ".claude/settings.json" ]; then
+    mkdir -p .claude
+    cp "$TEMPLATE_DIR/project-scaffold/.claude/settings.json" .claude/
+    echo "  Created: .claude/settings.json (SessionStart coverage hook)"
+  else
+    echo "  Exists:  .claude/settings.json"
+  fi
+
   echo ""
   echo "Next steps:"
   echo "  1. Edit docs/requirements/context.yaml (stakeholders, scope, glossary)"
   echo "  2. Run: volere new --type functional (write your first requirement)"
-  echo "  3. Edit CLAUDE.md and ARCHITECTURE.md with project details"
+  echo "  3. Add the Session Start snippet to your CLAUDE.md:"
+  echo "     cat $VOLERE_DIR/templates/project-scaffold/CLAUDE.md.snippet"
+  echo "  4. Edit CLAUDE.md and ARCHITECTURE.md with project details"
   echo ""
   echo "Run: volere validate to check project health"
 }
