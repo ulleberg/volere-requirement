@@ -26,8 +26,9 @@ volere-requirement/
 │   │   ├── profile.schema.json      DAL profiles + verification_commands
 │   │   ├── compliance.schema.json   Compliance dimensions
 │   │   └── evidence.schema.json     Evidence lifecycle + verification_level
-│   ├── skills/                      7 Claude Code skills
+│   ├── skills/                      8 Claude Code skills
 │   │   ├── extract-requirements/    Scan codebase → draft UR/TC cards → owner review
+│   │   ├── simplify-requirements/   Reduce cards: delete, merge, question every card
 │   │   ├── write-requirement/       Card format + cross-impact prompt
 │   │   ├── review-requirements/     3 review types + zero-agent mode
 │   │   ├── trace-codebase/          Map code→requirements, find dead code
