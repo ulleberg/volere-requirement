@@ -415,6 +415,30 @@ origin:
   date: "2026-03-31"
 CARD
 
+cat > docs/requirements/UR-051.yaml << 'CARD'
+id: UR-051
+type: functional
+title: "Dependent requirement"
+description: "The system must depend on UR-050"
+rationale: "Testing impact analysis"
+fit_criteria:
+  user:
+    criterion: "Depends on UR-050"
+    verification: test
+dal: C
+priority: must
+status: proposed
+origin:
+  stakeholder: test
+  date: "2026-03-31"
+depends_on:
+  - UR-050
+CARD
+
+mkdir -p src
+echo "// Implements UR-050" > src/feature.js
+echo "// Tests UR-050" > src/feature.test.js
+
 # Test 26: volere validate runs and reports (TC-013)
 VALIDATE_OUT=$("$VOLERE_CMD" validate 2>&1 || true)
 if echo "$VALIDATE_OUT" | grep -qiE "validat|check|pass|warn"; then
