@@ -76,9 +76,9 @@ Regardless of score:
 - **Any DB migration or schema change → minimum DAL-B**
 - **Pure documentation or comments → DAL-E** (even if the file is in a critical module)
 - **Requirement's own DAL field** — the change's DAL cannot be lower than the affected requirement's DAL
-- **Any UR with browser-facing fit criteria → minimum DAL-C, recommend system-level verification**
-  Keywords: "user can see", "user can hear", "renders", "displays", "plays", "shows", "browser", "page", "screen"
-  Rationale: `curl` returns 200 with valid HTML while the page is black. Browser-facing criteria cannot be verified below system level.
+- **Any UR with fit criteria that imply system-level or higher verification → minimum DAL-C**
+  Scenarios: browser-facing ("renders", "displays", "page"), multi-service ("service calls", "API responds"), stateful/temporal ("expires after", "timeout triggers"), data pipeline ("pipeline produces", "downstream receives"), deployment ("deploys to", "in production", "across machines"), hardware-adjacent ("microphone", "camera", "speaker").
+  Rationale: Unit tests cannot verify behavior that spans browsers, services, time, pipelines, environments, or hardware. See `audit-tests` skill for the full verification level mismatch table.
 
 ## Verification Requirements Per DAL
 

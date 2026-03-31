@@ -116,18 +116,34 @@ For each fit criterion, report the highest V-Model level at which it has been te
 | UR-12 | TTS plays audio | acceptance | integration | YES — hardware-adjacent criterion needs acceptance test |
 | UR-27 | CSP headers set | system | system | No |
 
-**Browser-facing flag:** Any fit criterion containing these keywords requires system or acceptance level verification:
-- "user can see", "renders", "displays", "shows", "page", "screen"
-- "user can hear", "plays", "audio", "speaks"
-- "browser", "loads", "navigates"
+**Verification level mismatch detection:** Fit criteria contain signals that imply a minimum verification level. Flag any criterion where actual verification is below the minimum:
 
-If a fit criterion matches these keywords but only has unit or integration tests, flag it:
+| Scenario | Fit criterion signals | Minimum level | Why unit/integration isn't enough |
+|----------|----------------------|---------------|----------------------------------|
+| **Browser-facing** | "user can see/hear", "renders", "displays", "shows", "plays", "page", "screen", "browser", "loads", "navigates" | system | curl 200 ≠ page renders correctly |
+| **Multi-service** | "service A calls/returns", "API responds", "endpoint returns", "upstream/downstream" | integration | Testing one service doesn't verify the contract |
+| **Stateful/temporal** | "after N minutes/hours", "expires", "timeout triggers", "eventually", "within N seconds" | system | Snapshot tests don't verify behavior over time |
+| **Data pipeline** | "pipeline produces", "downstream receives", "transforms and delivers", "end-to-end" | system | Transform logic works but schema changed downstream |
+| **Deployment/infra** | "deploys to", "runs on", "in production", "across machines", "multi-node", "cluster" | acceptance | Tests pass locally, target environment differs |
+| **Hardware-adjacent** | "microphone", "camera", "speaker", "sensor", "GPS", "bluetooth" | acceptance | See Loopback Testing Pattern below |
+
+If a fit criterion matches signals from this table but only has verification below the minimum level, flag it:
 
 ```
 ⚠ UR-03:user — "Grid renders all active sessions" — browser-facing criterion
   Current verification: unit (TestGridHandler returns JSON)
   Required verification: system (browser renders grid with sessions visible)
   Action: Add Playwright or browser-check test that verifies the rendered page
+
+⚠ UR-08:operational — "Session expires after 30 minutes of inactivity" — stateful/temporal
+  Current verification: unit (TestSessionExpiry with mocked clock)
+  Required verification: system (real timer fires and session is cleaned up)
+  Action: Add integration test with shortened timeout that verifies actual expiry
+
+⚠ UR-15:user — "Auth service validates token with API gateway" — multi-service
+  Current verification: unit (TestTokenValidation with mocked gateway)
+  Required verification: integration (real auth service → real gateway → verified response)
+  Action: Add integration test that exercises the actual service boundary
 ```
 
 ### Classification Table
