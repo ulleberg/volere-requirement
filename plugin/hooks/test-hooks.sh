@@ -643,6 +643,14 @@ else
   log_fail "security catalog should have 5 SEC requirements with tailorable flags (got $SEC_COUNT reqs, $HAS_TAILORABLE tailorable)"
 fi
 
+# Test 43: volere trace reports TRACED for requirements with code and test refs (BUC-002)
+TRACE_OUT=$("$VOLERE_CMD" trace 2>&1 || true)
+if echo "$TRACE_OUT" | grep -q "TRACED"; then
+  log_pass "volere trace reports TRACED status for traced requirements (BUC-002)"
+else
+  log_fail "volere trace should report TRACED for UR-050 (has code and test references)"
+fi
+
 # Clean up
 rm -rf docs/requirements .volere src
 
