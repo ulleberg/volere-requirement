@@ -2,8 +2,13 @@
   "hooks": {
     "SessionStart": [
       {
-        "command": "plugin/hooks/coverage-gaps.sh",
-        "description": "Inject uncovered requirements into session context"
+        "matcher": "",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "plugin/hooks/coverage-gaps.sh"
+          }
+        ]
       }
     ]
   }
