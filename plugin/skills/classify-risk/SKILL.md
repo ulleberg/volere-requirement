@@ -16,13 +16,7 @@ Assign a Design Assurance Level (A-E) to a code change, feature, or requirement.
 
 ## DAL Levels
 
-| DAL | Failure Impact | Verification Required | Example Changes |
-|-----|---------------|----------------------|-----------------|
-| **A** | Catastrophic — data loss, security breach, safety incident | Unit + integration + system + acceptance + performance + mutation + multi-agent review | Auth bypass fix, DB migration, encryption change, safety-critical control logic |
-| **B** | Critical — service degradation, data corruption, secrets exposure | Unit + integration + system + acceptance + performance + code review | Session data persistence, secrets handling, CORS configuration, API contract changes |
-| **C** | Moderate — feature broken, user-visible impact, workaround may exist | Unit + integration + system + acceptance + code review | New feature, state detection logic, file preview, WebSocket handling |
-| **D** | Minor — cosmetic issue, easy workaround, limited user impact | Unit + basic integration | Config default change, log format, error message text, minor UI tweak |
-| **E** | Cosmetic — no user impact, no behavioral change | Linting + type checking | Documentation, CSS fix, comment update, dependency version bump (patch) |
+See `/glossary` for the full DAL table. Quick reference: A=catastrophic, B=critical, C=moderate, D=minor, E=cosmetic.
 
 ## Classification Method
 
@@ -82,45 +76,7 @@ Regardless of score:
 
 ## Verification Requirements Per DAL
 
-Read from the project's `.volere/profile.yaml`. Default:
-
-```yaml
-A:  # catastrophic
-  hooks: [check-secrets, check-traceability, check-fit-criteria]
-  ci: [lint, typecheck, test, coverage, mutation, fitness-functions]
-  review: [code-reviewer, test-engineer, architecture-reviewer, security-engineer]
-  verification:
-    unit: required
-    integration: required
-    system: required
-    acceptance: required
-    performance: required
-    visual: required
-    mutation: required
-    manual: forbidden
-
-C:  # moderate (default)
-  hooks: [check-secrets, check-traceability]
-  ci: [lint, typecheck, test, coverage]
-  review: code-reviewer
-  verification:
-    unit: required
-    integration: required
-    system: required
-    acceptance: required
-    manual: forbidden
-
-E:  # cosmetic
-  hooks: []
-  ci: [lint, typecheck]
-  review: none
-  verification:
-    unit: optional
-    integration: optional
-    system: optional
-    acceptance: optional
-    manual: optional
-```
+Read from the project's `.volere/profile.yaml`. See the default profile in `plugin/templates/project-scaffold/.volere/profile.yaml`.
 
 ## How Agents Use This
 

@@ -29,12 +29,7 @@ Agents are lazy testers. They optimise for coverage metrics, not verification qu
 
 For each test, ask: **"Which fit criterion does this test verify? Can I point to the specific measurable condition?"**
 
-| Classification | Criterion | Action |
-|---------------|-----------|--------|
-| **VERIFIES** | Test directly asserts the condition stated in a fit criterion | Keep — this is a real acceptance test |
-| **SUPPORTS** | Test checks implementation that serves a fit criterion, but doesn't assert the criterion itself | Keep, but consider rewriting to verify the criterion directly |
-| **THEATER** | Test checks implementation details with no connection to any fit criterion | Remove — it inflates coverage without adding verification |
-| **REDUNDANT** | Test duplicates another test's coverage of the same criterion | Remove the weaker one — keep the test that most directly verifies the criterion |
+Classify as VERIFIES, SUPPORTS, THEATER, or REDUNDANT. See `/glossary` for definitions.
 
 ### Decision Tree
 

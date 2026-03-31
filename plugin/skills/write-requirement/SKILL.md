@@ -30,14 +30,13 @@ Guide the agent through writing a Volere requirement card in YAML format. Every 
    ```
    Find the next available number.
 
-3. **Determine the requirement level:**
-   - **BUC** (Business Use Case, Volere §7) — high-level business process the system supports. Answers "why do these requirements exist?" Decomposes into PUCs or URs.
-   - **PUC** (Product Use Case, Volere §8) — specific user-system interaction. Answers "what does the user do?" Decomposes into URs. Each PUC serves a BUC.
-   - **UR** (User Requirement, Volere §9-17) — what the user needs from the system. Implements a PUC or BUC. Decomposes into TCs.
-   - **TC** (Technical Constraint) — implementation contract that serves a UR. Emerged during development, not from user needs.
-   - **SHR** (Stakeholder Requirement, Volere §1-5) — high-level need (complex/regulated projects only)
+3. **Determine the requirement level** (see `/glossary` for the full table):
+   - **BUC** — why requirements exist (business context)
+   - **PUC** — what the user does (interaction flows)
+   - **UR** — what the system must do
+   - **TC** — what the implementation must guarantee (serves a UR)
 
-   **Decomposition rule:** Start with BUCs. If URs exist without a parent BUC, that's a gap — either the BUC is missing or the UR is orphaned. Not every project needs PUCs (the intermediate layer), but every project needs BUCs to give requirements context.
+   **Decomposition rule:** Start with BUCs. If URs exist without a parent BUC, that's a gap. Not every project needs PUCs, but every project needs BUCs for context.
 
 ## Writing the Card
 
@@ -85,15 +84,7 @@ For each dimension, specify:
 
 ### 4. DAL Classification
 
-Classify the risk if this requirement fails:
-
-| DAL | Failure Impact | Example |
-|-----|---------------|---------|
-| **A** | Catastrophic — data loss, safety incident, security breach | Database migration, auth bypass, safety-critical control |
-| **B** | Critical — service degradation, data corruption | Session data integrity, secrets exposure |
-| **C** | Moderate — feature broken, user impact | Session state detection, file preview |
-| **D** | Minor — cosmetic, workaround exists | Workspace grouping, context summary |
-| **E** | Cosmetic — no user impact | CSS fix, documentation |
+Classify the risk if this requirement fails. See `/glossary` for the full DAL table, or use `/classify-risk` for the scoring method. Quick reference: A=catastrophic, B=critical, C=moderate, D=minor, E=cosmetic.
 
 ### 5. Priority (MoSCoW)
 
