@@ -170,7 +170,7 @@ try {
   }
 
   // Check id format
-  if (card.id && !/^(UR|TC|SHR|SEC)-[0-9]{3}$/.test(card.id)) {
+  if (card.id && !/^(UR|TC|SHR|SEC|BUC|PUC)-[0-9]{3}$/.test(card.id)) {
     errors.push('Invalid id format: ' + card.id + ' (expected UR-001, TC-001, etc.)');
   }
 
