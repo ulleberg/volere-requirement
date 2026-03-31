@@ -42,7 +42,7 @@ echo ""
 echo "check-secrets:"
 # ============================================================
 
-# Test 1: File with secret should block
+# Test 1: File with secret should block (TC-001)
 echo 'api_key = "FAKE_TEST_KEY_abcdefghijklmnopqrstuvwxyz1234567890"' > secret.txt
 git add secret.txt
 if ! "$SCRIPT_DIR/check-secrets.sh" >/dev/null 2>&1; then
@@ -53,7 +53,7 @@ fi
 git reset --quiet HEAD secret.txt
 rm secret.txt
 
-# Test 2: File with AWS key should block
+# Test 2: File with AWS key should block (TC-001)
 echo 'aws_key = "AKIAIOSFODNN7EXAMPLE"' > aws.txt
 git add aws.txt
 if ! "$SCRIPT_DIR/check-secrets.sh" >/dev/null 2>&1; then
@@ -64,7 +64,7 @@ fi
 git reset --quiet HEAD aws.txt
 rm aws.txt
 
-# Test 3: File with private key should block
+# Test 3: File with private key should block (TC-001)
 printf '%s\n' '-----BEGIN RSA PRIVATE KEY-----' 'MIIEpAIBAAKCAQEA...' '-----END RSA PRIVATE KEY-----' > key.pem
 git add key.pem
 if ! "$SCRIPT_DIR/check-secrets.sh" >/dev/null 2>&1; then
@@ -75,7 +75,7 @@ fi
 git reset --quiet HEAD key.pem
 rm key.pem
 
-# Test 4: Normal code should pass
+# Test 4: Normal code should pass (TC-001)
 echo 'const x = 42;' > clean.js
 git add clean.js
 if "$SCRIPT_DIR/check-secrets.sh" >/dev/null 2>&1; then
@@ -85,7 +85,7 @@ else
 fi
 git commit --quiet -m "clean commit"
 
-# Test 5: Test files should be skipped
+# Test 5: Test files should be skipped (TC-001)
 echo 'api_key = "FAKE_TEST_KEY_abcdefghijklmnopqrstuvwxyz1234567890"' > auth.test.js
 git add auth.test.js
 if "$SCRIPT_DIR/check-secrets.sh" >/dev/null 2>&1; then
@@ -95,7 +95,7 @@ else
 fi
 git commit --quiet -m "test file"
 
-# Test 6: .env.example should be skipped
+# Test 6: .env.example should be skipped (TC-001)
 echo 'API_KEY="your-key-here-replace-me-with-a-real-one"' > .env.example
 git add .env.example
 if "$SCRIPT_DIR/check-secrets.sh" >/dev/null 2>&1; then
@@ -111,7 +111,7 @@ echo ""
 echo "check-traceability:"
 # ============================================================
 
-# Test 7: Commit with UR reference should pass
+# Test 7: Commit with UR reference should pass (TC-002)
 echo "Fix session state (UR-003)" > "$TEMP_DIR/.git/COMMIT_MSG"
 if "$SCRIPT_DIR/check-traceability.sh" "$TEMP_DIR/.git/COMMIT_MSG" >/dev/null 2>&1; then
   log_pass "Passes commit with UR-003 reference"
@@ -119,7 +119,7 @@ else
   log_fail "Should pass commit with UR-003"
 fi
 
-# Test 8: Commit with TC reference should pass
+# Test 8: Commit with TC reference should pass (TC-002)
 echo "Implement idle debounce (TC-005)" > "$TEMP_DIR/.git/COMMIT_MSG"
 if "$SCRIPT_DIR/check-traceability.sh" "$TEMP_DIR/.git/COMMIT_MSG" >/dev/null 2>&1; then
   log_pass "Passes commit with TC-005 reference"
@@ -127,7 +127,7 @@ else
   log_fail "Should pass commit with TC-005"
 fi
 
-# Test 9: Commit with BUC reference should pass
+# Test 9: Commit with BUC reference should pass (TC-002)
 echo "Support mobile agent management (BUC-001)" > "$TEMP_DIR/.git/COMMIT_MSG"
 if "$SCRIPT_DIR/check-traceability.sh" "$TEMP_DIR/.git/COMMIT_MSG" >/dev/null 2>&1; then
   log_pass "Passes commit with BUC-001 reference"
@@ -135,7 +135,7 @@ else
   log_fail "Should pass commit with BUC-001"
 fi
 
-# Test 10: Commit without reference should warn (exit 0)
+# Test 10: Commit without reference should warn (exit 0) (TC-002)
 echo "Fix a bug" > "$TEMP_DIR/.git/COMMIT_MSG"
 if "$SCRIPT_DIR/check-traceability.sh" "$TEMP_DIR/.git/COMMIT_MSG" >/dev/null 2>&1; then
   log_pass "Warns (exit 0) on commit without reference"
@@ -143,7 +143,7 @@ else
   log_fail "Should warn (exit 0), not block"
 fi
 
-# Test 11: Strict mode should block
+# Test 11: Strict mode should block (TC-002)
 echo "Fix a bug" > "$TEMP_DIR/.git/COMMIT_MSG"
 export VOLERE_TRACEABILITY_STRICT=1
 if ! "$SCRIPT_DIR/check-traceability.sh" "$TEMP_DIR/.git/COMMIT_MSG" >/dev/null 2>&1; then
@@ -153,7 +153,7 @@ else
 fi
 unset VOLERE_TRACEABILITY_STRICT
 
-# Test 12: Merge commits should be skipped
+# Test 12: Merge commits should be skipped (TC-002)
 echo "Merge branch 'feature' into main" > "$TEMP_DIR/.git/COMMIT_MSG"
 export VOLERE_TRACEABILITY_STRICT=1
 if "$SCRIPT_DIR/check-traceability.sh" "$TEMP_DIR/.git/COMMIT_MSG" >/dev/null 2>&1; then
@@ -183,7 +183,7 @@ git add docs/requirements/UR-002.yaml
 git commit --quiet -m "Add UR-002"
 FEATURE_HEAD=$(git rev-parse HEAD)
 
-# Test 13: Post-checkout runs without error (advisory)
+# Test 13: Post-checkout runs without error (advisory) (TC-004)
 git checkout --quiet main 2>/dev/null || git checkout --quiet master
 if "$SCRIPT_DIR/check-checkout.sh" "$FEATURE_HEAD" "$MAIN_HEAD" "1" >/dev/null 2>&1; then
   log_pass "Post-checkout runs without error (advisory)"
@@ -191,7 +191,7 @@ else
   log_fail "Post-checkout should never block (advisory)"
 fi
 
-# Test 14: Post-checkout skips file checkouts
+# Test 14: Post-checkout skips file checkouts (TC-004)
 if "$SCRIPT_DIR/check-checkout.sh" "$MAIN_HEAD" "$MAIN_HEAD" "0" >/dev/null 2>&1; then
   log_pass "Skips file checkouts (flag=0)"
 else
@@ -207,14 +207,14 @@ echo ""
 echo "check-merge:"
 # ============================================================
 
-# Test 15: Post-merge runs without error when no reqs changed
+# Test 15: Post-merge runs without error when no reqs changed (TC-005)
 if "$SCRIPT_DIR/check-merge.sh" "0" >/dev/null 2>&1; then
   log_pass "Post-merge runs without error (no changes)"
 else
   log_fail "Post-merge should never block (advisory)"
 fi
 
-# Test 16: Post-merge detects changed requirement cards
+# Test 16: Post-merge detects changed requirement cards (TC-005)
 git checkout --quiet -b merge-test
 echo "id: UR-099" > docs/requirements/UR-099.yaml
 git add docs/requirements/UR-099.yaml
