@@ -651,6 +651,55 @@ else
   log_fail "volere trace should report TRACED for UR-050 (has code and test references)"
 fi
 
+# Test 44: volere trace shows TRACED/GAP status and coverage percentage (UR-006)
+if echo "$TRACE_OUT" | grep -qE "GAP|Traced:.*[0-9]+%"; then
+  log_pass "volere trace shows TRACED/GAP status and coverage percentage (UR-006)"
+else
+  log_fail "volere trace should show GAP status and coverage percentage"
+fi
+
+# Test 45: volere coverage reports per-requirement coverage percentage (UR-007)
+COVERAGE_OUT=$("$VOLERE_CMD" coverage 2>&1 || true)
+if echo "$COVERAGE_OUT" | grep -qE "Coverage:.*[0-9]+/[0-9]+"; then
+  log_pass "volere coverage reports per-requirement coverage percentage (UR-007)"
+else
+  log_fail "volere coverage should report coverage fraction"
+fi
+
+# Test 46: validator flags specific vague words in fit criteria (TC-008)
+cat > vague-tc008.yaml << 'CARD'
+id: UR-097
+type: functional
+title: "Vague words test"
+description: "The system must be adequate"
+rationale: "Testing TC-008 vague detection"
+fit_criteria:
+  user:
+    criterion: "Response time is sufficient and reasonable"
+    verification: test
+dal: C
+priority: must
+status: proposed
+origin:
+  stakeholder: test
+  date: "2026-03-31"
+CARD
+TC008_OUT=$("$VALIDATE_CMD" vague-tc008.yaml 2>&1 || true)
+if echo "$TC008_OUT" | grep -qi "sufficient\|reasonable"; then
+  log_pass "validator flags sufficient and reasonable as vague words (TC-008)"
+else
+  log_fail "validator should flag 'sufficient' and 'reasonable' in fit criteria"
+fi
+rm -f vague-tc008.yaml
+
+# Test 47: volere review recommends review type based on project state (UR-009)
+REVIEW_OUT=$("$VOLERE_CMD" review 2>&1 || true)
+if echo "$REVIEW_OUT" | grep -qiE "Full Review|Validation Review|Trace Review|write-requirement"; then
+  log_pass "volere review recommends review type based on project state (UR-009)"
+else
+  log_fail "volere review should recommend a review type"
+fi
+
 # Clean up
 rm -rf docs/requirements .volere src
 
