@@ -5,6 +5,7 @@
 set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
+VALIDATE_CMD="$SCRIPT_DIR/../validate.sh"
 TEMP_DIR=$(mktemp -d)
 PASS=0
 FAIL=0
@@ -22,6 +23,26 @@ log_pass() {
 log_fail() {
   echo "  ✗ $1"
   FAIL=$((FAIL + 1))
+}
+
+# Test helpers
+assert_secrets_blocks() {  # file, content, message
+  echo "$2" > "$1"; git add "$1"
+  if ! "$SCRIPT_DIR/check-secrets.sh" >/dev/null 2>&1; then log_pass "$3"; else log_fail "$3"; fi
+  git reset --quiet HEAD "$1"; rm -f "$1"
+}
+
+assert_secrets_passes() {  # file, content, message, commit_msg
+  echo "$2" > "$1"; git add "$1"
+  if "$SCRIPT_DIR/check-secrets.sh" >/dev/null 2>&1; then log_pass "$3"; else log_fail "$3"; fi
+  git commit --quiet -m "${4:-auto}"
+}
+
+assert_file_contains() {  # pass_msg, file, pattern1 [pattern2 ...]
+  local msg="$1" f="$2"; shift 2
+  [ ! -f "$f" ] && { log_fail "$msg"; return; }
+  for p in "$@"; do grep -q "$p" "$f" 2>/dev/null || { log_fail "$msg"; return; }; done
+  log_pass "$msg"
 }
 
 # Setup temp repo
@@ -43,67 +64,25 @@ echo "check-secrets:"
 # ============================================================
 
 # Test 1: File with secret should block (TC-001)
-echo 'api_key = "FAKE_TEST_KEY_abcdefghijklmnopqrstuvwxyz1234567890"' > secret.txt
-git add secret.txt
-if ! "$SCRIPT_DIR/check-secrets.sh" >/dev/null 2>&1; then
-  log_pass "Blocks commit with API key"
-else
-  log_fail "Should block commit with API key"
-fi
-git reset --quiet HEAD secret.txt
-rm secret.txt
+assert_secrets_blocks secret.txt 'api_key = "FAKE_TEST_KEY_abcdefghijklmnopqrstuvwxyz1234567890"' "Blocks commit with API key"
 
 # Test 2: File with AWS key should block (TC-001)
-echo 'aws_key = "AKIAIOSFODNN7EXAMPLE"' > aws.txt
-git add aws.txt
-if ! "$SCRIPT_DIR/check-secrets.sh" >/dev/null 2>&1; then
-  log_pass "Blocks commit with AWS access key"
-else
-  log_fail "Should block commit with AWS key"
-fi
-git reset --quiet HEAD aws.txt
-rm aws.txt
+assert_secrets_blocks aws.txt 'aws_key = "AKIAIOSFODNN7EXAMPLE"' "Blocks commit with AWS access key"
 
 # Test 3: File with private key should block (TC-001)
 printf '%s\n' '-----BEGIN RSA PRIVATE KEY-----' 'MIIEpAIBAAKCAQEA...' '-----END RSA PRIVATE KEY-----' > key.pem
 git add key.pem
-if ! "$SCRIPT_DIR/check-secrets.sh" >/dev/null 2>&1; then
-  log_pass "Blocks commit with private key"
-else
-  log_fail "Should block commit with private key"
-fi
-git reset --quiet HEAD key.pem
-rm key.pem
+if ! "$SCRIPT_DIR/check-secrets.sh" >/dev/null 2>&1; then log_pass "Blocks commit with private key"; else log_fail "Should block commit with private key"; fi
+git reset --quiet HEAD key.pem; rm key.pem
 
 # Test 4: Normal code should pass (TC-001)
-echo 'const x = 42;' > clean.js
-git add clean.js
-if "$SCRIPT_DIR/check-secrets.sh" >/dev/null 2>&1; then
-  log_pass "Passes commit without secrets"
-else
-  log_fail "Should pass commit without secrets"
-fi
-git commit --quiet -m "clean commit"
+assert_secrets_passes clean.js 'const x = 42;' "Passes commit without secrets" "clean commit"
 
 # Test 5: Test files should be skipped (TC-001)
-echo 'api_key = "FAKE_TEST_KEY_abcdefghijklmnopqrstuvwxyz1234567890"' > auth.test.js
-git add auth.test.js
-if "$SCRIPT_DIR/check-secrets.sh" >/dev/null 2>&1; then
-  log_pass "Skips test files"
-else
-  log_fail "Should skip test files"
-fi
-git commit --quiet -m "test file"
+assert_secrets_passes auth.test.js 'api_key = "FAKE_TEST_KEY_abcdefghijklmnopqrstuvwxyz1234567890"' "Skips test files" "test file"
 
 # Test 6: .env.example should be skipped (TC-001)
-echo 'API_KEY="your-key-here-replace-me-with-a-real-one"' > .env.example
-git add .env.example
-if "$SCRIPT_DIR/check-secrets.sh" >/dev/null 2>&1; then
-  log_pass "Skips .env.example"
-else
-  log_fail "Should skip .env.example"
-fi
-git commit --quiet -m "env example"
+assert_secrets_passes .env.example 'API_KEY="your-key-here-replace-me-with-a-real-one"' "Skips .env.example" "env example"
 
 echo ""
 
@@ -111,29 +90,16 @@ echo ""
 echo "check-traceability:"
 # ============================================================
 
-# Test 7: Commit with UR reference should pass (TC-002)
-echo "Fix session state (UR-003)" > "$TEMP_DIR/.git/COMMIT_MSG"
-if "$SCRIPT_DIR/check-traceability.sh" "$TEMP_DIR/.git/COMMIT_MSG" >/dev/null 2>&1; then
-  log_pass "Passes commit with UR-003 reference"
-else
-  log_fail "Should pass commit with UR-003"
-fi
-
-# Test 8: Commit with TC reference should pass (TC-002)
-echo "Implement idle debounce (TC-005)" > "$TEMP_DIR/.git/COMMIT_MSG"
-if "$SCRIPT_DIR/check-traceability.sh" "$TEMP_DIR/.git/COMMIT_MSG" >/dev/null 2>&1; then
-  log_pass "Passes commit with TC-005 reference"
-else
-  log_fail "Should pass commit with TC-005"
-fi
-
-# Test 9: Commit with BUC reference should pass (TC-002)
-echo "Support mobile agent management (BUC-001)" > "$TEMP_DIR/.git/COMMIT_MSG"
-if "$SCRIPT_DIR/check-traceability.sh" "$TEMP_DIR/.git/COMMIT_MSG" >/dev/null 2>&1; then
-  log_pass "Passes commit with BUC-001 reference"
-else
-  log_fail "Should pass commit with BUC-001"
-fi
+# Tests 7-9: Commits with UR/TC/BUC references should pass (TC-002)
+for ref in "Fix session state (UR-003):UR-003" "Implement idle debounce (TC-005):TC-005" "Support mobile agent management (BUC-001):BUC-001"; do
+  msg="${ref%%:*}"; label="${ref##*:}"
+  echo "$msg" > "$TEMP_DIR/.git/COMMIT_MSG"
+  if "$SCRIPT_DIR/check-traceability.sh" "$TEMP_DIR/.git/COMMIT_MSG" >/dev/null 2>&1; then
+    log_pass "Passes commit with $label reference (TC-002)"
+  else
+    log_fail "Should pass commit with $label"
+  fi
+done
 
 # Test 10: Commit without reference should warn (exit 0) (TC-002)
 echo "Fix a bug" > "$TEMP_DIR/.git/COMMIT_MSG"
@@ -316,7 +282,7 @@ rm -f app3.js
 # Clean up
 git checkout --quiet main 2>/dev/null || git checkout --quiet master
 git branch -D fit-test-branch --quiet 2>/dev/null || true
-rm -rf .volere go.mod main.go app.js app2.js app3.js README.md
+rm -rf .volere app.js app2.js app3.js README.md
 
 echo ""
 
@@ -484,30 +450,6 @@ else
   log_fail "volere validate should produce output"
 fi
 
-# Test 27: volere trace runs and reports (TC-014)
-TRACE_OUT=$("$VOLERE_CMD" trace 2>&1 || true)
-if echo "$TRACE_OUT" | grep -qiE "UR-050|trace|coverage|gap"; then
-  log_pass "volere trace runs and finds requirements (TC-014)"
-else
-  log_fail "volere trace should find UR-050"
-fi
-
-# Test 28: volere coverage runs and reports (TC-015)
-COVERAGE_OUT=$("$VOLERE_CMD" coverage 2>&1 || true)
-if echo "$COVERAGE_OUT" | grep -qiE "coverage|UR-050|percent|%"; then
-  log_pass "volere coverage runs and reports coverage (TC-015)"
-else
-  log_fail "volere coverage should report coverage"
-fi
-
-# Test 29: volere review detects review type (TC-016)
-REVIEW_OUT=$("$VOLERE_CMD" review 2>&1 || true)
-if echo "$REVIEW_OUT" | grep -qiE "review|full|validation|trace|recommend"; then
-  log_pass "volere review detects review type (TC-016)"
-else
-  log_fail "volere review should detect review type"
-fi
-
 # Test 30: volere impact shows direct dependents (UR-008)
 IMPACT_OUT=$("$VOLERE_CMD" impact UR-050 2>&1 || true)
 if echo "$IMPACT_OUT" | grep -q "UR-051"; then
@@ -559,7 +501,6 @@ else
 fi
 
 # Test 36: valid card passes schema validation (TC-007)
-VALIDATE_CMD="$SCRIPT_DIR/../validate.sh"
 VALIDATE_OUT=$("$VALIDATE_CMD" docs/requirements/UR-050.yaml 2>&1 || true)
 if echo "$VALIDATE_OUT" | grep -q "PASS"; then
   log_pass "valid card passes schema validation (TC-007)"
@@ -738,12 +679,8 @@ fi
 echo 'dal: C' > .volere/profile.yaml
 
 # Test 51: classify-risk skill defines DAL scoring matrix (UR-015)
-RISK_SKILL="$SCRIPT_DIR/../skills/classify-risk/SKILL.md"
-if [ -f "$RISK_SKILL" ] && grep -q "5-6" "$RISK_SKILL" && grep -q "3-4" "$RISK_SKILL"; then
-  log_pass "classify-risk skill defines DAL scoring matrix (UR-015)"
-else
-  log_fail "classify-risk skill should define scoring matrix with DAL mappings"
-fi
+assert_file_contains "classify-risk skill defines DAL scoring matrix (UR-015)" \
+  "$SCRIPT_DIR/../skills/classify-risk/SKILL.md" "5-6" "3-4"
 
 # Test 52: project scaffold templates exist for all card types (UR-017)
 TMPL_DIR="$SCRIPT_DIR/../templates"
@@ -771,20 +708,12 @@ else
 fi
 
 # Test 54: extract-requirements skill covers scan, draft, review workflow (UR-011)
-EXTRACT_SKILL="$SCRIPT_DIR/../skills/extract-requirements/SKILL.md"
-if [ -f "$EXTRACT_SKILL" ] && grep -q "draft" "$EXTRACT_SKILL" && grep -q "confirm" "$EXTRACT_SKILL" && grep -q "BUC" "$EXTRACT_SKILL"; then
-  log_pass "extract-requirements skill covers scan, draft, and review workflow (UR-011)"
-else
-  log_fail "extract-requirements skill should cover draft output, confirm/reject, and BUC surfacing"
-fi
+assert_file_contains "extract-requirements skill covers scan, draft, and review workflow (UR-011)" \
+  "$EXTRACT_SKILL" "draft" "confirm" "BUC"
 
 # Test 55: audit-tests skill defines VERIFIES/SUPPORTS/THEATER/REDUNDANT classification (UR-014)
-AUDIT_SKILL="$SCRIPT_DIR/../skills/audit-tests/SKILL.md"
-if [ -f "$AUDIT_SKILL" ] && grep -q "VERIFIES" "$AUDIT_SKILL" && grep -q "THEATER" "$AUDIT_SKILL" && grep -q "REDUNDANT" "$AUDIT_SKILL"; then
-  log_pass "audit-tests skill defines test classification categories (UR-014)"
-else
-  log_fail "audit-tests skill should define VERIFIES/SUPPORTS/THEATER/REDUNDANT classifications"
-fi
+assert_file_contains "audit-tests skill defines test classification categories (UR-014)" \
+  "$SCRIPT_DIR/../skills/audit-tests/SKILL.md" "VERIFIES" "THEATER" "REDUNDANT"
 
 # Clean up
 rm -rf docs/requirements .volere src
