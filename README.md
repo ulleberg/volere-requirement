@@ -36,12 +36,12 @@ Each level has testable fit criteria. Each level traces to the next. Each level 
 | Component | What it does |
 |-----------|-------------|
 | `plugin/schema/` | JSON Schema for requirement cards, DAL profiles, compliance, evidence |
-| `plugin/skills/` | 6 skills: extract-requirements, write-requirement, review-requirements, trace-codebase, audit-tests, classify-risk |
-| `plugin/hooks/` | 4 hooks: check-secrets, check-traceability, check-fit-criteria, installer |
+| `plugin/skills/` | 7 skills: extract-requirements, write-requirement, review-requirements, trace-codebase, audit-tests, classify-risk, glossary |
+| `plugin/hooks/` | 6 hooks: check-secrets, check-traceability, check-fit-criteria, check-checkout, check-merge, installer |
 | `plugin/cli/volere` | CLI with 7 commands: init, new, validate, trace, coverage, impact, review |
 | `plugin/catalogs/` | Shared requirement catalogs (security-baseline) |
-| `plugin/templates/` | Project scaffold, BUC/PUC/UR/TC/evidence/compliance templates |
-| `plugin/requirements/` | Framework's own requirements (dogfooding) |
+| `plugin/templates/` | Project scaffold, BUC/PUC/UR/TC/evidence/compliance templates, retrofit guide |
+| `plugin/requirements/` | 39 cards dogfooding the framework (6 BUCs, 15 URs, 16 TCs), 29/29 tests, 41% coverage |
 
 ## Key Features
 
@@ -54,6 +54,7 @@ Each level has testable fit criteria. Each level traces to the next. Each level 
 ## Proven By
 
 - **thul-studio validation** — 26 URs strengthened to 43 URs + 12 TCs, 12,814 lines dead code removed, 23 security tests added via TDD
+- **Self-dogfooding** — framework's own codebase extracted and reviewed: 6 BUCs, 15 URs, 16 TCs, 29/29 tests, 5 framework improvements discovered during the process
 - **Experiment 001** (thul-agentic-research) — skilled agent teams produce 100% testable fit criteria and self-organize for cross-document coherence
 
 ## Original Volere Template

@@ -13,7 +13,7 @@ Archive of the original Volere Requirements Template (v15) plus the Volere Agent
   - `cli/` — CLI with 7 commands + suspect link manager
   - `catalogs/` — shared requirement catalogs (security-baseline)
   - `templates/` — project scaffold, BUC/PUC/UR/TC/evidence/compliance templates, retrofit guide
-  - `requirements/` — framework's own requirements (dogfooding)
+  - `requirements/` — 39 cards dogfooding the framework (6 BUCs, 15 URs, 16 TCs), 29/29 tests, 41% coverage
 
 See `ARCHITECTURE.md` for the full V-Model mapping, design principles, and design decisions.
 
@@ -36,7 +36,7 @@ See `ARCHITECTURE.md` for the full V-Model mapping, design principles, and desig
 # Validate requirement cards against schema
 plugin/validate.sh plugin/requirements/UR-001.yaml
 
-# Run hook test suite (16 tests)
+# Run hook + CLI + validator test suite (29 tests)
 plugin/hooks/test-hooks.sh
 
 # CLI commands
