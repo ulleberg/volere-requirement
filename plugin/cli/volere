@@ -784,9 +784,11 @@ cmd_check_docs() {
 # ============================================================
 cmd_clean() {
   local do_rm=0
+  local do_archive=0
   while [ $# -gt 0 ]; do
     case "$1" in
       --rm) do_rm=1; shift ;;
+      --archive) do_archive=1; do_rm=1; shift ;;
       *) shift ;;
     esac
   done
@@ -814,8 +816,15 @@ cmd_clean() {
         echo -e "  ${YELLOW}⚠${NC} $rel — skipped (uncommitted changes)"
         skipped=$((skipped + 1))
       else
-        rm -rf "$full"
-        echo -e "  ${GREEN}✓${NC} $rel — removed"
+        if [ "$do_archive" -eq 1 ]; then
+          local archive_dir="$PROJECT_ROOT/docs/.archive/$(dirname "$rel")"
+          mkdir -p "$archive_dir"
+          mv "$full" "$archive_dir/"
+          echo -e "  ${GREEN}✓${NC} $rel — archived to docs/.archive/$rel"
+        else
+          rm -rf "$full"
+          echo -e "  ${GREEN}✓${NC} $rel — removed"
+        fi
         removed=$((removed + 1))
       fi
     else
@@ -1027,7 +1036,7 @@ case "${1:-help}" in
     echo "  impact --auto               Auto-detect suspects from git changes"
     echo "  review [--coherence]        Detect review type and show guidance"
     echo "  check-docs                 Check documentation staleness"
-    echo "  clean [--rm]               Remove process artifacts from docs/"
+    echo "  clean [--rm|--archive]     Remove or archive process artifacts from docs/"
     echo "  graph [--output F]          Interactive requirement graph"
     echo ""
     echo "Examples:"

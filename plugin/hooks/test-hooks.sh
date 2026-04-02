@@ -944,6 +944,21 @@ else
 fi
 rm -f docs/brief.md
 
+# Test 78: volere clean --archive moves artifacts to docs/.archive/ (UR-022)
+mkdir -p docs/options
+echo "# Test problem" > docs/problem.md
+echo "# Test option" > docs/options/option-a.md
+git add docs/problem.md docs/options/option-a.md
+git commit --quiet -m "Add test artifacts for archive"
+ARCHIVE_OUT=$("$VOLERE_CMD" clean --archive 2>&1 || true)
+if [ -f docs/.archive/docs/problem.md ] && [ -f docs/.archive/docs/options/option-a.md ] && [ ! -f docs/problem.md ]; then
+  log_pass "volere clean --archive moves artifacts to docs/.archive/ (UR-022)"
+  # Dimension: UR-022:operational
+else
+  log_fail "volere clean --archive should move artifacts to docs/.archive/ preserving structure"
+fi
+rm -rf docs/.archive docs/options
+
 echo ""
 
 # ============================================================
@@ -1058,6 +1073,16 @@ if grep -q '#ffa657' "$GRAPH_OUT_FILE" && grep -q '#7ee787' "$GRAPH_OUT_FILE" &&
   log_pass "graph HTML contains type-to-color mapping for BUC/PUC/UR/TC (UR-020)"
 else
   log_fail "graph HTML should contain color codes for all four types"
+fi
+
+# Test 79: graph HTML is self-contained — no external script/link tags (UR-020)
+# Test 70 checks no external URLs; this verifies no <script src=> or <link href=> pointing outside
+if ! grep -qE '<script\s+src=' "$GRAPH_OUT_FILE" 2>/dev/null && \
+   ! grep -qE '<link\s+.*href=.http' "$GRAPH_OUT_FILE" 2>/dev/null; then
+  log_pass "graph HTML is self-contained — no external script/link tags (UR-020)"
+  # Dimension: UR-020:operational
+else
+  log_fail "graph HTML should not reference external scripts or stylesheets"
 fi
 
 rm -f "$GRAPH_OUT_FILE"
