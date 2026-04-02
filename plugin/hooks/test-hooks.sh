@@ -1060,8 +1060,7 @@ else
 fi
 
 # Test 70: graph HTML has no external resource URLs (UR-020)
-# Exclude SVG namespace URI (http://www.w3.org/2000/svg) which is required for createElementNS
-EXT_URLS=$(grep -E 'https?://' "$GRAPH_OUT_FILE" | { grep -vE 'w3\.org/(2000/svg|1999/xhtml)' || true; } | wc -l | tr -d ' ')
+EXT_URLS=$({ grep -E 'https?://' "$GRAPH_OUT_FILE" || true; } | wc -l | tr -d ' ')
 if [ "$EXT_URLS" -eq 0 ]; then
   log_pass "graph HTML has no external resource URLs (UR-020)"
 else
@@ -1069,11 +1068,11 @@ else
 fi
 
 # Test 71: graph HTML contains type-to-color mapping for all types (UR-020)
-if grep -q '#ffa657' "$GRAPH_OUT_FILE" && grep -q '#7ee787' "$GRAPH_OUT_FILE" && \
-   grep -q '#79c0ff' "$GRAPH_OUT_FILE" && grep -q '#d2a8ff' "$GRAPH_OUT_FILE"; then
-  log_pass "graph HTML contains type-to-color mapping for BUC/PUC/UR/TC (UR-020)"
+if grep -q '#D97757' "$GRAPH_OUT_FILE" && grep -q '#7EB8DA' "$GRAPH_OUT_FILE" && \
+   grep -q '#B8A9D4' "$GRAPH_OUT_FILE"; then
+  log_pass "graph HTML contains type-to-color mapping for BUC/UR/TC (UR-020)"
 else
-  log_fail "graph HTML should contain color codes for all four types"
+  log_fail "graph HTML should contain color codes for all three types"
 fi
 
 # Test 79: graph HTML is self-contained — no external script/link tags (UR-020)

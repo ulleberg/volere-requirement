@@ -7,296 +7,508 @@
 <style>
 * { margin: 0; padding: 0; box-sizing: border-box; }
 body {
-  background: #0d1117; color: #f0f6fc;
+  background: #1a1a1a; color: #ececec;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-  overflow: hidden; height: 100vh;
+  min-height: 100vh;
 }
 
-/* Filter bar */
-.filter-bar {
-  position: fixed; top: 0; left: 0; right: 0; z-index: 10;
-  background: #161b22; border-bottom: 1px solid #30363d;
-  padding: 8px 16px; display: flex; align-items: center; gap: 16px;
-  font-size: 14px;
+/* Header bar */
+.header {
+  position: sticky; top: 0; z-index: 20;
+  background: #292521; border-bottom: 1px solid #3d3630;
+  padding: 10px 20px; display: flex; align-items: center; gap: 20px;
+  flex-wrap: wrap;
 }
-.filter-bar label {
-  display: flex; align-items: center; gap: 4px; cursor: pointer;
+.header-title {
+  font-size: 15px; font-weight: 600; color: #ececec;
+  margin-right: 8px; white-space: nowrap;
+}
+.legend {
+  display: flex; align-items: center; gap: 14px; flex-wrap: wrap;
+}
+.legend-item {
+  display: flex; align-items: center; gap: 5px;
+  font-size: 12px; color: #a39b8b;
+}
+.legend-dot {
+  width: 9px; height: 9px; border-radius: 50%; flex-shrink: 0;
+}
+.dal-scale {
+  display: flex; align-items: center; gap: 4px; margin-left: 4px;
+}
+.dal-scale-label {
+  font-size: 11px; color: #6b6259; margin-right: 2px;
+}
+.dal-mini {
+  font-size: 10px; font-weight: 700; padding: 1px 5px; border-radius: 3px;
+  font-family: 'SF Mono', 'Fira Code', monospace;
+}
+.dal-A { background: #C13A3A; color: #fff; }
+.dal-B { background: #D97757; color: #fff; }
+.dal-C { background: #C4A35A; color: #fff; }
+.dal-D { background: #5B8A6E; color: #fff; }
+.dal-E { background: #5a5248; color: #ececec; }
+
+.search-input {
+  margin-left: auto; background: #1a1a1a; border: 1px solid #3d3630;
+  color: #ececec; padding: 5px 10px; border-radius: 5px;
+  font-size: 13px; width: 220px; outline: none;
+}
+.search-input::placeholder { color: #6b6259; }
+.search-input:focus { border-color: #D97757; }
+
+/* Cluster grid */
+.grid {
+  padding: 20px; display: flex; flex-wrap: wrap; gap: 18px;
+  align-items: flex-start;
+}
+
+/* BUC cluster card */
+.cluster {
+  background: #292521; border: 1px solid #3d3630; border-radius: 10px;
+  width: 320px; overflow: hidden; transition: opacity 0.2s;
+  flex-shrink: 0;
+}
+.cluster.dimmed { opacity: 0.15; pointer-events: none; }
+
+.cluster-hero {
+  background: #3a2a22; padding: 14px 16px; border-bottom: 1px solid #3d3630;
+  cursor: pointer;
+}
+.cluster-hero:hover { background: #422e24; }
+.hero-top {
+  display: flex; align-items: center; gap: 8px; margin-bottom: 6px;
+}
+.hero-id {
+  font-family: 'SF Mono', 'Fira Code', monospace;
+  font-size: 13px; font-weight: 700; color: #D97757;
+}
+.hero-title {
+  font-size: 14px; font-weight: 600; color: #ececec; margin-bottom: 4px;
+}
+.hero-desc {
+  font-size: 12px; color: #a39b8b; line-height: 1.4;
+}
+
+/* Unclustered group */
+.cluster.unclustered .cluster-hero {
+  background: #252525;
+}
+.cluster.unclustered .cluster-hero:hover { background: #2a2a2a; }
+.cluster.unclustered .hero-id { color: #6b6259; }
+
+/* Pills section */
+.pills-section {
+  padding: 10px 16px 12px;
+}
+.pills-section-label {
+  font-size: 10px; text-transform: uppercase; letter-spacing: 0.07em;
+  color: #6b6259; margin-bottom: 6px; margin-top: 4px;
+}
+.pills {
+  display: flex; flex-wrap: wrap; gap: 5px;
+}
+.pill {
+  display: inline-flex; align-items: center; gap: 4px;
+  padding: 3px 8px; border-radius: 20px; font-size: 11px;
+  cursor: pointer; border: 1px solid transparent;
+  transition: opacity 0.15s, filter 0.15s;
   user-select: none;
 }
-.filter-bar input[type="checkbox"] { accent-color: #79c0ff; }
-.filter-bar input[type="text"] {
-  background: #0d1117; border: 1px solid #30363d; color: #f0f6fc;
-  padding: 4px 8px; border-radius: 4px; font-size: 13px; width: 200px;
+.pill.ur {
+  background: rgba(126, 184, 218, 0.12); color: #7EB8DA;
+  border-color: rgba(126, 184, 218, 0.25);
 }
-.type-dot {
-  display: inline-block; width: 10px; height: 10px; border-radius: 50%;
+.pill.ur:hover { background: rgba(126, 184, 218, 0.22); }
+.pill.tc {
+  background: rgba(184, 169, 212, 0.12); color: #B8A9D4;
+  border-color: rgba(184, 169, 212, 0.25);
 }
-
-/* SVG container */
-svg { width: 100%; height: 100%; padding-top: 44px; }
+.pill.tc:hover { background: rgba(184, 169, 212, 0.22); }
+.pill.dimmed { opacity: 0.2; }
+.pill-id {
+  font-family: 'SF Mono', 'Fira Code', monospace;
+  font-weight: 600;
+}
+.pill-label { color: inherit; opacity: 0.8; }
+.pill-dal {
+  font-family: 'SF Mono', 'Fira Code', monospace;
+  font-size: 9px; font-weight: 700; padding: 1px 4px; border-radius: 2px;
+}
 
 /* Detail panel */
 .detail-panel {
-  position: fixed; top: 44px; right: 0; width: 320px; bottom: 0;
-  background: #161b22; border-left: 1px solid #30363d;
-  padding: 20px; overflow-y: auto; transform: translateX(100%);
-  transition: transform 0.2s ease;
-  font-size: 14px;
+  position: fixed; top: 0; right: 0; width: 360px; bottom: 0;
+  background: #292521; border-left: 1px solid #3d3630;
+  padding: 24px 20px; overflow-y: auto;
+  transform: translateX(100%); transition: transform 0.2s ease;
+  font-size: 14px; z-index: 30;
 }
 .detail-panel.open { transform: translateX(0); }
-.detail-panel h2 {
+.detail-header {
+  display: flex; align-items: flex-start; justify-content: space-between;
+  margin-bottom: 16px;
+}
+.detail-id {
   font-family: 'SF Mono', 'Fira Code', monospace;
-  font-size: 18px; margin-bottom: 4px;
+  font-size: 20px; font-weight: 700;
 }
-.detail-panel .title { color: #8b949e; margin-bottom: 16px; }
-.detail-panel .field { margin-bottom: 12px; }
-.detail-panel .field-label {
-  font-size: 11px; text-transform: uppercase; letter-spacing: 0.05em;
-  color: #484f58; margin-bottom: 2px;
+.detail-id.buc { color: #D97757; }
+.detail-id.ur  { color: #7EB8DA; }
+.detail-id.tc  { color: #B8A9D4; }
+.detail-id.puc { color: #a39b8b; }
+.detail-close {
+  background: none; border: 1px solid #3d3630; color: #a39b8b;
+  padding: 3px 8px; border-radius: 5px; cursor: pointer; font-size: 13px;
+  flex-shrink: 0; margin-top: 2px;
 }
-.detail-panel .links a {
-  color: #79c0ff; text-decoration: none; cursor: pointer;
+.detail-close:hover { border-color: #6b6259; color: #ececec; }
+.detail-title {
+  font-size: 15px; font-weight: 600; color: #ececec; margin-bottom: 14px;
+  line-height: 1.4;
 }
-.detail-panel .links a:hover { text-decoration: underline; }
-
-/* Edge styles */
-.edge-depends_on, .edge-serves { stroke: #484f58; stroke-width: 1.5; }
-.edge-decomposed_to { stroke: #484f58; stroke-width: 1.5; stroke-dasharray: 6 3; }
-.edge-cross_verify { stroke: #484f58; stroke-width: 1; stroke-dasharray: 2 2; }
-.edge-conflicts { stroke: #f85149; stroke-width: 1; stroke-dasharray: 2 2; }
-
-/* Node styles */
-.node rect {
-  rx: 6; stroke-width: 1.5; cursor: pointer;
-  transition: opacity 0.2s;
+.detail-field { margin-bottom: 14px; }
+.detail-field-label {
+  font-size: 10px; text-transform: uppercase; letter-spacing: 0.07em;
+  color: #6b6259; margin-bottom: 4px;
 }
-.node text {
+.detail-field-value { color: #a39b8b; font-size: 13px; }
+.fit-dim { margin-bottom: 8px; }
+.fit-dim-name {
+  font-size: 11px; font-weight: 600; color: #6b6259;
+  text-transform: capitalize; margin-bottom: 2px;
+}
+.fit-dim-text { font-size: 13px; color: #ececec; line-height: 1.5; }
+.detail-links { display: flex; flex-direction: column; gap: 5px; }
+.detail-link {
+  font-size: 12px; padding: 4px 8px; border-radius: 5px; cursor: pointer;
+  border: 1px solid #3d3630; background: none; text-align: left;
+  color: #a39b8b; display: flex; align-items: center; gap: 6px;
+  font-family: inherit;
+}
+.detail-link:hover { background: #3d3630; color: #ececec; }
+.detail-link .link-id {
   font-family: 'SF Mono', 'Fira Code', monospace;
-  font-size: 12px; fill: #0d1117; pointer-events: none;
-  text-anchor: middle; dominant-baseline: central;
+  font-weight: 600; font-size: 12px;
 }
-.node.dimmed rect, .node.dimmed text { opacity: 0.15; }
-.edge.dimmed { opacity: 0.08; }
+.link-id.buc { color: #D97757; }
+.link-id.ur  { color: #7EB8DA; }
+.link-id.tc  { color: #B8A9D4; }
+.link-id.puc { color: #a39b8b; }
+.link-type {
+  font-size: 10px; color: #6b6259; margin-left: auto;
+}
+
+/* Overlay backdrop */
+.backdrop {
+  display: none; position: fixed; inset: 0; z-index: 25; cursor: pointer;
+}
+.backdrop.active { display: block; }
 </style>
 </head>
 <body>
 
-<div class="filter-bar">
-  <label><input type="checkbox" data-type="BUC" checked><span class="type-dot" style="background:#ffa657"></span> BUC</label>
-  <label><input type="checkbox" data-type="PUC" checked><span class="type-dot" style="background:#7ee787"></span> PUC</label>
-  <label><input type="checkbox" data-type="UR" checked><span class="type-dot" style="background:#79c0ff"></span> UR</label>
-  <label><input type="checkbox" data-type="TC" checked><span class="type-dot" style="background:#d2a8ff"></span> TC</label>
-  <input type="text" id="search" placeholder="Search requirements...">
+<div class="header">
+  <span class="header-title">Volere Requirement Graph</span>
+  <div class="legend">
+    <div class="legend-item"><span class="legend-dot" style="background:#D97757"></span>BUC</div>
+    <div class="legend-item"><span class="legend-dot" style="background:#7EB8DA"></span>UR</div>
+    <div class="legend-item"><span class="legend-dot" style="background:#B8A9D4"></span>TC</div>
+  </div>
+  <div class="dal-scale">
+    <span class="dal-scale-label">DAL</span>
+    <span class="dal-mini dal-A">A</span>
+    <span class="dal-mini dal-B">B</span>
+    <span class="dal-mini dal-C">C</span>
+    <span class="dal-mini dal-D">D</span>
+    <span class="dal-mini dal-E">E</span>
+  </div>
+  <input class="search-input" id="search" type="text" placeholder="Search by ID or title...">
 </div>
 
-<svg id="graph"></svg>
+<div class="grid" id="grid"></div>
+
+<div class="backdrop" id="backdrop"></div>
 
 <div class="detail-panel" id="detail">
-  <h2 id="detail-id"></h2>
-  <div class="title" id="detail-title"></div>
-  <div class="field"><div class="field-label">DAL</div><div id="detail-dal"></div></div>
-  <div class="field"><div class="field-label">Status</div><div id="detail-status"></div></div>
-  <div class="field"><div class="field-label">Fit Criteria</div><div id="detail-fit"></div></div>
-  <div class="field"><div class="field-label">Links</div><div class="links" id="detail-links"></div></div>
+  <div class="detail-header">
+    <div class="detail-id" id="detail-id"></div>
+    <button class="detail-close" id="detail-close">Close</button>
+  </div>
+  <div class="detail-title" id="detail-title"></div>
+  <div class="detail-field">
+    <div class="detail-field-label">DAL</div>
+    <div class="detail-field-value" id="detail-dal"></div>
+  </div>
+  <div class="detail-field">
+    <div class="detail-field-label">Status</div>
+    <div class="detail-field-value" id="detail-status"></div>
+  </div>
+  <div class="detail-field" id="detail-fit-section">
+    <div class="detail-field-label">Fit Criteria</div>
+    <div id="detail-fit"></div>
+  </div>
+  <div class="detail-field" id="detail-links-section">
+    <div class="detail-field-label">Links</div>
+    <div class="detail-links" id="detail-links"></div>
+  </div>
 </div>
 
 <script>
 const DATA = {{DATA}};
 
-const TYPE_COLORS = { BUC: '#ffa657', PUC: '#7ee787', UR: '#79c0ff', TC: '#d2a8ff' };
-const TYPE_TIER = { BUC: 0, PUC: 1, UR: 2, TC: 3 };
-const NODE_W = 72, NODE_H = 30;
+const TYPE_CLASS = { BUC: 'buc', PUC: 'puc', UR: 'ur', TC: 'tc' };
+const DAL_CLASS = { A: 'dal-A', B: 'dal-B', C: 'dal-C', D: 'dal-D', E: 'dal-E' };
 
-const svg = document.getElementById('graph');
-const detail = document.getElementById('detail');
-const searchInput = document.getElementById('search');
-
-// Build lookup
+// Build lookups
 const nodeMap = {};
 DATA.nodes.forEach(n => { nodeMap[n.id] = n; });
 
-// Initialize positions — tiered by type
-const svgRect = () => svg.getBoundingClientRect();
-function initPositions() {
-  const { width, height } = svgRect();
-  const tierHeight = (height - 88) / 4; // 44px top padding
-  DATA.nodes.forEach(n => {
-    const tier = TYPE_TIER[n.type] || 2;
-    n.x = width * 0.2 + Math.random() * width * 0.6;
-    n.y = 66 + tier * tierHeight + Math.random() * tierHeight * 0.6;
-    n.vx = 0; n.vy = 0;
-  });
-}
-
-// Force-directed layout
-function simulate(iterations) {
-  const { width, height } = svgRect();
-  for (let iter = 0; iter < iterations; iter++) {
-    // Repulsion between nodes
-    for (let i = 0; i < DATA.nodes.length; i++) {
-      for (let j = i + 1; j < DATA.nodes.length; j++) {
-        const a = DATA.nodes[i], b = DATA.nodes[j];
-        let dx = a.x - b.x, dy = a.y - b.y;
-        let dist = Math.sqrt(dx * dx + dy * dy) || 1;
-        let force = 800 / (dist * dist);
-        a.vx += (dx / dist) * force;
-        a.vy += (dy / dist) * force;
-        b.vx -= (dx / dist) * force;
-        b.vy -= (dy / dist) * force;
-      }
-    }
-    // Attraction along edges
-    DATA.edges.forEach(e => {
-      const a = nodeMap[e.from], b = nodeMap[e.to];
-      if (!a || !b) return;
-      let dx = b.x - a.x, dy = b.y - a.y;
-      let dist = Math.sqrt(dx * dx + dy * dy) || 1;
-      let force = (dist - 120) * 0.05;
-      a.vx += (dx / dist) * force;
-      a.vy += (dy / dist) * force;
-      b.vx -= (dx / dist) * force;
-      b.vy -= (dy / dist) * force;
-    });
-    // Tier gravity — pull nodes toward their tier row
-    const tierHeight = (height - 88) / 4;
-    DATA.nodes.forEach(n => {
-      const tier = TYPE_TIER[n.type] || 2;
-      const targetY = 66 + tier * tierHeight + tierHeight * 0.5;
-      n.vy += (targetY - n.y) * 0.1;
-    });
-    // Apply velocities with damping
-    DATA.nodes.forEach(n => {
-      n.vx *= 0.6; n.vy *= 0.6;
-      n.x += n.vx; n.y += n.vy;
-      n.x = Math.max(NODE_W, Math.min(width - NODE_W, n.x));
-      n.y = Math.max(60, Math.min(height - NODE_H, n.y));
-    });
+// Derive parent BUC for each node from decomposed_to edges
+const parentBUC = {};  // nodeId -> bucId
+DATA.edges.forEach(e => {
+  if (e.type === 'decomposed_to' && nodeMap[e.from] && nodeMap[e.from].type === 'BUC') {
+    parentBUC[e.to] = e.from;
   }
+});
+
+// Group nodes into clusters
+const clusters = {};  // bucId -> { buc, urs: [], tcs: [] }
+DATA.nodes.forEach(n => {
+  if (n.type === 'BUC') {
+    if (!clusters[n.id]) clusters[n.id] = { buc: n, urs: [], tcs: [] };
+    else clusters[n.id].buc = n;
+  }
+});
+
+const orphanURs = [], orphanTCs = [];
+DATA.nodes.forEach(n => {
+  if (n.type === 'UR' || n.type === 'TC') {
+    const buc = parentBUC[n.id];
+    if (buc && clusters[buc]) {
+      if (n.type === 'UR') clusters[buc].urs.push(n);
+      else clusters[buc].tcs.push(n);
+    } else {
+      if (n.type === 'UR') orphanURs.push(n);
+      else orphanTCs.push(n);
+    }
+  }
+});
+
+// Render helpers
+function dalBadge(dal, cls) {
+  return `<span class="dal-mini ${DAL_CLASS[dal] || 'dal-E'}">${dal || '?'}</span>`;
 }
 
-// Render
-function render() {
-  const ns = 'http://www.w3.org/2000/svg';
-  svg.innerHTML = '';
+function makePill(n) {
+  const cls = TYPE_CLASS[n.type] || 'ur';
+  const dal = n.dal || '?';
+  return `<div class="pill ${cls}" data-id="${n.id}" title="${escHtml(n.title)}">
+    <span class="pill-id">${escHtml(n.id)}</span>
+    <span class="pill-label">${escHtml(n.label || '')}</span>
+    <span class="pill-dal ${DAL_CLASS[dal] || 'dal-E'}">${dal}</span>
+  </div>`;
+}
 
-  // Edges
-  DATA.edges.forEach(e => {
-    const a = nodeMap[e.from], b = nodeMap[e.to];
-    if (!a || !b) return;
-    const line = document.createElementNS(ns, 'line');
-    line.setAttribute('x1', a.x); line.setAttribute('y1', a.y);
-    line.setAttribute('x2', b.x); line.setAttribute('y2', b.y);
-    line.setAttribute('class', 'edge edge-' + e.type);
-    line.dataset.from = e.from; line.dataset.to = e.to;
-    svg.appendChild(line);
-  });
+function escHtml(s) {
+  return String(s || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
 
-  // Nodes
-  DATA.nodes.forEach(n => {
-    const g = document.createElementNS(ns, 'g');
-    g.setAttribute('class', 'node');
-    g.setAttribute('transform', `translate(${n.x}, ${n.y})`);
-    g.dataset.id = n.id; g.dataset.type = n.type;
+function desc120(n) {
+  if (!n.fit_criteria) return '';
+  const vals = Object.values(n.fit_criteria);
+  if (!vals.length) return '';
+  const text = vals[0] || '';
+  return text.length > 120 ? text.slice(0, 120) + '…' : text;
+}
 
-    const rect = document.createElementNS(ns, 'rect');
-    rect.setAttribute('x', -NODE_W / 2); rect.setAttribute('y', -NODE_H / 2);
-    rect.setAttribute('width', NODE_W); rect.setAttribute('height', NODE_H);
-    rect.setAttribute('fill', TYPE_COLORS[n.type] || '#79c0ff');
-    rect.setAttribute('stroke', '#0d1117');
+// Build grid
+const grid = document.getElementById('grid');
 
-    const text = document.createElementNS(ns, 'text');
-    text.textContent = n.id;
+Object.values(clusters).forEach(({ buc, urs, tcs }) => {
+  const div = document.createElement('div');
+  div.className = 'cluster';
+  div.dataset.bucId = buc.id;
 
-    const title = document.createElementNS(ns, 'title');
-    title.textContent = n.title;
+  const urPills = urs.map(makePill).join('');
+  const tcPills = tcs.map(makePill).join('');
+  const urSection = urs.length ? `<div class="pills-section-label">URs (${urs.length})</div><div class="pills">${urPills}</div>` : '';
+  const tcSection = tcs.length ? `<div class="pills-section-label">TCs (${tcs.length})</div><div class="pills">${tcPills}</div>` : '';
+  const hasPills = urs.length || tcs.length;
 
-    g.appendChild(rect); g.appendChild(text); g.appendChild(title);
-    g.addEventListener('click', () => showDetail(n));
-    svg.appendChild(g);
-  });
+  div.innerHTML = `
+    <div class="cluster-hero" data-id="${buc.id}">
+      <div class="hero-top">
+        <span class="hero-id">${escHtml(buc.id)}</span>
+        ${dalBadge(buc.dal)}
+      </div>
+      <div class="hero-title">${escHtml(buc.title)}</div>
+      ${buc.fit_criteria ? `<div class="hero-desc">${escHtml(desc120(buc))}</div>` : ''}
+    </div>
+    ${hasPills ? `<div class="pills-section">${urSection}${tcSection}</div>` : ''}
+  `;
+  grid.appendChild(div);
+});
+
+// Orphan cluster
+if (orphanURs.length || orphanTCs.length) {
+  const div = document.createElement('div');
+  div.className = 'cluster unclustered';
+  div.dataset.bucId = '__orphan__';
+
+  const urPills = orphanURs.map(makePill).join('');
+  const tcPills = orphanTCs.map(makePill).join('');
+  const urSection = orphanURs.length ? `<div class="pills-section-label">URs (${orphanURs.length})</div><div class="pills">${urPills}</div>` : '';
+  const tcSection = orphanTCs.length ? `<div class="pills-section-label">TCs (${orphanTCs.length})</div><div class="pills">${tcPills}</div>` : '';
+
+  div.innerHTML = `
+    <div class="cluster-hero">
+      <div class="hero-top"><span class="hero-id">Unclustered</span></div>
+      <div class="hero-title">Requirements not linked to a BUC</div>
+    </div>
+    <div class="pills-section">${urSection}${tcSection}</div>
+  `;
+  grid.appendChild(div);
 }
 
 // Detail panel
-function showDetail(n) {
+const detail = document.getElementById('detail');
+const backdrop = document.getElementById('backdrop');
+let activeImpactId = null;
+
+function typeClass(id) {
+  const n = nodeMap[id];
+  return n ? (TYPE_CLASS[n.type] || 'ur') : 'ur';
+}
+
+function showDetail(nodeId, doImpact) {
+  const n = nodeMap[nodeId];
+  if (!n) return;
+
   document.getElementById('detail-id').textContent = n.id;
-  document.getElementById('detail-title').textContent = n.title;
-  document.getElementById('detail-dal').textContent = 'DAL-' + n.dal;
-  document.getElementById('detail-status').textContent = n.status;
+  document.getElementById('detail-id').className = 'detail-id ' + (TYPE_CLASS[n.type] || 'ur');
+  document.getElementById('detail-title').textContent = n.title || '';
+  document.getElementById('detail-dal').textContent = n.dal ? 'DAL-' + n.dal : '—';
+  document.getElementById('detail-status').textContent = n.status || '—';
 
   const fitEl = document.getElementById('detail-fit');
   fitEl.innerHTML = '';
-  if (n.fit_criteria) {
+  if (n.fit_criteria && Object.keys(n.fit_criteria).length) {
     Object.entries(n.fit_criteria).forEach(([dim, val]) => {
-      const div = document.createElement('div');
-      div.style.marginBottom = '6px';
-      div.innerHTML = '<strong>' + dim + ':</strong> ' + (val || '');
-      fitEl.appendChild(div);
+      const block = document.createElement('div');
+      block.className = 'fit-dim';
+      block.innerHTML = `<div class="fit-dim-name">${escHtml(dim)}</div><div class="fit-dim-text">${escHtml(val || '')}</div>`;
+      fitEl.appendChild(block);
     });
   }
 
   const linksEl = document.getElementById('detail-links');
   linksEl.innerHTML = '';
   DATA.edges.filter(e => e.from === n.id || e.to === n.id).forEach(e => {
-    const other = e.from === n.id ? e.to : e.from;
-    const a = document.createElement('a');
-    a.textContent = other + ' (' + e.type + ')';
-    a.addEventListener('click', () => {
-      const otherNode = nodeMap[other];
-      if (otherNode) showDetail(otherNode);
-    });
-    linksEl.appendChild(a);
-    linksEl.appendChild(document.createElement('br'));
+    const otherId = e.from === n.id ? e.to : e.from;
+    const btn = document.createElement('button');
+    btn.className = 'detail-link';
+    const dir = e.from === n.id ? '→' : '←';
+    btn.innerHTML = `<span class="link-id ${typeClass(otherId)}">${escHtml(otherId)}</span>` +
+      `<span>${escHtml(nodeMap[otherId]?.label || nodeMap[otherId]?.title || '')}</span>` +
+      `<span class="link-type">${dir} ${escHtml(e.type)}</span>`;
+    btn.addEventListener('click', () => showDetail(otherId, otherId !== n.id));
+    linksEl.appendChild(btn);
   });
 
   detail.classList.add('open');
+  backdrop.classList.add('active');
+
+  if (doImpact && (n.type === 'UR' || n.type === 'TC')) {
+    applyImpact(n.id);
+  } else {
+    clearImpact();
+  }
 }
 
-// Close panel on background click
-svg.addEventListener('click', e => {
-  if (e.target === svg) detail.classList.remove('open');
-});
+function applyImpact(nodeId) {
+  activeImpactId = nodeId;
 
-// Type filter
-document.querySelectorAll('.filter-bar input[type="checkbox"]').forEach(cb => {
-  cb.addEventListener('change', applyFilters);
-});
-searchInput.addEventListener('input', applyFilters);
-
-function applyFilters() {
-  const hiddenTypes = new Set();
-  document.querySelectorAll('.filter-bar input[type="checkbox"]').forEach(cb => {
-    if (!cb.checked) hiddenTypes.add(cb.dataset.type);
+  // Find all clusters/pills connected to this node
+  const connectedBUCs = new Set();
+  const connectedPills = new Set([nodeId]);
+  DATA.edges.forEach(e => {
+    if (e.from === nodeId || e.to === nodeId) {
+      const other = e.from === nodeId ? e.to : e.from;
+      connectedPills.add(other);
+      const buc = parentBUC[other] || (nodeMap[other]?.type === 'BUC' ? other : null);
+      if (buc) connectedBUCs.add(buc);
+    }
   });
-  const query = searchInput.value.toLowerCase();
+  // Also include the BUC containing the active node
+  const ownBUC = parentBUC[nodeId];
+  if (ownBUC) connectedBUCs.add(ownBUC);
 
-  document.querySelectorAll('.node').forEach(g => {
-    const id = g.dataset.id;
-    const n = nodeMap[id];
-    const typeHidden = hiddenTypes.has(g.dataset.type);
-    const searchMiss = query && !id.toLowerCase().includes(query) &&
-                       !(n && n.title.toLowerCase().includes(query));
-    const dimmed = typeHidden || searchMiss;
-    g.classList.toggle('dimmed', dimmed);
-    g.style.display = typeHidden ? 'none' : '';
+  document.querySelectorAll('.cluster').forEach(c => {
+    const bucId = c.dataset.bucId;
+    const isConnected = connectedBUCs.has(bucId) || bucId === '__orphan__' && connectedPills.has(nodeId);
+    c.classList.toggle('dimmed', !isConnected);
   });
 
-  document.querySelectorAll('.edge').forEach(line => {
-    const fromHidden = hiddenTypes.has(nodeMap[line.dataset.from]?.type);
-    const toHidden = hiddenTypes.has(nodeMap[line.dataset.to]?.type);
-    line.style.display = (fromHidden || toHidden) ? 'none' : '';
-
-    const fromMiss = query && !line.dataset.from.toLowerCase().includes(query) &&
-                     !(nodeMap[line.dataset.from]?.title.toLowerCase().includes(query));
-    const toMiss = query && !line.dataset.to.toLowerCase().includes(query) &&
-                   !(nodeMap[line.dataset.to]?.title.toLowerCase().includes(query));
-    line.classList.toggle('dimmed', query && fromMiss && toMiss);
+  document.querySelectorAll('.pill').forEach(p => {
+    const pid = p.dataset.id;
+    p.classList.toggle('dimmed', !connectedPills.has(pid));
   });
 }
 
-// Init
-initPositions();
-simulate(100);
-render();
+function clearImpact() {
+  activeImpactId = null;
+  document.querySelectorAll('.cluster').forEach(c => c.classList.remove('dimmed'));
+  document.querySelectorAll('.pill').forEach(p => p.classList.remove('dimmed'));
+}
+
+function closeDetail() {
+  detail.classList.remove('open');
+  backdrop.classList.remove('active');
+  clearImpact();
+}
+
+document.getElementById('detail-close').addEventListener('click', closeDetail);
+backdrop.addEventListener('click', closeDetail);
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeDetail(); });
+
+// Event delegation for cluster heroes and pills
+grid.addEventListener('click', e => {
+  const hero = e.target.closest('.cluster-hero[data-id]');
+  if (hero) { showDetail(hero.dataset.id, false); return; }
+  const pill = e.target.closest('.pill[data-id]');
+  if (pill) { showDetail(pill.dataset.id, true); }
+});
+
+// Search
+const searchInput = document.getElementById('search');
+searchInput.addEventListener('input', () => {
+  const q = searchInput.value.toLowerCase().trim();
+  if (!q) {
+    document.querySelectorAll('.cluster').forEach(c => c.classList.remove('dimmed'));
+    document.querySelectorAll('.pill').forEach(p => p.classList.remove('dimmed'));
+    return;
+  }
+
+  const matchNode = n => n.id.toLowerCase().includes(q) || (n.title || '').toLowerCase().includes(q);
+
+  document.querySelectorAll('.cluster').forEach(c => {
+    const bucId = c.dataset.bucId;
+    const buc = nodeMap[bucId];
+    const bucMatch = buc && matchNode(buc);
+
+    // Check if any child pill matches
+    let childMatch = false;
+    c.querySelectorAll('.pill').forEach(p => {
+      const n = nodeMap[p.dataset.id];
+      const pm = n && matchNode(n);
+      p.classList.toggle('dimmed', !pm && !bucMatch);
+      if (pm) childMatch = true;
+    });
+
+    c.classList.toggle('dimmed', !bucMatch && !childMatch);
+  });
+});
 </script>
 </body>
 </html>
