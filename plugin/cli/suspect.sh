@@ -142,6 +142,11 @@ cmd_auto() {
     [ -z "$id" ] && continue
     echo "  $id ($f)"
 
+    # Self-suspect: mark the card itself if its fit_criteria changed
+    if git diff HEAD~$depth..HEAD -- "$PROJECT_ROOT/$f" 2>/dev/null | grep -q "fit_criteria"; then
+      cmd_mark "$id" --reason "fit criteria changed — re-verify acceptance tests" --source "$id" 2>/dev/null || true
+    fi
+
     # Find dependents
     local reqs_dir="$PROJECT_ROOT/docs/requirements"
     for dep_file in "$reqs_dir"/*.yaml; do

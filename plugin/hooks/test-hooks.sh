@@ -501,6 +501,21 @@ else
   log_fail "suspect auto should mark UR-051 when UR-050 changed"
 fi
 
+# Test 76: suspect auto marks card itself when fit_criteria changes (TC-009)
+rm -f .volere/suspects.yaml
+# Modify UR-050's fit_criteria block specifically
+sed -i.bak 's/criterion: "All tests pass"/criterion: "All tests pass with 100% coverage"/' docs/requirements/UR-050.yaml
+rm -f docs/requirements/UR-050.yaml.bak
+git add docs/requirements/UR-050.yaml
+git commit -m "test: modify UR-050 fit_criteria" --quiet
+"$SUSPECT_CMD" auto >/dev/null 2>&1 || true
+if [ -f .volere/suspects.yaml ] && grep -q "UR-050" .volere/suspects.yaml 2>/dev/null; then
+  log_pass "suspect auto marks card itself when fit_criteria changes (TC-009)"
+  # Dimension: TC-009:operational
+else
+  log_fail "suspect auto should mark UR-050 itself when its fit_criteria changed"
+fi
+
 # Test 36: valid card passes schema validation (TC-007)
 VALIDATE_OUT=$("$VALIDATE_CMD" docs/requirements/UR-050.yaml 2>&1 || true)
 if echo "$VALIDATE_OUT" | grep -q "PASS"; then
