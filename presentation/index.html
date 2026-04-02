@@ -813,7 +813,42 @@
 </section>
 
 <!-- Section 13: Hard + Soft Enforcement -->
-<section id="s13"><div class="section-inner"></div></section>
+<section id="s13">
+<div class="section-inner" style="text-align: center;">
+  <h2 class="fade-in">Soft constraints teach. Hard constraints enforce.</h2>
+  <p class="fade-in stagger subtitle" style="--delay: 0.1s;">Neither alone is sufficient.</p>
+
+  <div class="split-compare" style="margin-top: 2rem;">
+    <div class="fade-in stagger" style="--delay: 0.2s; border: 1px solid rgba(248,81,73,0.2); text-align: left;">
+      <div class="label" style="color: var(--red);">Soft only</div>
+      <div class="flow" style="line-height: 2;">
+        <div>CLAUDE.md: "use separate packages"</div>
+        <div>CLAUDE.md: "write tests first"</div>
+        <div>CLAUDE.md: "trace to requirements"</div>
+      </div>
+      <div class="detail" style="color: var(--red); line-height: 2;">
+        Session 1: follows &#10003;<br>
+        Session 5: drifts &hellip;<br>
+        Session 10: ignored &#10007;
+      </div>
+    </div>
+    <div class="fade-in stagger" style="--delay: 0.4s; border: 1px solid rgba(126,231,135,0.2); text-align: left;">
+      <div class="label" style="color: var(--green);">Soft + Hard</div>
+      <div class="flow" style="line-height: 2;">
+        <div><span style="color: var(--purple);">skill:</span> "use separate packages"</div>
+        <div><span style="color: var(--orange);">hook:</span> boundary check blocks commit</div>
+        <div><span style="color: var(--purple);">skill:</span> "write tests first"</div>
+        <div><span style="color: var(--orange);">hook:</span> fit criteria gate blocks push</div>
+        <div><span style="color: var(--purple);">skill:</span> "trace to requirements"</div>
+        <div><span style="color: var(--orange);">hook:</span> traceability check on commit</div>
+      </div>
+      <div class="detail" style="color: var(--green);">
+        Session 100: still holds &#10003;
+      </div>
+    </div>
+  </div>
+</div>
+</section>
 
 <!-- Section 14: Dogfooding -->
 <section id="s14"><div class="section-inner"></div></section>
