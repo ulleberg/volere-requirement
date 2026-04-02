@@ -1,0 +1,42 @@
+id: UR-021
+type: functional
+title: "Documentation consistency verification"
+
+description: >
+  The framework detects stale documentation and presentations via modification
+  time comparison at session start, and provides an on-demand CLI command that
+  spawns agents to verify content consistency between docs and codebase.
+
+rationale: >
+  The interactive presentation exposed three internal inconsistencies that
+  code review missed. Docs drift silently — ARCHITECTURE.md, README.md, and
+  presentations can describe system behavior that no longer matches the code.
+  A lightweight staleness check at session start catches drift early, while
+  a deeper agent-driven verification confirms content accuracy on demand.
+
+fit_criteria:
+  user:
+    criterion: >
+      SessionStart hook reports docs whose modification time is older than
+      the most recent source change in their scope (e.g., "ARCHITECTURE.md
+      is 12 days stale"). volere check-docs CLI command verifies content
+      consistency and outputs a list of inconsistencies with file paths and
+      conflicting text.
+    verification: test
+    test_type: system
+
+dal: D
+priority: should
+status: proposed
+
+origin:
+  stakeholder: thomas-ulleberg
+  date: "2026-04-02"
+  trigger: "Session discussion — no existing hook verifies doc/presentation consistency against codebase"
+
+depends_on: [UR-008]  # coverage/impact reporting infrastructure
+
+history:
+  - date: "2026-04-02"
+    action: created
+    by: thomas-ulleberg
