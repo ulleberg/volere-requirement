@@ -1085,6 +1085,16 @@ else
   log_fail "graph HTML should not reference external scripts or stylesheets"
 fi
 
+# Test 80: graph JSON contains full fit criteria text, not truncated (UR-020)
+GRAPH_TEST_FILE="/tmp/volere-graph-test-$$.html"
+"$VOLERE_CMD" graph --output "$GRAPH_TEST_FILE" --no-open >/dev/null 2>&1 || true
+if grep -q 'All tests pass' "$GRAPH_TEST_FILE" 2>/dev/null; then
+  log_pass "graph JSON contains full fit criteria text (UR-020)"
+else
+  log_fail "graph JSON should contain full fit criteria text, not just '>'"
+fi
+rm -f "$GRAPH_TEST_FILE"
+
 rm -f "$GRAPH_OUT_FILE"
 rm -f docs/requirements/UR-050.yaml docs/requirements/BUC-050.yaml
 

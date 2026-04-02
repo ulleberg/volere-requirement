@@ -919,37 +919,84 @@ cmd_graph() {
       *) type_prefix="UR" ;;
     esac
 
-    # Extract fit criteria summaries
+    # Extract fit criteria summaries (handles inline and multiline > / | YAML)
     local fit_json="{"
     local first_fit=1
     local in_fit=0
     local current_dim=""
+    local in_criterion=0
+    local crit_buf=""
+    flush_criterion() {
+      if [ -n "$current_dim" ] && [ -n "$crit_buf" ]; then
+        local crit
+        crit=$(echo "$crit_buf" | tr '\n' ' ' | sed 's/^[[:space:]]*//' | sed 's/[[:space:]]*$//' | sed 's/  */ /g' | sed 's/"/\\"/g')
+        [ "$first_fit" -eq 0 ] && fit_json="$fit_json,"
+        fit_json="$fit_json\"$current_dim\":\"$crit\""
+        first_fit=0
+        crit_buf=""
+        in_criterion=0
+      fi
+    }
     while IFS= read -r line; do
       if echo "$line" | grep -q "^fit_criteria:"; then
         in_fit=1; continue
       fi
       if [ "$in_fit" -eq 1 ]; then
-        # End of fit_criteria block
-        if echo "$line" | grep -qE "^[a-z_]+:" && ! echo "$line" | grep -q "^    "; then
-          echo "$line" | grep -qE "^  [a-z]" || break
+        # End of fit_criteria block — top-level key (not indented)
+        if echo "$line" | grep -qE "^[a-z_]"; then
+          flush_criterion
+          break
         fi
         # Dimension header (e.g., "  user:")
         if echo "$line" | grep -qE "^  [a-z_]+:$"; then
-          current_dim=$(echo "$line" | sed 's/^  //' | sed 's/://');
+          flush_criterion
+          current_dim=$(echo "$line" | sed 's/^  //' | sed 's/://')
+          continue
         fi
-        # Criterion value
+        # Criterion line
         if echo "$line" | grep -q "^    criterion:"; then
-          local crit=$(echo "$line" | sed 's/^    criterion: //' | sed 's/^"//' | sed 's/"$//' | sed "s/'/\\\\\'/g" | sed 's/"/\\"/g')
-          [ "$first_fit" -eq 0 ] && fit_json="$fit_json,"
-          fit_json="$fit_json\"$current_dim\":\"$crit\""
-          first_fit=0
+          flush_criterion
+          local crit_val
+          crit_val=$(echo "$line" | sed 's/^    criterion: //')
+          if echo "$crit_val" | grep -qE '^[>|]'; then
+            # Multiline indicator — collect continuation lines
+            in_criterion=1
+            crit_buf=""
+          else
+            # Inline value
+            crit_buf=$(echo "$crit_val" | sed 's/^"//' | sed 's/"$//')
+            in_criterion=2
+          fi
+          continue
         fi
+        # Continuation lines for multiline criterion
+        if [ "$in_criterion" -eq 1 ]; then
+          if echo "$line" | grep -qE "^      "; then
+            local cont
+            cont=$(echo "$line" | sed 's/^      //')
+            [ -n "$crit_buf" ] && crit_buf="$crit_buf $cont" || crit_buf="$cont"
+            continue
+          else
+            # End of continuation — flush before processing this line
+            flush_criterion
+          fi
+        fi
+        # Other fields under a dimension (verification:, test_type:, etc.) — skip
       fi
     done < "$f"
+    flush_criterion
     fit_json="$fit_json}"
 
+    # Compute label: title truncated to 20 chars with ellipsis
+    local label
+    if [ ${#title} -gt 20 ]; then
+      label="${title:0:20}..."
+    else
+      label="$title"
+    fi
+
     [ "$first_node" -eq 0 ] && nodes="$nodes,"
-    nodes="$nodes{\"id\":\"$id\",\"type\":\"$type_prefix\",\"title\":\"$title\",\"dal\":\"$dal\",\"status\":\"$status\",\"fit_criteria\":$fit_json}"
+    nodes="$nodes{\"id\":\"$id\",\"type\":\"$type_prefix\",\"title\":\"$title\",\"label\":\"$label\",\"dal\":\"$dal\",\"status\":\"$status\",\"fit_criteria\":$fit_json}"
     first_node=0
   done
   nodes="$nodes]"
