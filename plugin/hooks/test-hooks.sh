@@ -849,6 +849,97 @@ rm -rf docs/requirements .volere src
 echo ""
 
 # ============================================================
+echo "volere graph:"
+# ============================================================
+
+# Create requirements for graph tests
+mkdir -p docs/requirements .volere
+echo 'dal: C' > .volere/profile.yaml
+cat > docs/requirements/UR-050.yaml << 'CARD'
+id: UR-050
+type: functional
+title: "Test requirement"
+description: "The system must pass tests"
+rationale: "Testing graph command"
+fit_criteria:
+  user:
+    criterion: "All tests pass"
+    verification: test
+dal: C
+priority: must
+status: proposed
+origin:
+  stakeholder: test
+  date: "2026-03-31"
+CARD
+
+cat > docs/requirements/BUC-050.yaml << 'CARD'
+id: BUC-050
+type: business-use-case
+title: "Test business case"
+description: "Business context for testing"
+rationale: "Testing graph command"
+fit_criteria:
+  user:
+    criterion: "Business value delivered"
+    verification: test
+dal: C
+priority: must
+status: proposed
+origin:
+  stakeholder: test
+  date: "2026-03-31"
+decomposed_to:
+  - UR-050
+CARD
+
+GRAPH_OUT_FILE="/tmp/volere-graph-test-$$.html"
+
+# Test 67: volere graph produces HTML output file (UR-020)
+GRAPH_OUT=$("$VOLERE_CMD" graph --output "$GRAPH_OUT_FILE" --no-open 2>&1 || true)
+if [ -f "$GRAPH_OUT_FILE" ] && grep -q '<!DOCTYPE html>' "$GRAPH_OUT_FILE"; then
+  log_pass "volere graph produces HTML output file (UR-020)"
+else
+  log_fail "volere graph should produce an HTML file"
+fi
+
+# Test 68: graph HTML contains all requirement IDs as node data (UR-020)
+if grep -q '"UR-050"' "$GRAPH_OUT_FILE" && grep -q '"BUC-050"' "$GRAPH_OUT_FILE"; then
+  log_pass "graph HTML contains all requirement IDs as node data (UR-020)"
+else
+  log_fail "graph HTML should contain UR-050 and BUC-050 as node data"
+fi
+
+# Test 69: graph HTML contains relationship edges (UR-020)
+if grep -q '"decomposed_to"' "$GRAPH_OUT_FILE"; then
+  log_pass "graph HTML contains relationship edges (UR-020)"
+else
+  log_fail "graph HTML should contain decomposed_to edge"
+fi
+
+# Test 70: graph HTML has no external resource URLs (UR-020)
+# Exclude SVG namespace URI (http://www.w3.org/2000/svg) which is required for createElementNS
+EXT_URLS=$(grep -E 'https?://' "$GRAPH_OUT_FILE" | { grep -vE 'w3\.org/(2000/svg|1999/xhtml)' || true; } | wc -l | tr -d ' ')
+if [ "$EXT_URLS" -eq 0 ]; then
+  log_pass "graph HTML has no external resource URLs (UR-020)"
+else
+  log_fail "graph HTML should have no external resource URLs (found $EXT_URLS)"
+fi
+
+# Test 71: graph HTML contains type-to-color mapping for all types (UR-020)
+if grep -q '#ffa657' "$GRAPH_OUT_FILE" && grep -q '#7ee787' "$GRAPH_OUT_FILE" && \
+   grep -q '#79c0ff' "$GRAPH_OUT_FILE" && grep -q '#d2a8ff' "$GRAPH_OUT_FILE"; then
+  log_pass "graph HTML contains type-to-color mapping for BUC/PUC/UR/TC (UR-020)"
+else
+  log_fail "graph HTML should contain color codes for all four types"
+fi
+
+rm -f "$GRAPH_OUT_FILE"
+rm -f docs/requirements/UR-050.yaml docs/requirements/BUC-050.yaml
+
+echo ""
+
+# ============================================================
 echo "Results:"
 echo "  $PASS passed, $FAIL failed"
 # ============================================================

@@ -12,6 +12,7 @@
 #   review      Generate team review prompt
 #   check-docs  Check documentation staleness
 #   clean       Remove process artifacts from docs/
+#   graph       Interactive requirement graph visualization
 
 set -euo pipefail
 
@@ -802,6 +803,129 @@ cmd_clean() {
 }
 
 # ============================================================
+# volere graph
+# ============================================================
+cmd_graph() {
+  local output=""
+  local no_open=0
+
+  while [ $# -gt 0 ]; do
+    case "$1" in
+      --output) output="$2"; shift 2 ;;
+      --output=*) output="${1#--output=}"; shift ;;
+      --no-open) no_open=1; shift ;;
+      *) shift ;;
+    esac
+  done
+
+  [ -z "$output" ] && output="/tmp/volere-graph.html"
+
+  local template="$VOLERE_DIR/cli/graph-template.html"
+  if [ ! -f "$template" ]; then
+    echo -e "${RED}Error: graph-template.html not found at $template${NC}"
+    return 1
+  fi
+
+  # Build JSON nodes array
+  local nodes="["
+  local first_node=1
+  for f in "$REQS_DIR"/*.yaml; do
+    [ -f "$f" ] || continue
+    [ "$(basename "$f")" = "context.yaml" ] && continue
+
+    local id=$(grep "^id:" "$f" | head -1 | awk '{print $2}')
+    local title=$(grep "^title:" "$f" | head -1 | sed 's/^title: //' | sed 's/^"//' | sed 's/"$//')
+    local type_raw=$(grep "^type:" "$f" | head -1 | awk '{print $2}')
+    local dal=$(grep "^dal:" "$f" | head -1 | awk '{print $2}')
+    local status=$(grep "^status:" "$f" | head -1 | awk '{print $2}')
+    [ -z "$id" ] && continue
+
+    # Map type to prefix
+    local type_prefix
+    case "$type_raw" in
+      business-use-case) type_prefix="BUC" ;;
+      product-use-case) type_prefix="PUC" ;;
+      technical-constraint) type_prefix="TC" ;;
+      *) type_prefix="UR" ;;
+    esac
+
+    # Extract fit criteria summaries
+    local fit_json="{"
+    local first_fit=1
+    local in_fit=0
+    local current_dim=""
+    while IFS= read -r line; do
+      if echo "$line" | grep -q "^fit_criteria:"; then
+        in_fit=1; continue
+      fi
+      if [ "$in_fit" -eq 1 ]; then
+        # End of fit_criteria block
+        if echo "$line" | grep -qE "^[a-z_]+:" && ! echo "$line" | grep -q "^    "; then
+          echo "$line" | grep -qE "^  [a-z]" || break
+        fi
+        # Dimension header (e.g., "  user:")
+        if echo "$line" | grep -qE "^  [a-z_]+:$"; then
+          current_dim=$(echo "$line" | sed 's/^  //' | sed 's/://');
+        fi
+        # Criterion value
+        if echo "$line" | grep -q "^    criterion:"; then
+          local crit=$(echo "$line" | sed 's/^    criterion: //' | sed 's/^"//' | sed 's/"$//' | sed "s/'/\\\\\'/g" | sed 's/"/\\"/g')
+          [ "$first_fit" -eq 0 ] && fit_json="$fit_json,"
+          fit_json="$fit_json\"$current_dim\":\"$crit\""
+          first_fit=0
+        fi
+      fi
+    done < "$f"
+    fit_json="$fit_json}"
+
+    [ "$first_node" -eq 0 ] && nodes="$nodes,"
+    nodes="$nodes{\"id\":\"$id\",\"type\":\"$type_prefix\",\"title\":\"$title\",\"dal\":\"$dal\",\"status\":\"$status\",\"fit_criteria\":$fit_json}"
+    first_node=0
+  done
+  nodes="$nodes]"
+
+  # Build JSON edges array
+  local edges="["
+  local first_edge=1
+  for f in "$REQS_DIR"/*.yaml; do
+    [ -f "$f" ] || continue
+    [ "$(basename "$f")" = "context.yaml" ] && continue
+
+    local from_id=$(grep "^id:" "$f" | head -1 | awk '{print $2}')
+    [ -z "$from_id" ] && continue
+
+    # Extract relationship arrays
+    for rel_type in depends_on serves decomposed_to cross_verify conflicts; do
+      local targets=$(grep -A 20 "^${rel_type}:" "$f" 2>/dev/null | grep "^  - " | sed 's/^  - //' | tr -d ' ')
+      for target in $targets; do
+        [ "$first_edge" -eq 0 ] && edges="$edges,"
+        edges="$edges{\"from\":\"$from_id\",\"to\":\"$target\",\"type\":\"$rel_type\"}"
+        first_edge=0
+      done
+    done
+  done
+  edges="$edges]"
+
+  local json="{\"nodes\":$nodes,\"edges\":$edges}"
+
+  # Inject JSON into template
+  # Use awk to avoid sed issues with special characters in JSON
+  awk -v data="$json" '{gsub(/\{\{DATA\}\}/, data); print}' "$template" > "$output"
+
+  echo -e "${CYAN}Requirement Graph${NC} — $(basename "$PROJECT_ROOT")"
+  echo ""
+  local node_count=$(echo "$json" | grep -o '"id"' | wc -l | tr -d ' ')
+  local edge_count=$(echo "$json" | grep -o '"from"' | wc -l | tr -d ' ')
+  echo "  Nodes: $node_count requirements"
+  echo "  Edges: $edge_count relationships"
+  echo "  Output: $output"
+
+  if [ "$no_open" -eq 0 ] && command -v open >/dev/null 2>&1; then
+    open "$output"
+  fi
+}
+
+# ============================================================
 # Main
 # ============================================================
 case "${1:-help}" in
@@ -823,6 +947,7 @@ case "${1:-help}" in
   review)     shift; cmd_review "$@" ;;
   check-docs) shift; cmd_check_docs "$@" ;;
   clean)      shift; cmd_clean "$@" ;;
+  graph)      shift; cmd_graph "$@" ;;
   help|--help|-h)
     echo "Volere Agentic Framework CLI"
     echo ""
@@ -842,6 +967,7 @@ case "${1:-help}" in
     echo "  review [--coherence]        Detect review type and show guidance"
     echo "  check-docs                 Check documentation staleness"
     echo "  clean [--rm]               Remove process artifacts from docs/"
+    echo "  graph [--output F]          Interactive requirement graph"
     echo ""
     echo "Examples:"
     echo "  volere init --dal B"
