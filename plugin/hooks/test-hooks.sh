@@ -1003,7 +1003,8 @@ description: "The system must pass tests"
 rationale: "Testing graph command"
 fit_criteria:
   user:
-    criterion: "All tests pass"
+    criterion: >
+      All graph tests pass with coverage
     verification: test
 dal: C
 priority: must
@@ -1088,7 +1089,7 @@ fi
 # Test 80: graph JSON contains full fit criteria text, not truncated (UR-020)
 GRAPH_TEST_FILE="/tmp/volere-graph-test-$$.html"
 "$VOLERE_CMD" graph --output "$GRAPH_TEST_FILE" --no-open >/dev/null 2>&1 || true
-if grep -q 'All tests pass' "$GRAPH_TEST_FILE" 2>/dev/null; then
+if grep -q 'All graph tests pass with coverage' "$GRAPH_TEST_FILE" 2>/dev/null; then
   log_pass "graph JSON contains full fit criteria text (UR-020)"
 else
   log_fail "graph JSON should contain full fit criteria text, not just '>'"

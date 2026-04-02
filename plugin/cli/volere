@@ -943,7 +943,7 @@ cmd_graph() {
       fi
       if [ "$in_fit" -eq 1 ]; then
         # End of fit_criteria block — top-level key (not indented)
-        if echo "$line" | grep -qE "^[a-z_]"; then
+        if echo "$line" | grep -qE "^[a-z_]+:"; then
           flush_criterion
           break
         fi
@@ -965,7 +965,6 @@ cmd_graph() {
           else
             # Inline value
             crit_buf=$(echo "$crit_val" | sed 's/^"//' | sed 's/"$//')
-            in_criterion=2
           fi
           continue
         fi
