@@ -758,22 +758,22 @@
     <div class="fit-cell fade-in stagger" style="--delay: 0.2s; border: 1px solid rgba(126,231,135,0.25);">
       <div class="mono" style="color: var(--green); font-size: 0.7rem; font-weight: 600; margin-bottom: 0.4rem;">user</div>
       <div style="font-size: 0.85rem;">"95% of state transitions detected within 2s"</div>
-      <div style="color: var(--text-dim); font-size: 0.65rem; margin-top: 0.25rem;" class="mono">test_type: integration</div>
+      <div style="color: var(--text-dim); font-size: 0.65rem; margin-top: 0.25rem;" class="mono">V-Model: system test (UR level)</div>
     </div>
     <div class="fit-cell fade-in stagger" style="--delay: 0.3s; border: 1px solid rgba(248,81,73,0.25);">
       <div class="mono" style="color: var(--red); font-size: 0.7rem; font-weight: 600; margin-bottom: 0.4rem;">security</div>
       <div style="font-size: 0.85rem;">"Cannot be spoofed by terminal injection"</div>
-      <div style="color: var(--text-dim); font-size: 0.65rem; margin-top: 0.25rem;" class="mono">test_type: unit</div>
+      <div style="color: var(--text-dim); font-size: 0.65rem; margin-top: 0.25rem;" class="mono">V-Model: unit test (TC level)</div>
     </div>
     <div class="fit-cell fade-in stagger" style="--delay: 0.4s; border: 1px solid rgba(255,166,87,0.25);">
       <div class="mono" style="color: var(--orange); font-size: 0.7rem; font-weight: 600; margin-bottom: 0.4rem;">operational</div>
       <div style="font-size: 0.85rem;">"Works during cross-machine deployment"</div>
-      <div style="color: var(--text-dim); font-size: 0.65rem; margin-top: 0.25rem;" class="mono">test_type: system</div>
+      <div style="color: var(--text-dim); font-size: 0.65rem; margin-top: 0.25rem;" class="mono">V-Model: system test (PUC level)</div>
     </div>
     <div class="fit-cell fade-in stagger" style="--delay: 0.5s; border: 1px solid rgba(121,192,255,0.25);">
       <div class="mono" style="color: var(--blue); font-size: 0.7rem; font-weight: 600; margin-bottom: 0.4rem;">regulatory</div>
       <div style="font-size: 0.85rem;">"Meets IEC 61508 SIL-2 evidence chain"</div>
-      <div style="color: var(--text-dim); font-size: 0.65rem; margin-top: 0.25rem;" class="mono">test_type: acceptance</div>
+      <div style="color: var(--text-dim); font-size: 0.65rem; margin-top: 0.25rem;" class="mono">V-Model: acceptance test (BUC level)</div>
     </div>
   </div>
 </div>
@@ -791,35 +791,35 @@
         <div class="mono" style="color: var(--text-muted); font-size: 1.25rem; font-weight: 700;">E</div>
         <div style="color: var(--text-dim); font-size: 0.6rem;">Cosmetic</div>
       </div>
-      <div class="dal-bar-label">linting</div>
+      <div class="dal-bar-label">static analysis<br><span style="color: var(--text-dim);">Code level</span></div>
     </div>
     <div class="dal-bar fade-in stagger" style="--delay: 0.25s;">
       <div class="dal-bar-inner" style="height: 110px; border-color: rgba(121,192,255,0.25);">
         <div class="mono" style="color: var(--blue); font-size: 1.25rem; font-weight: 700;">D</div>
         <div style="color: var(--text-dim); font-size: 0.6rem;">Minor</div>
       </div>
-      <div class="dal-bar-label">unit +<br>integration</div>
+      <div class="dal-bar-label">+ unit tests<br><span style="color: var(--text-dim);">TC level</span></div>
     </div>
     <div class="dal-bar fade-in stagger" style="--delay: 0.35s;">
       <div class="dal-bar-inner" style="height: 140px; border-color: rgba(210,168,255,0.25);">
         <div class="mono" style="color: var(--purple); font-size: 1.25rem; font-weight: 700;">C</div>
         <div style="color: var(--text-dim); font-size: 0.6rem;">Moderate</div>
       </div>
-      <div class="dal-bar-label">+ system<br>tests</div>
+      <div class="dal-bar-label">+ integration +<br>system tests<br><span style="color: var(--text-dim);">Architecture + UR level</span></div>
     </div>
     <div class="dal-bar fade-in stagger" style="--delay: 0.45s;">
       <div class="dal-bar-inner" style="height: 170px; border-color: rgba(255,166,87,0.25);">
         <div class="mono" style="color: var(--orange); font-size: 1.25rem; font-weight: 700;">B</div>
         <div style="color: var(--text-dim); font-size: 0.6rem;">Critical</div>
       </div>
-      <div class="dal-bar-label">+ code<br>review</div>
+      <div class="dal-bar-label">+ acceptance tests<br>+ code review<br><span style="color: var(--text-dim);">BUC level</span></div>
     </div>
     <div class="dal-bar fade-in stagger" style="--delay: 0.55s;">
       <div class="dal-bar-inner" style="height: 210px; border-color: rgba(248,81,73,0.25);">
         <div class="mono" style="color: var(--red); font-size: 1.25rem; font-weight: 700;">A</div>
         <div style="color: var(--text-dim); font-size: 0.6rem;">Catastrophic</div>
       </div>
-      <div class="dal-bar-label">+ mutation testing<br>+ multi-agent review</div>
+      <div class="dal-bar-label">+ mutation testing<br>+ multi-agent review<br><span style="color: var(--text-dim);">Full V-Model stack</span></div>
     </div>
   </div>
 
