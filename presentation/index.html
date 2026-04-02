@@ -282,6 +282,56 @@
     font-size: 0.8rem;
   }
 
+  /* === Snow Card === */
+  .snow-card-layout {
+    display: flex;
+    gap: 1.25rem;
+    margin-top: 1.5rem;
+  }
+
+  .snow-card-yaml {
+    flex: 1;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 1.25rem;
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    line-height: 1.8;
+    overflow-x: auto;
+  }
+
+  .snow-card-labels {
+    flex: 0 0 200px;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    font-size: 0.72rem;
+  }
+
+  .snow-label {
+    padding: 0.5rem;
+    border-radius: 0 4px 4px 0;
+  }
+
+  .yaml-key { color: var(--purple); }
+  .yaml-val { color: var(--cyan); }
+  .yaml-comment { color: var(--text-dim); }
+
+  /* === Fit Criteria Grid === */
+  .fit-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.75rem;
+    margin-top: 1.5rem;
+  }
+
+  .fit-cell {
+    background: var(--surface);
+    border-radius: 6px;
+    padding: 1rem;
+  }
+
   /* === Responsive === */
   @media (max-width: 768px) {
     section { padding: 2rem 1rem; }
@@ -293,6 +343,9 @@
     .failure-labels { flex-direction: column; align-items: center; gap: 1rem; }
     .loop-detail { flex-direction: column; }
     .loop-detail-gate { flex: auto; }
+    .snow-card-layout { flex-direction: column; }
+    .snow-card-labels { flex: auto; }
+    .fit-grid { grid-template-columns: 1fr; }
   }
 </style>
 </head>
@@ -593,10 +646,87 @@
 </section>
 
 <!-- Section 10: The Snow Card -->
-<section id="s10"><div class="section-inner"></div></section>
+<section id="s10">
+<div class="section-inner">
+  <h2 class="fade-in" style="text-align: center;">Anatomy of a requirement card</h2>
+  <p class="fade-in stagger subtitle" style="--delay: 0.1s; text-align: center;">Volere's "snow card" — modernised as YAML</p>
+
+  <div class="snow-card-layout">
+    <div class="snow-card-yaml fade-in stagger" style="--delay: 0.2s;">
+      <span class="yaml-key">id:</span> <span class="yaml-val">UR-007</span><br>
+      <span class="yaml-key">type:</span> <span class="yaml-val">functional</span><br>
+      <span class="yaml-key">title:</span> <span class="yaml-val">Session state detection</span><br>
+      <span class="yaml-key">description:</span> <span class="yaml-comment">|</span><br>
+      <span class="yaml-val" style="padding-left: 1rem;">&nbsp; System detects active sessions</span><br>
+      <span class="yaml-val" style="padding-left: 1rem;">&nbsp; across all connected machines.</span><br>
+      <span class="yaml-key">rationale:</span> <span class="yaml-val">Prevents duplicate work</span><br>
+      <span class="yaml-key">dal:</span> <span style="color: var(--orange);">C</span><br>
+      <span class="yaml-key">priority:</span> <span style="color: var(--orange);">high</span><br>
+      <span class="yaml-key">fit_criteria:</span><br>
+      <span class="yaml-key" style="padding-left: 1rem;">&nbsp; user:</span><br>
+      <span class="yaml-key" style="padding-left: 2rem;">&nbsp;&nbsp; criterion:</span> <span class="yaml-val">"95% detection in 2s"</span><br>
+      <span class="yaml-key" style="padding-left: 1rem;">&nbsp; security:</span><br>
+      <span class="yaml-key" style="padding-left: 2rem;">&nbsp;&nbsp; criterion:</span> <span class="yaml-val">"No terminal injection"</span><br>
+      <span class="yaml-key">depends_on:</span> <span class="yaml-val">[TC-003]</span><br>
+      <span class="yaml-key">origin:</span><br>
+      <span class="yaml-key" style="padding-left: 1rem;">&nbsp; stakeholder:</span> <span class="yaml-val">ops-team</span>
+    </div>
+    <div class="snow-card-labels">
+      <div class="snow-label fade-in stagger" style="--delay: 0.3s; background: rgba(210,168,255,0.08); border-left: 2px solid var(--purple);">
+        <div style="color: var(--purple); font-weight: 600;">Identity</div>
+        <div style="color: var(--text-muted);">ID, type, title — unique, traceable</div>
+      </div>
+      <div class="snow-label fade-in stagger" style="--delay: 0.4s; background: rgba(126,231,135,0.08); border-left: 2px solid var(--green);">
+        <div style="color: var(--green); font-weight: 600;">Why</div>
+        <div style="color: var(--text-muted);">Rationale — Chesterton's fence</div>
+      </div>
+      <div class="snow-label fade-in stagger" style="--delay: 0.5s; background: rgba(255,166,87,0.08); border-left: 2px solid var(--orange);">
+        <div style="color: var(--orange); font-weight: 600;">Risk</div>
+        <div style="color: var(--text-muted);">DAL scales verification effort</div>
+      </div>
+      <div class="snow-label fade-in stagger" style="--delay: 0.6s; background: rgba(248,81,73,0.08); border-left: 2px solid var(--red);">
+        <div style="color: var(--red); font-weight: 600;">Done means</div>
+        <div style="color: var(--text-muted);">Multi-dimensional fit criteria</div>
+      </div>
+      <div class="snow-label fade-in stagger" style="--delay: 0.7s; background: rgba(121,192,255,0.08); border-left: 2px solid var(--blue);">
+        <div style="color: var(--blue); font-weight: 600;">Traceability</div>
+        <div style="color: var(--text-muted);">depends_on, origin, history</div>
+      </div>
+    </div>
+  </div>
+</div>
+</section>
 
 <!-- Section 11: Multi-dimensional Fit Criteria -->
-<section id="s11"><div class="section-inner"></div></section>
+<section id="s11">
+<div class="section-inner" style="text-align: center;">
+  <h2 class="fade-in">One requirement. Multiple definitions of "done."</h2>
+  <p class="fade-in stagger subtitle" style="--delay: 0.1s;">Traditional: one pass/fail. Volere: user + security + ops + regulatory.</p>
+
+  <div class="fit-grid" style="max-width: 640px; margin-left: auto; margin-right: auto;">
+    <div class="fit-cell fade-in stagger" style="--delay: 0.2s; border: 1px solid rgba(126,231,135,0.25);">
+      <div class="mono" style="color: var(--green); font-size: 0.7rem; font-weight: 600; margin-bottom: 0.4rem;">user</div>
+      <div style="font-size: 0.85rem;">"95% of state transitions detected within 2s"</div>
+      <div style="color: var(--text-dim); font-size: 0.65rem; margin-top: 0.25rem;" class="mono">test_type: integration</div>
+    </div>
+    <div class="fit-cell fade-in stagger" style="--delay: 0.3s; border: 1px solid rgba(248,81,73,0.25);">
+      <div class="mono" style="color: var(--red); font-size: 0.7rem; font-weight: 600; margin-bottom: 0.4rem;">security</div>
+      <div style="font-size: 0.85rem;">"Cannot be spoofed by terminal injection"</div>
+      <div style="color: var(--text-dim); font-size: 0.65rem; margin-top: 0.25rem;" class="mono">test_type: unit</div>
+    </div>
+    <div class="fit-cell fade-in stagger" style="--delay: 0.4s; border: 1px solid rgba(255,166,87,0.25);">
+      <div class="mono" style="color: var(--orange); font-size: 0.7rem; font-weight: 600; margin-bottom: 0.4rem;">operational</div>
+      <div style="font-size: 0.85rem;">"Works during cross-machine deployment"</div>
+      <div style="color: var(--text-dim); font-size: 0.65rem; margin-top: 0.25rem;" class="mono">test_type: system</div>
+    </div>
+    <div class="fit-cell fade-in stagger" style="--delay: 0.5s; border: 1px solid rgba(121,192,255,0.25);">
+      <div class="mono" style="color: var(--blue); font-size: 0.7rem; font-weight: 600; margin-bottom: 0.4rem;">regulatory</div>
+      <div style="font-size: 0.85rem;">"Meets IEC 61508 SIL-2 evidence chain"</div>
+      <div style="color: var(--text-dim); font-size: 0.65rem; margin-top: 0.25rem;" class="mono">test_type: acceptance</div>
+    </div>
+  </div>
+</div>
+</section>
 
 <!-- Section 12: DAL Graduated Rigour -->
 <section id="s12"><div class="section-inner"></div></section>
