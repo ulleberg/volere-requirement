@@ -20,7 +20,9 @@ cp plugin/templates/requirement-card.yaml your-project/docs/requirements/UR-001.
 plugin/validate.sh your-project/docs/requirements/UR-001.yaml
 ```
 
-## V-Model Decomposition
+## Requirement Hierarchy (Volere)
+
+Volere's four-level hierarchy organises requirements by abstraction:
 
 ```
 BUC  (Business Use Cases)     Why do these requirements exist?
@@ -29,7 +31,9 @@ BUC  (Business Use Cases)     Why do these requirements exist?
          └── TC  (Technical Constraints) What must the implementation guarantee?
 ```
 
-Each level has testable fit criteria. Each level traces to the next. Each level has a corresponding verification level (acceptance → system → integration → unit tests).
+Each level has testable fit criteria and traces to the next.
+
+This framework adds a novel synthesis: each Volere type maps to a V-Model verification level — BUC↔acceptance tests, PUC↔system tests, UR↔system/integration tests, TC↔unit tests. That mapping is not from the original Volere template; it is the framework's contribution. The result is that every requirement carries both a definition and a verification obligation at the correct level of the V-Model.
 
 ## Framework Components
 
