@@ -16,6 +16,14 @@ fit_criteria:
     verification: test
     test_type: system
     verification_method: system
+  operational:
+    criterion: >
+      volere coverage counts fit criteria dimensions per card and checks
+      that each dimension has at least one referencing test. A card with
+      3 dimensions and 1 test shows as partially covered (1/3), not fully
+      covered. Coverage percentage reflects dimensions covered, not cards.
+    verification: test
+    test_type: system
 
 dal: C
 priority: should
@@ -26,3 +34,11 @@ origin:
   date: "2026-03-31"
   trigger: "Codebase extraction"
   source: "plugin/cli/volere (cmd_coverage)"
+
+history:
+  - date: "2026-03-31"
+    action: created
+    by: extract-requirements
+  - date: "2026-04-02"
+    action: "added operational fit criterion — per-dimension coverage counting"
+    by: thomas-ulleberg

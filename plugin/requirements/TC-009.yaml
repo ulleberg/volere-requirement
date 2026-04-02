@@ -19,6 +19,15 @@ fit_criteria:
     verification: test
     test_type: integration
     verification_method: integration
+  operational:
+    criterion: >
+      suspect auto detects when a card's own fit_criteria block changes
+      (not just its dependents) and marks that card as suspect with reason
+      "fit criteria changed — re-verify acceptance tests". A card whose
+      fit criteria dimensions were added, removed, or modified is flagged
+      for re-verification.
+    verification: test
+    test_type: integration
 
 dal: B
 priority: must
@@ -32,3 +41,11 @@ origin:
 
 serves:
   - UR-008
+
+history:
+  - date: "2026-03-31"
+    action: created
+    by: extract-requirements
+  - date: "2026-04-02"
+    action: "added operational fit criterion — self-suspect on fit criteria change"
+    by: thomas-ulleberg
