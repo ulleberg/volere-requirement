@@ -496,6 +496,7 @@ git commit -m "test: modify UR-050" --quiet
 "$SUSPECT_CMD" auto >/dev/null 2>&1 || true
 if [ -f .volere/suspects.yaml ] && grep -q "UR-051" .volere/suspects.yaml 2>/dev/null; then
   log_pass "suspect auto marks dependents of changed requirements (TC-009)"
+  # Dimension: TC-009:user
 else
   log_fail "suspect auto should mark UR-051 when UR-050 changed"
 fi
@@ -603,6 +604,7 @@ fi
 COVERAGE_OUT=$("$VOLERE_CMD" coverage 2>&1 || true)
 if echo "$COVERAGE_OUT" | grep -qE "Coverage:.*[0-9]+/[0-9]+"; then
   log_pass "volere coverage reports per-dimension coverage percentage (TC-015, UR-007)"
+  # Dimension: UR-007:user
 else
   log_fail "volere coverage should report coverage fraction"
 fi
@@ -710,6 +712,7 @@ fi
 # Test 54: extract-requirements skill covers scan, draft, review workflow (UR-011)
 assert_file_contains "extract-requirements skill covers scan, draft, and review workflow (UR-011)" \
   "$EXTRACT_SKILL" "draft" "confirm" "BUC"
+# Dimension: UR-011:user
 
 # Test 55: audit-tests skill defines VERIFIES/SUPPORTS/THEATER/REDUNDANT classification (UR-014)
 assert_file_contains "audit-tests skill defines test classification categories (UR-014)" \
@@ -881,6 +884,7 @@ git commit --quiet -m "Add process artifacts"
 CLEAN_OUT=$("$VOLERE_CMD" clean 2>&1 || true)
 if echo "$CLEAN_OUT" | grep -q "problem.md" && echo "$CLEAN_OUT" | grep -q "discovery-to-delivery"; then
   log_pass "volere clean lists process artifacts with source attribution (UR-022)"
+  # Dimension: UR-022:user
 else
   log_fail "volere clean should list artifacts with source attribution"
 fi
@@ -1000,6 +1004,7 @@ GRAPH_OUT_FILE="/tmp/volere-graph-test-$$.html"
 GRAPH_OUT=$("$VOLERE_CMD" graph --output "$GRAPH_OUT_FILE" --no-open 2>&1 || true)
 if [ -f "$GRAPH_OUT_FILE" ] && grep -q '<!DOCTYPE html>' "$GRAPH_OUT_FILE"; then
   log_pass "volere graph produces HTML output file (UR-020)"
+  # Dimension: UR-020:user
 else
   log_fail "volere graph should produce an HTML file"
 fi
