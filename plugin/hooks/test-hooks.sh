@@ -715,6 +715,30 @@ assert_file_contains "extract-requirements skill covers scan, draft, and review 
 assert_file_contains "audit-tests skill defines test classification categories (UR-014)" \
   "$SCRIPT_DIR/../skills/audit-tests/SKILL.md" "VERIFIES" "THEATER" "REDUNDANT"
 
+# Test 56: review-requirements skill defines coherence review type (UR-018)
+REVIEW_SKILL="$SCRIPT_DIR/../skills/review-requirements/SKILL.md"
+if grep -q "Coherence Review" "$REVIEW_SKILL" && grep -q "contradictions" "$REVIEW_SKILL" && grep -q "coherence-review.md" "$REVIEW_SKILL"; then
+  log_pass "review-requirements skill defines coherence review with contradiction output (UR-018)"
+else
+  log_fail "review-requirements skill should define coherence review type with contradiction pairs"
+fi
+
+# Test 57: volere review --coherence suggests coherence review (UR-018)
+COHERENCE_OUT=$("$VOLERE_CMD" review --coherence 2>&1 || true)
+if echo "$COHERENCE_OUT" | grep -q "Coherence Review"; then
+  log_pass "volere review --coherence suggests coherence review type (UR-018)"
+else
+  log_fail "volere review --coherence should suggest coherence review type"
+fi
+
+# Test 58: volere coverage shows cards-to-tests ratio (UR-019)
+# (reuses COVERAGE_OUT from test 45)
+if echo "$COVERAGE_OUT" | grep -qE "Ratio: 1:[0-9]+\.[0-9]+ \([0-9]+ cards, [0-9]+ tests\)"; then
+  log_pass "volere coverage shows cards-to-tests ratio (UR-019)"
+else
+  log_fail "volere coverage should show Ratio: 1:X.X (N cards, M tests)"
+fi
+
 # Clean up
 rm -rf docs/requirements .volere src
 

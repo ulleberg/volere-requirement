@@ -26,6 +26,7 @@ Check the project state to determine which review type to run:
 | No `docs/requirements/reviews/` directory | **Full Review** (Pass 1) | 5 agents |
 | Reviews exist, requirements changed since last review | **Validation Review** (Pass 1.5) | 3 agents |
 | User asks to "trace" or "find dead code" or "audit tests" | **Trace Review** (Pass 2) | 4 agents |
+| User asks to "check coherence" or "find contradictions" | **Coherence Review** | 1 agent |
 
 **How to detect "requirements changed since last review":**
 ```bash
@@ -277,6 +278,46 @@ All teammates read: docs/requirements/*.yaml, ARCHITECTURE.md, CLAUDE.md
 ```
 
 **Note:** If the project has no frontend (API-only, CLI tool), skip the Frontend Tracer and use a 3-agent team.
+
+## Review Type 4: Coherence Review
+
+**When:** User asks to "check coherence", "find contradictions", or "explain requirements to an outsider". Verifies that requirements can be explained without internal contradictions.
+
+**Team:** 1 agent (runs in zero-agent mode — sequential in one session)
+
+**Process:** For each requirement card, compare its description, rationale, and fit criteria against every other card's. Flag:
+- **Contradictions** — conflicting statements about the same concept (e.g., one card says "client-side only", another requires "server-side validation")
+- **Incoherences** — a rationale in one card undermined by a fit criterion in another
+- **Terminology drift** — the same concept named differently across cards
+
+**Prompt template:**
+
+```
+Read all requirement cards in docs/requirements/.
+
+For each pair of requirements, check whether description, rationale, or
+fit criteria in one card contradict or undermine statements in another.
+
+Deliverable — write to docs/requirements/reviews/coherence-review.md:
+
+For each contradiction found:
+  {ID-A} ↔ {ID-B}: {one-line summary}
+    Card A says: "{exact text from card A}"
+    Card B says: "{exact text from card B}"
+    Assessment: {why these conflict and which should change}
+
+If no contradictions are found, state that explicitly.
+
+At the end, list any terminology inconsistencies (same concept, different names).
+```
+
+**Output structure:**
+```
+docs/requirements/reviews/
+└── coherence-review.md
+```
+
+**Scaling:** For projects with 100+ cards, scope the coherence check to a module boundary from `context.yaml` rather than comparing all pairs globally.
 
 ## Synthesis Scoring Criteria
 

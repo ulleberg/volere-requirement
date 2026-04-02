@@ -428,6 +428,8 @@ cmd_coverage() {
   local total_criteria=0
   local covered=0
   local uncovered=0
+  local total_cards=0
+  local total_tests=0
 
   for f in "$REQS_DIR"/*.yaml; do
     [ -f "$f" ] || continue
@@ -450,14 +452,20 @@ cmd_coverage() {
     fi
 
     total_criteria=$((total_criteria + dims))
+    total_cards=$((total_cards + 1))
 
-    # Check if tests reference this ID
-    local has_tests=$(grep -rl "$id" "$PROJECT_ROOT" \
+    # Check if tests reference this ID (count all matching test files)
+    local test_files=$(grep -rl "$id" "$PROJECT_ROOT" \
       --include="*_test.go" --include="*.test.js" --include="*.test.ts" --include="*.spec.*" \
       --include="*test*.sh" --include="*_test.py" --include="*_test.rs" \
-      2>/dev/null | grep -v node_modules | head -1 || true)
+      2>/dev/null | grep -v node_modules || true)
+    local test_count=0
+    if [ -n "$test_files" ]; then
+      test_count=$(echo "$test_files" | wc -l | tr -d ' ')
+    fi
+    total_tests=$((total_tests + test_count))
 
-    if [ -n "$has_tests" ]; then
+    if [ -n "$test_files" ]; then
       covered=$((covered + dims))
       echo -e "  ${GREEN}✓${NC} $id (DAL-$dal): tested"
     else
@@ -473,6 +481,16 @@ cmd_coverage() {
     echo "  No fit criteria found"
   fi
   echo -e "  Uncovered: ${RED}$uncovered${NC}"
+
+  # Cards-to-tests ratio (UR-019)
+  if [ "$total_cards" -gt 0 ]; then
+    local ratio=$(awk "BEGIN {printf \"%.1f\", $total_tests / $total_cards}")
+    echo "  Ratio: 1:$ratio ($total_cards cards, $total_tests tests)"
+    local low=$(awk "BEGIN {print ($total_tests / $total_cards < 1.2) ? 1 : 0}")
+    if [ "$low" -eq 1 ]; then
+      echo -e "  ${YELLOW}⚠ Low ratio — check for single-dimensional fit criteria.${NC}"
+    fi
+  fi
 }
 
 # ============================================================
@@ -584,12 +602,29 @@ cmd_impact_resolve() {
 # ============================================================
 cmd_review() {
   local card_count=$(ls "$REQS_DIR"/*.yaml 2>/dev/null | grep -v context.yaml | wc -l | tr -d ' ')
+  local review_mode=""
+
+  while [ $# -gt 0 ]; do
+    case "$1" in
+      --coherence) review_mode="coherence"; shift ;;
+      *) shift ;;
+    esac
+  done
 
   echo -e "${CYAN}Review Requirements${NC}"
   echo ""
   echo "  Project: $(basename "$PROJECT_ROOT")"
   echo "  Requirements: $card_count"
   echo ""
+
+  # Explicit coherence review (bypass minimum card count)
+  if [ "$review_mode" = "coherence" ]; then
+    echo "  Type: Coherence Review — check for contradictions across requirement set"
+    echo "  Team: 1 agent (pairwise comparison of descriptions, rationales, fit criteria)"
+    echo ""
+    echo "  Use the review-requirements skill in Claude Code to run the coherence check."
+    return
+  fi
 
   if [ "$card_count" -lt 5 ]; then
     echo "  < 5 requirements — use write-requirement skill to improve individual cards."
@@ -650,7 +685,7 @@ case "${1:-help}" in
     echo "  impact --resolve <ID>       Mark suspect link as resolved"
     echo "  impact --suspects           Check for unresolved suspect links"
     echo "  impact --auto               Auto-detect suspects from git changes"
-    echo "  review                      Detect review type and show guidance"
+    echo "  review [--coherence]        Detect review type and show guidance"
     echo ""
     echo "Examples:"
     echo "  volere init --dal B"
