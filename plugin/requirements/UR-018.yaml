@@ -1,0 +1,40 @@
+id: UR-018
+type: functional
+title: "Explanation coherence check in requirement reviews"
+
+description: >
+  The review-requirements skill includes a review mode that verifies
+  requirements can be explained to an outsider without contradicting
+  other requirements in the set.
+
+rationale: >
+  Building the interactive presentation exposed three internal
+  inconsistencies (V-Model levels, fit criteria test types, DAL bar
+  labels) that code review and existing review modes missed. Explaining
+  to an external audience forces precision that internal review does not.
+
+fit_criteria:
+  user:
+    criterion: >
+      review-requirements skill accepts a review type that checks each
+      requirement's description, rationale, and fit criteria for
+      contradictions against other requirements in the set. Output lists
+      contradictions with requirement ID pairs and conflicting text.
+    verification: test
+    test_type: system
+
+dal: D
+priority: could
+status: proposed
+
+origin:
+  stakeholder: thomas-ulleberg
+  date: "2026-04-02"
+  trigger: "Insight 18 — presentation as verification activity exposed inconsistencies that code review missed"
+
+depends_on: [UR-011]  # review-requirements skill
+
+history:
+  - date: "2026-04-02"
+    action: created
+    by: thomas-ulleberg

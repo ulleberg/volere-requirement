@@ -1,0 +1,41 @@
+id: UR-019
+type: functional
+title: "Coverage ratio metric in volere coverage"
+
+description: >
+  The volere coverage command reports a cards-to-tests ratio alongside
+  the existing coverage percentage, as a multi-dimensional testing
+  health indicator.
+
+rationale: >
+  The framework's 32 cards produce 52 tests because multi-dimensional
+  fit criteria generate multiple tests per requirement. A ratio close to
+  1:1 may indicate single-dimensional testing that misses security,
+  operational, or regulatory failure modes. Making this visible helps
+  users assess test quality, not just test quantity.
+
+fit_criteria:
+  user:
+    criterion: >
+      volere coverage output includes a line showing cards:tests ratio
+      (e.g., "Ratio: 1:1.6 (32 cards, 52 tests)"). Ratio below 1.2
+      triggers an advisory: "Low ratio — check for single-dimensional
+      fit criteria."
+    verification: test
+    test_type: system
+
+dal: E
+priority: could
+status: proposed
+
+origin:
+  stakeholder: thomas-ulleberg
+  date: "2026-04-02"
+  trigger: "Insight 19 — presentation audience questioned 32-card to 52-test discrepancy, which is actually the framework's strength"
+
+depends_on: [UR-008]  # coverage reporting
+
+history:
+  - date: "2026-04-02"
+    action: created
+    by: thomas-ulleberg
