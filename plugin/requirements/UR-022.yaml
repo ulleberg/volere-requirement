@@ -1,0 +1,42 @@
+id: UR-022
+type: functional
+title: "Process artifact cleanup"
+
+description: >
+  The CLI detects process artifacts from discovery and execution plugins
+  and offers advisory removal with a destructive flag for actual deletion.
+
+rationale: >
+  Discovery-to-delivery and Superpowers create process artifacts (problem.md,
+  brief.md, options/, specs, plans, execution prompts) that become noise after
+  delivery. New contributors see them and wonder if they're current. Git history
+  preserves them — the working tree shouldn't accumulate stale process docs.
+
+fit_criteria:
+  user:
+    criterion: >
+      volere clean lists all process artifacts matching known patterns
+      (docs/problem.md, docs/brief.md, docs/options/, docs/spec.md,
+      docs/decisions.md, docs/superpowers/, .superpowers/,
+      docs/execution-*.md, docs/team-prompt-*.md) with file age and
+      source attribution. volere clean --rm removes listed artifacts
+      and reports count removed. Uncommitted (git-dirty) files are
+      skipped with a warning.
+    verification: test
+    test_type: system
+
+dal: D
+priority: should
+status: proposed
+
+origin:
+  stakeholder: thomas-ulleberg
+  date: "2026-04-02"
+  trigger: "Session discussion — process artifacts from d2d and superpowers clutter docs/ after delivery"
+
+depends_on: [UR-021]  # documentation consistency — clean complements staleness detection
+
+history:
+  - date: "2026-04-02"
+    action: created
+    by: thomas-ulleberg

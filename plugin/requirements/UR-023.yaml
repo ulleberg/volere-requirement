@@ -1,0 +1,38 @@
+id: UR-023
+type: functional
+title: "Doc tracking nudge for new maintained documents"
+
+description: >
+  When creating a document intended to be maintained, the agent offers to
+  add it to .volere/profile.yaml docs tracking.
+
+rationale: >
+  The docs field in profile.yaml only works if populated. Without a nudge,
+  new presentations, guides, and API references are created but never tracked
+  for staleness — the same drift problem UR-021 solves for known docs.
+
+fit_criteria:
+  user:
+    criterion: >
+      The using-volere skill contains an instruction that directs agents to
+      offer profile.yaml docs tracking when creating non-process-artifact
+      documents (presentations, guides, runbooks, API references). Structural
+      test verifies the instruction exists in the skill file.
+    verification: test
+    test_type: system
+
+dal: E
+priority: could
+status: proposed
+
+origin:
+  stakeholder: thomas-ulleberg
+  date: "2026-04-02"
+  trigger: "Session discussion — profile.yaml docs field only works if populated, no nudge exists"
+
+depends_on: [UR-021]  # documentation consistency verification
+
+history:
+  - date: "2026-04-02"
+    action: created
+    by: thomas-ulleberg

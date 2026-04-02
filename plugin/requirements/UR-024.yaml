@@ -1,0 +1,44 @@
+id: UR-024
+type: functional
+title: "Requirement card gate before brainstorming"
+
+description: >
+  The using-volere skill instructs agents to identify which requirement card
+  the work serves before invoking brainstorm, redirecting to write-requirement
+  if none exists.
+
+rationale: >
+  Nothing currently prevents agents from going brainstorm -> plan -> build
+  with no requirement card. This violates the framework's core discipline:
+  requirements before code. Without a card there are no fit criteria, without
+  fit criteria there are no acceptance tests, and work becomes untraceable.
+
+fit_criteria:
+  user:
+    criterion: >
+      The using-volere skill contains an instruction that directs agents to
+      identify the serving UR/TC before invoking brainstorm. If no card
+      exists, agents are directed to write-requirement first. Structural
+      test verifies the instruction exists in the skill file.
+    verification: test
+    test_type: system
+
+dal: C
+priority: should
+status: proposed
+
+# Future hardening: PreToolUse hook on brainstorm skill invocation that
+# checks whether a requirement ID has been referenced in the conversation.
+# Only pursue if the soft skill instruction proves insufficient.
+
+origin:
+  stakeholder: thomas-ulleberg
+  date: "2026-04-02"
+  trigger: "Session discussion — no gate prevents brainstorm without a requirement card"
+
+depends_on: [BUC-001]  # requirements engineering discipline
+
+history:
+  - date: "2026-04-02"
+    action: created
+    by: thomas-ulleberg
