@@ -597,28 +597,40 @@
       <div class="fade-in label" style="color: var(--purple);">Loop 2 — Volere</div>
       <h2 class="fade-in stagger" style="--delay: 0.1s; margin-top: 0.75rem;">Specify what "done" means.</h2>
       <p class="fade-in stagger" style="--delay: 0.2s; color: var(--text-muted); font-size: 0.9rem; margin-top: 0.75rem;">
-        Turns the spec into testable requirement cards. Each card has measurable fit criteria — the definition of when a requirement is satisfied.
+        Two proven disciplines, combined for the first time. <span style="color: var(--purple);">Volere</span> <span style="color: var(--text-dim);">(Robertson &amp; Robertson, 1995)</span> provides structured requirement types. The <span style="color: var(--purple);">V-Model</span> <span style="color: var(--text-dim);">(systems engineering)</span> maps each definition level to a verification level. This framework connects them.
       </p>
       <div class="vmodel fade-in stagger" style="--delay: 0.3s;">
+        <div style="display: flex; justify-content: space-between; margin-bottom: 0.25rem;">
+          <span class="label" style="color: var(--text-dim); letter-spacing: 0.1em;">Define (Volere)</span>
+          <span class="label" style="color: var(--text-dim); letter-spacing: 0.1em;">Verify (V-Model)</span>
+        </div>
         <div class="vmodel-row">
-          <span style="color: var(--purple);">BUC (Business Context)</span>
+          <span style="color: var(--purple);">BUC (Business Use Case)</span>
           <span style="color: var(--purple);">Acceptance Tests</span>
         </div>
-        <div class="vmodel-row" style="padding: 0 1.25rem;">
-          <span style="color: var(--text);">UR (User Requirements)</span>
+        <div class="vmodel-row" style="padding: 0 0.75rem;">
+          <span style="color: var(--text);">PUC (Product Use Case)</span>
           <span style="color: var(--text);">System Tests</span>
         </div>
-        <div class="vmodel-row" style="padding: 0 2.5rem;">
-          <span style="color: var(--text-muted);">TC (Tech Constraints)</span>
-          <span style="color: var(--text-muted);">Unit Tests</span>
+        <div class="vmodel-row" style="padding: 0 1.5rem;">
+          <span style="color: var(--text);">UR (User Requirement)</span>
+          <span style="color: var(--text);">System Tests</span>
         </div>
-        <div style="text-align: center; color: var(--text-dim); padding-top: 0.25rem;">&darr; Code &darr;</div>
+        <div class="vmodel-row" style="padding: 0 2.25rem;">
+          <span style="color: var(--text-muted);">Architecture / Design</span>
+          <span style="color: var(--text-muted);">Integration Tests</span>
+        </div>
+        <div class="vmodel-row" style="padding: 0 3rem;">
+          <span style="color: var(--text-dim);">TC (Technical Constraint)</span>
+          <span style="color: var(--text-dim);">Unit Tests</span>
+        </div>
+        <div style="text-align: center; color: var(--text-dim); padding-top: 0.25rem;">&darr; Code &amp; Static Analysis &darr;</div>
       </div>
     </div>
     <div class="loop-detail-gate fade-in stagger" style="--delay: 0.4s; border: 1px solid rgba(210,168,255,0.2);">
-      <div class="mono" style="color: var(--purple); font-size: 0.7rem; font-weight: 600; margin-bottom: 0.5rem;">Quality gate</div>
-      <div style="font-weight: 600; font-size: 0.9rem; margin-bottom: 0.5rem;">Do requirements have measurable fit criteria?</div>
-      <div style="color: var(--text-muted); font-size: 0.75rem;">No implementation until every requirement defines what "pass" looks like.</div>
+      <div class="mono" style="color: var(--purple); font-size: 0.7rem; font-weight: 600; margin-bottom: 0.5rem;">The synthesis</div>
+      <div style="font-weight: 600; font-size: 0.9rem; margin-bottom: 0.5rem;">Volere defines <em>what</em>. The V-Model defines <em>how to verify</em>.</div>
+      <div style="color: var(--text-muted); font-size: 0.75rem;">No published work had mapped these together for agentic development. This framework does.</div>
     </div>
   </div>
 </div>
