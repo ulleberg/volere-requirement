@@ -260,6 +260,28 @@
     justify-content: space-between;
   }
 
+  /* === Handoff Flow === */
+  .handoff-chain {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.25rem;
+    flex-wrap: wrap;
+    margin: 2rem 0;
+  }
+
+  .handoff-node {
+    padding: 0.5rem 0.6rem;
+    border-radius: 4px;
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+  }
+
+  .handoff-arrow {
+    color: var(--text-dim);
+    font-size: 0.8rem;
+  }
+
   /* === Responsive === */
   @media (max-width: 768px) {
     section { padding: 2rem 1rem; }
@@ -538,7 +560,37 @@
 </section>
 
 <!-- Section 9: The Handoffs -->
-<section id="s9"><div class="section-inner"></div></section>
+<section id="s9">
+<div class="section-inner" style="text-align: center;">
+  <h2 class="fade-in">Artifacts flow. Nothing is thrown over a wall.</h2>
+  <p class="fade-in stagger subtitle" style="--delay: 0.1s;">Each handoff carries explicit context — specs, cards, fit criteria, coverage data.</p>
+
+  <div class="handoff-chain">
+    <div class="fade-in stagger handoff-node" style="--delay: 0.15s; background: rgba(126,231,135,0.12); border: 1px solid rgba(126,231,135,0.25); color: var(--green);">docs/spec.md</div>
+    <div class="fade-in stagger handoff-arrow" style="--delay: 0.2s;">&rarr;</div>
+    <div class="fade-in stagger handoff-node" style="--delay: 0.25s; background: rgba(210,168,255,0.12); border: 1px solid rgba(210,168,255,0.25); color: var(--purple);">/extract-requirements</div>
+    <div class="fade-in stagger handoff-arrow" style="--delay: 0.3s;">&rarr;</div>
+    <div class="fade-in stagger handoff-node" style="--delay: 0.35s; background: rgba(210,168,255,0.12); border: 1px solid rgba(210,168,255,0.25); color: var(--purple);">UR/TC cards</div>
+    <div class="fade-in stagger handoff-arrow" style="--delay: 0.4s;">&rarr;</div>
+    <div class="fade-in stagger handoff-node" style="--delay: 0.45s; background: rgba(121,192,255,0.12); border: 1px solid rgba(121,192,255,0.25); color: var(--blue);">/brainstorm</div>
+    <div class="fade-in stagger handoff-arrow" style="--delay: 0.5s;">&rarr;</div>
+    <div class="fade-in stagger handoff-node" style="--delay: 0.55s; background: rgba(121,192,255,0.12); border: 1px solid rgba(121,192,255,0.25); color: var(--blue);">code + tests</div>
+  </div>
+
+  <div class="fade-in stagger" style="--delay: 0.65s;">
+    <svg width="500" height="28" viewBox="0 0 500 28" style="max-width: 100%;">
+      <path d="M420,4 C460,4 460,24 420,24 L80,24 C40,24 40,4 80,4" fill="none" stroke="var(--red)" stroke-width="1.5" stroke-dasharray="4,4" opacity="0.6"/>
+      <text x="250" y="18" text-anchor="middle" fill="var(--red)" font-size="10" font-family="var(--font-mono)" opacity="0.8">coverage-gaps hook triggers re-verification</text>
+    </svg>
+  </div>
+
+  <div class="fade-in stagger" style="--delay: 0.8s; margin-top: 1.5rem; max-width: 36rem; margin-left: auto; margin-right: auto;">
+    <p style="color: var(--text-muted); font-size: 0.85rem;">
+      When Superpowers finishes building, the <span class="mono" style="color: var(--orange);">coverage-gaps</span> hook fires. If fit criteria aren't fully verified, the loop reopens — requirements are re-examined, tests are added, and coverage closes.
+    </p>
+  </div>
+</div>
+</section>
 
 <!-- Section 10: The Snow Card -->
 <section id="s10"><div class="section-inner"></div></section>
