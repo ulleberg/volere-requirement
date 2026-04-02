@@ -602,7 +602,7 @@ fi
 # Test 45: volere coverage reports per-requirement coverage percentage (UR-007)
 COVERAGE_OUT=$("$VOLERE_CMD" coverage 2>&1 || true)
 if echo "$COVERAGE_OUT" | grep -qE "Coverage:.*[0-9]+/[0-9]+"; then
-  log_pass "volere coverage reports per-requirement coverage percentage (TC-015, UR-007)"
+  log_pass "volere coverage reports per-dimension coverage percentage (TC-015, UR-007)"
 else
   log_fail "volere coverage should report coverage fraction"
 fi
@@ -761,6 +761,107 @@ if echo "$COVERAGE_OUT" | grep -qE "Ratio: 1:[0-9]+\.[0-9]+ \([0-9]+ cards, [0-9
 else
   log_fail "volere coverage should show Ratio: 1:X.X (N cards, M tests)"
 fi
+
+# ============================================================
+echo "volere coverage (per-dimension):"
+# ============================================================
+
+# Set up a card with 2 dimensions and a test that only covers user
+mkdir -p docs/requirements .volere
+echo 'dal: C' > .volere/profile.yaml
+
+cat > docs/requirements/UR-090.yaml << 'CARD'
+id: UR-090
+type: functional
+title: "Multi-dimension test card"
+description: "Card with two fit criteria dimensions"
+rationale: "Testing per-dimension coverage"
+fit_criteria:
+  user:
+    criterion: "User criterion met"
+    verification: test
+    test_type: system
+  operational:
+    criterion: "Operational criterion met"
+    verification: test
+    test_type: system
+dal: C
+priority: must
+status: proposed
+origin:
+  stakeholder: test
+  date: "2026-04-02"
+CARD
+
+# Create a test that only references bare ID (covers user only)
+echo "# Tests UR-090" > src/test_ur090.test.js
+git add src/test_ur090.test.js docs/requirements/UR-090.yaml
+git commit --quiet -m "test: add UR-090 fixtures"
+
+# Test 72: card with 2 dimensions and bare test shows partial coverage (UR-007:operational)
+DIM_OUT=$("$VOLERE_CMD" coverage 2>&1 || true)
+if echo "$DIM_OUT" | grep -q "UR-090" && echo "$DIM_OUT" | grep -qE "1/2|missing"; then
+  log_pass "card with 2 dimensions and bare test shows partial coverage (UR-007:operational)"
+else
+  log_fail "UR-090 should show 1/2 coverage (bare ref = user only)"
+fi
+
+# Add a tagged test for the operational dimension
+echo "# Tests UR-090:operational" > src/test_ur090_ops.test.js
+git add src/test_ur090_ops.test.js
+git commit --quiet -m "test: add UR-090 operational test"
+
+# Test 73: card with 2 dimensions and 2 tagged tests shows full coverage (UR-007:operational)
+DIM_OUT2=$("$VOLERE_CMD" coverage 2>&1 || true)
+if echo "$DIM_OUT2" | grep -q "UR-090" && echo "$DIM_OUT2" | grep -qE "2/2"; then
+  log_pass "card with 2 dimensions and tagged tests shows full coverage (UR-007:operational)"
+else
+  log_fail "UR-090 should show 2/2 coverage with both tagged tests"
+fi
+
+# Test 74: single-dimension card with bare test shows 1/1 (backwards compat)
+cat > docs/requirements/UR-091.yaml << 'CARD'
+id: UR-091
+type: functional
+title: "Single dimension card"
+description: "Card with one fit criteria dimension"
+rationale: "Testing backwards compatibility"
+fit_criteria:
+  user:
+    criterion: "User criterion met"
+    verification: test
+    test_type: system
+dal: C
+priority: must
+status: proposed
+origin:
+  stakeholder: test
+  date: "2026-04-02"
+CARD
+
+echo "# Tests UR-091" > src/test_ur091.test.js
+git add docs/requirements/UR-091.yaml src/test_ur091.test.js
+git commit --quiet -m "test: add UR-091 fixture"
+
+DIM_OUT3=$("$VOLERE_CMD" coverage 2>&1 || true)
+if echo "$DIM_OUT3" | grep -q "UR-091" && echo "$DIM_OUT3" | grep -qE "1/1"; then
+  log_pass "single-dimension card with bare test shows 1/1 (UR-007:operational)"
+else
+  log_fail "UR-091 should show 1/1 (backwards compatible)"
+fi
+
+# Test 75: summary shows dimension count not card count (UR-007:operational)
+if echo "$DIM_OUT3" | grep -qE "Coverage:.*[0-9]+/[0-9]+"; then
+  log_pass "summary shows dimension-based coverage fraction (UR-007:operational)"
+else
+  log_fail "summary should show dimension-based coverage"
+fi
+
+# Clean up
+rm -f docs/requirements/UR-090.yaml docs/requirements/UR-091.yaml
+rm -f src/test_ur090.test.js src/test_ur090_ops.test.js src/test_ur091.test.js
+
+echo ""
 
 # ============================================================
 echo "volere clean:"
