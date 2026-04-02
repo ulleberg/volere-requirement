@@ -729,6 +729,11 @@ assert_file_contains "extract-requirements skill covers scan, draft, and review 
   "$EXTRACT_SKILL" "draft" "confirm" "BUC"
 # Dimension: UR-011:user
 
+# Test 77: extract-requirements skill maps structured spec sections to card fields (UR-011)
+assert_file_contains "extract-requirements skill maps spec sections to card fields (UR-011)" \
+  "$EXTRACT_SKILL" "Capabilities" "Success criteria" "Constraints" "Decisions" "Risks" "cross_verify"
+# Dimension: UR-011:operational
+
 # Test 55: audit-tests skill defines VERIFIES/SUPPORTS/THEATER/REDUNDANT classification (UR-014)
 assert_file_contains "audit-tests skill defines test classification categories (UR-014)" \
   "$SCRIPT_DIR/../skills/audit-tests/SKILL.md" "VERIFIES" "THEATER" "REDUNDANT"

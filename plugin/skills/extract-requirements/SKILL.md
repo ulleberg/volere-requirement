@@ -127,6 +127,20 @@ For each test, note:
 | Issue tracker references in code | Requirements with external context |
 | TODO/FIXME comments | Missing or incomplete requirements |
 
+### Structured Specs (→ URs + TCs)
+
+When the input includes a discovery-to-delivery spec (e.g., `docs/spec.md`), map sections directly to card fields:
+
+| Spec section | Card field | Card type |
+|-------------|------------|-----------|
+| Capabilities | `description` | UR |
+| Success criteria | `fit_criteria` | UR |
+| Constraints | `description` + `fit_criteria` | TC |
+| Decisions | `rationale` | UR or TC |
+| Risks | `cross_verify` links | UR or TC |
+
+This mapping supplements the codebase scan — specs provide intent that code alone cannot reveal. When a spec section contradicts what the code does, flag it during owner review.
+
 ### Grouping
 
 As you scan, group findings by module. Use the top-level source directory structure:
