@@ -762,6 +762,65 @@ else
   log_fail "volere coverage should show Ratio: 1:X.X (N cards, M tests)"
 fi
 
+# ============================================================
+echo "volere clean:"
+# ============================================================
+
+# Plant process artifacts for clean tests
+mkdir -p docs/options
+echo "# Problem" > docs/problem.md
+echo "# Brief" > docs/brief.md
+echo "# Option A" > docs/options/option-a.md
+echo "# Execution" > docs/execution-phase1.md
+echo "# Team prompt" > docs/team-prompt-review.md
+git add docs/problem.md docs/brief.md docs/options docs/execution-phase1.md docs/team-prompt-review.md
+git commit --quiet -m "Add process artifacts"
+
+# Test 61: volere clean lists process artifacts with source attribution (UR-022)
+CLEAN_OUT=$("$VOLERE_CMD" clean 2>&1 || true)
+if echo "$CLEAN_OUT" | grep -q "problem.md" && echo "$CLEAN_OUT" | grep -q "discovery-to-delivery"; then
+  log_pass "volere clean lists process artifacts with source attribution (UR-022)"
+else
+  log_fail "volere clean should list artifacts with source attribution"
+fi
+
+# Test 62: volere clean reports clean state when no artifacts present (UR-022)
+rm -rf docs/problem.md docs/brief.md docs/options docs/execution-phase1.md docs/team-prompt-review.md
+git add -A; git commit --quiet -m "Remove artifacts"
+CLEAN_EMPTY=$("$VOLERE_CMD" clean 2>&1 || true)
+if echo "$CLEAN_EMPTY" | grep -q "No process artifacts"; then
+  log_pass "volere clean reports clean state when no artifacts present (UR-022)"
+else
+  log_fail "volere clean should report clean state"
+fi
+
+# Replant for --rm tests
+mkdir -p docs/options
+echo "# Problem" > docs/problem.md
+echo "# Option A" > docs/options/option-a.md
+git add docs/problem.md docs/options
+git commit --quiet -m "Replant artifacts"
+
+# Test 63: volere clean --rm removes committed artifacts (UR-022)
+RM_OUT=$("$VOLERE_CMD" clean --rm 2>&1 || true)
+if echo "$RM_OUT" | grep -qE "[0-9]+ removed" && [ ! -f docs/problem.md ]; then
+  log_pass "volere clean --rm removes committed artifacts (UR-022)"
+else
+  log_fail "volere clean --rm should remove artifacts and report count"
+fi
+
+# Test 64: volere clean --rm skips uncommitted files with warning (UR-022)
+echo "# Dirty brief" > docs/brief.md
+DIRTY_OUT=$("$VOLERE_CMD" clean --rm 2>&1 || true)
+if echo "$DIRTY_OUT" | grep -qi "skip\|uncommitted\|dirty"; then
+  log_pass "volere clean --rm skips uncommitted files with warning (UR-022)"
+else
+  log_fail "volere clean --rm should skip dirty files"
+fi
+rm -f docs/brief.md
+
+echo ""
+
 # Clean up
 rm -rf docs/requirements .volere src
 

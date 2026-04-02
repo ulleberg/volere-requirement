@@ -10,6 +10,8 @@
 #   coverage    Show fit criteria coverage
 #   impact      Show change impact for a requirement
 #   review      Generate team review prompt
+#   check-docs  Check documentation staleness
+#   clean       Remove process artifacts from docs/
 
 set -euo pipefail
 
@@ -716,6 +718,90 @@ cmd_check_docs() {
 }
 
 # ============================================================
+# volere clean
+# ============================================================
+cmd_clean() {
+  local do_rm=0
+  while [ $# -gt 0 ]; do
+    case "$1" in
+      --rm) do_rm=1; shift ;;
+      *) shift ;;
+    esac
+  done
+
+  echo -e "${CYAN}Process Artifacts${NC} — $(basename "$PROJECT_ROOT")"
+  echo ""
+
+  local found=0
+  local removed=0
+  local skipped=0
+
+  # Check a single artifact path
+  check_artifact() {
+    local path="$1" source="$2"
+    local full="$PROJECT_ROOT/$path"
+    [ -e "$full" ] || return 0
+    local rel="$path"
+    found=$((found + 1))
+
+    if [ "$do_rm" -eq 1 ]; then
+      # Check if uncommitted (dirty in git)
+      if ! git -C "$PROJECT_ROOT" diff --quiet -- "$rel" 2>/dev/null || \
+         ! git -C "$PROJECT_ROOT" diff --cached --quiet -- "$rel" 2>/dev/null || \
+         git -C "$PROJECT_ROOT" ls-files --others --exclude-standard -- "$rel" 2>/dev/null | grep -q .; then
+        echo -e "  ${YELLOW}⚠${NC} $rel — skipped (uncommitted changes)"
+        skipped=$((skipped + 1))
+      else
+        rm -rf "$full"
+        echo -e "  ${GREEN}✓${NC} $rel — removed"
+        removed=$((removed + 1))
+      fi
+    else
+      local age="unknown"
+      if [ -f "$full" ]; then
+        local mtime=$(stat -f %m "$full" 2>/dev/null || stat -c %Y "$full" 2>/dev/null || echo 0)
+        local now=$(date +%s)
+        [ "$mtime" -gt 0 ] && age="$(( (now - mtime) / 86400 )) days old"
+      elif [ -d "$full" ]; then
+        age="directory"
+      fi
+      printf "  %-40s %-16s (%s)\n" "$rel" "$age" "$source"
+    fi
+  }
+
+  # discovery-to-delivery
+  check_artifact "docs/problem.md" "discovery-to-delivery"
+  check_artifact "docs/brief.md" "discovery-to-delivery"
+  check_artifact "docs/options" "discovery-to-delivery"
+  check_artifact "docs/spec.md" "discovery-to-delivery"
+  check_artifact "docs/decisions.md" "discovery-to-delivery"
+
+  # superpowers
+  check_artifact "docs/superpowers" "superpowers"
+  check_artifact ".superpowers" "superpowers"
+
+  # execution artifacts (glob)
+  for f in "$PROJECT_ROOT"/docs/execution-*.md; do
+    [ -f "$f" ] || continue
+    check_artifact "${f#$PROJECT_ROOT/}" "execution"
+  done
+  for f in "$PROJECT_ROOT"/docs/team-prompt-*.md; do
+    [ -f "$f" ] || continue
+    check_artifact "${f#$PROJECT_ROOT/}" "execution"
+  done
+
+  echo ""
+  if [ "$found" -eq 0 ]; then
+    echo "  No process artifacts found."
+  elif [ "$do_rm" -eq 1 ]; then
+    echo "  $removed removed, $skipped skipped"
+  else
+    echo "  $found process artifacts found (git history preserves all removed files)"
+    echo "  Run: volere clean --rm"
+  fi
+}
+
+# ============================================================
 # Main
 # ============================================================
 case "${1:-help}" in
@@ -736,6 +822,7 @@ case "${1:-help}" in
     ;;
   review)     shift; cmd_review "$@" ;;
   check-docs) shift; cmd_check_docs "$@" ;;
+  clean)      shift; cmd_clean "$@" ;;
   help|--help|-h)
     echo "Volere Agentic Framework CLI"
     echo ""
@@ -754,6 +841,7 @@ case "${1:-help}" in
     echo "  impact --auto               Auto-detect suspects from git changes"
     echo "  review [--coherence]        Detect review type and show guidance"
     echo "  check-docs                 Check documentation staleness"
+    echo "  clean [--rm]               Remove process artifacts from docs/"
     echo ""
     echo "Examples:"
     echo "  volere init --dal B"
