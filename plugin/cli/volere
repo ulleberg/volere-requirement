@@ -650,6 +650,72 @@ cmd_review() {
 }
 
 # ============================================================
+# volere check-docs
+# ============================================================
+cmd_check_docs() {
+  echo -e "${CYAN}Documentation Staleness${NC} — $(basename "$PROJECT_ROOT")"
+  echo ""
+
+  # Constitution docs (always checked)
+  local docs="ARCHITECTURE.md README.md CLAUDE.md"
+
+  # Extra docs from profile.yaml
+  if [ -f "$PROJECT_ROOT/.volere/profile.yaml" ]; then
+    local extra=$(grep -A 100 "^docs:" "$PROJECT_ROOT/.volere/profile.yaml" 2>/dev/null | \
+      grep "^  - " | sed 's/^  - //' | tr -d '"' || true)
+    docs="$docs $extra"
+  fi
+
+  # Find most recent source change
+  local latest_source=0
+  for ext in yaml sh md js ts go py rs; do
+    local candidate=$(find "$PROJECT_ROOT" -name "*.$ext" \
+      -not -path "*/node_modules/*" -not -path "*/.git/*" \
+      -not -path "*/reviews/*" -not -path "*/docs/*" \
+      2>/dev/null | xargs stat -f %m 2>/dev/null | sort -rn | head -1 || \
+      find "$PROJECT_ROOT" -name "*.$ext" \
+      -not -path "*/node_modules/*" -not -path "*/.git/*" \
+      -not -path "*/reviews/*" -not -path "*/docs/*" \
+      -exec stat -c %Y {} \; 2>/dev/null | sort -rn | head -1 || echo 0)
+    [ "${candidate:-0}" -gt "$latest_source" ] && latest_source="$candidate"
+  done
+
+  local stale=0
+  local checked=0
+
+  for doc in $docs; do
+    local doc_path="$PROJECT_ROOT/$doc"
+    if [ ! -f "$doc_path" ]; then
+      echo -e "  ${YELLOW}○${NC} $doc (not found)"
+      continue
+    fi
+
+    checked=$((checked + 1))
+    local doc_mtime=$(stat -f %m "$doc_path" 2>/dev/null || stat -c %Y "$doc_path" 2>/dev/null || echo 0)
+
+    if [ "$latest_source" -gt 0 ] && [ "$doc_mtime" -gt 0 ]; then
+      local days=$(( (latest_source - doc_mtime) / 86400 ))
+      if [ "$days" -gt 7 ]; then
+        echo -e "  ${RED}✗${NC} $doc — ${RED}STALE${NC} ($days days)"
+        stale=$((stale + 1))
+      else
+        echo -e "  ${GREEN}✓${NC} $doc — CURRENT"
+      fi
+    else
+      echo -e "  ${GREEN}✓${NC} $doc — CURRENT"
+    fi
+  done
+
+  echo ""
+  echo "  Checked: $checked docs, $stale stale"
+
+  if [ "$stale" -gt 0 ]; then
+    echo ""
+    echo "  Run coherence review to verify content accuracy."
+  fi
+}
+
+# ============================================================
 # Main
 # ============================================================
 case "${1:-help}" in
@@ -668,7 +734,8 @@ case "${1:-help}" in
       *) cmd_impact "$@" ;;
     esac
     ;;
-  review)   shift; cmd_review "$@" ;;
+  review)     shift; cmd_review "$@" ;;
+  check-docs) shift; cmd_check_docs "$@" ;;
   help|--help|-h)
     echo "Volere Agentic Framework CLI"
     echo ""
@@ -686,6 +753,7 @@ case "${1:-help}" in
     echo "  impact --suspects           Check for unresolved suspect links"
     echo "  impact --auto               Auto-detect suspects from git changes"
     echo "  review [--coherence]        Detect review type and show guidance"
+    echo "  check-docs                 Check documentation staleness"
     echo ""
     echo "Examples:"
     echo "  volere init --dal B"

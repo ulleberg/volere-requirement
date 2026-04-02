@@ -731,7 +731,30 @@ else
   log_fail "volere review --coherence should suggest coherence review type"
 fi
 
-# Test 58: volere coverage shows cards-to-tests ratio (UR-019)
+# Test 58: volere check-docs reports staleness for constitution docs (UR-021)
+# Make ARCHITECTURE.md old by touching a source file newer
+touch -t 202501010000 ARCHITECTURE.md 2>/dev/null || true
+touch -t 202601010000 src/feature.js 2>/dev/null || true
+CHECKDOCS_OUT=$("$VOLERE_CMD" check-docs 2>&1 || true)
+if echo "$CHECKDOCS_OUT" | grep -qE "STALE|CURRENT|Documentation Staleness"; then
+  log_pass "volere check-docs reports staleness for constitution docs (UR-021)"
+else
+  log_fail "volere check-docs should report doc staleness status"
+fi
+
+# Test 59: volere check-docs reads extra paths from profile.yaml docs field (UR-021)
+echo 'docs:
+  - docs/extra-guide.md' >> .volere/profile.yaml
+mkdir -p docs
+echo "# Extra guide" > docs/extra-guide.md
+CHECKDOCS_EXTRA=$("$VOLERE_CMD" check-docs 2>&1 || true)
+if echo "$CHECKDOCS_EXTRA" | grep -q "extra-guide.md"; then
+  log_pass "volere check-docs reads extra paths from profile.yaml docs field (UR-021)"
+else
+  log_fail "volere check-docs should check docs listed in profile.yaml"
+fi
+
+# Test 60: volere coverage shows cards-to-tests ratio (UR-019)
 # (reuses COVERAGE_OUT from test 45)
 if echo "$COVERAGE_OUT" | grep -qE "Ratio: 1:[0-9]+\.[0-9]+ \([0-9]+ cards, [0-9]+ tests\)"; then
   log_pass "volere coverage shows cards-to-tests ratio (UR-019)"

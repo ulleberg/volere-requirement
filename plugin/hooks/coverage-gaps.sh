@@ -90,26 +90,64 @@ PCT=$((TESTED * 100 / TOTAL))
 # Only output if there are gaps
 if [ "$UNTESTED" -eq 0 ]; then
   echo "Volere coverage: $TESTED/$TOTAL (100%) — all testable requirements covered."
-  exit 0
 fi
 
-echo "Volere acceptance coverage: $TESTED/$TOTAL ($PCT%)"
-echo ""
+if [ "$UNTESTED" -gt 0 ]; then
+  echo "Volere acceptance coverage: $TESTED/$TOTAL ($PCT%)"
+  echo ""
 
-# Highlight DAL-B+ gaps first (highest priority)
-if [ -n "$DAL_B_GAPS" ]; then
-  echo "Critical gaps (DAL-A/B — close first):"
-  echo -e "$DAL_B_GAPS"
+  # Highlight DAL-B+ gaps first (highest priority)
+  if [ -n "$DAL_B_GAPS" ]; then
+    echo "Critical gaps (DAL-A/B — close first):"
+    echo -e "$DAL_B_GAPS"
+  fi
+
+  # Show remaining gaps
+  if [ "$UNTESTED" -gt 5 ]; then
+    # Truncate for context window efficiency
+    echo "Uncovered requirements ($UNTESTED total, showing DAL-A/B above):"
+    echo "  Run 'volere coverage' for full list."
+  else
+    echo "Uncovered requirements:"
+    echo -e "$UNTESTED_LIST"
+  fi
+
+  echo "Propose which gaps to close in this session."
 fi
 
-# Show remaining gaps
-if [ "$UNTESTED" -gt 5 ]; then
-  # Truncate for context window efficiency
-  echo "Uncovered requirements ($UNTESTED total, showing DAL-A/B above):"
-  echo "  Run 'volere coverage' for full list."
-else
-  echo "Uncovered requirements:"
-  echo -e "$UNTESTED_LIST"
+# Documentation staleness check (UR-021)
+# Constitution docs are always checked; profile.yaml docs field adds extras
+CONSTITUTION_DOCS="ARCHITECTURE.md README.md CLAUDE.md"
+EXTRA_DOCS=""
+if [ -f "$PROJECT_ROOT/.volere/profile.yaml" ]; then
+  EXTRA_DOCS=$(grep -A 100 "^docs:" "$PROJECT_ROOT/.volere/profile.yaml" 2>/dev/null | \
+    grep "^  - " | sed 's/^  - //' | tr -d '"' || true)
 fi
 
-echo "Propose which gaps to close in this session."
+# Find most recent source change in plugin/
+LATEST_SOURCE=0
+for ext in yaml sh md; do
+  candidate=$(find "$PROJECT_ROOT/plugin" -name "*.$ext" -not -path "*/reviews/*" 2>/dev/null | \
+    xargs stat -f %m 2>/dev/null | sort -rn | head -1 || \
+    find "$PROJECT_ROOT/plugin" -name "*.$ext" -not -path "*/reviews/*" -exec stat -c %Y {} \; 2>/dev/null | sort -rn | head -1 || echo 0)
+  [ "${candidate:-0}" -gt "$LATEST_SOURCE" ] && LATEST_SOURCE="$candidate"
+done
+
+STALE_DOCS=""
+for doc in $CONSTITUTION_DOCS $EXTRA_DOCS; do
+  doc_path="$PROJECT_ROOT/$doc"
+  [ -f "$doc_path" ] || continue
+  doc_mtime=$(stat -f %m "$doc_path" 2>/dev/null || stat -c %Y "$doc_path" 2>/dev/null || echo 0)
+  if [ "$LATEST_SOURCE" -gt 0 ] && [ "$doc_mtime" -gt 0 ]; then
+    days_stale=$(( (LATEST_SOURCE - doc_mtime) / 86400 ))
+    if [ "$days_stale" -gt 7 ]; then
+      STALE_DOCS="$STALE_DOCS  - $doc ($days_stale days)\n"
+    fi
+  fi
+done
+
+if [ -n "$STALE_DOCS" ]; then
+  echo ""
+  echo "Stale docs:"
+  echo -e "$STALE_DOCS"
+fi

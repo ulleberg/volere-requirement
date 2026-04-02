@@ -19,15 +19,18 @@ fit_criteria:
     criterion: >
       SessionStart hook reports docs whose modification time is older than
       the most recent source change in their scope (e.g., "ARCHITECTURE.md
-      is 12 days stale"). volere check-docs CLI command verifies content
-      consistency and outputs a list of inconsistencies with file paths and
-      conflicting text.
+      is 12 days stale"). volere check-docs CLI command lists stale docs
+      with file paths and days since last update. Constitution docs
+      (ARCHITECTURE.md, README.md, CLAUDE.md) are always checked;
+      additional paths are read from .volere/profile.yaml docs field.
+      Content consistency verification is delegated to the coherence
+      review skill.
     verification: test
     test_type: system
 
 dal: D
 priority: should
-status: proposed
+status: implemented
 
 origin:
   stakeholder: thomas-ulleberg
