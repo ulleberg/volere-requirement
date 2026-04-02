@@ -4,6 +4,11 @@
 
 dal: C                              # Default: moderate
 
+# Additional docs checked for staleness alongside ARCHITECTURE.md, README.md, CLAUDE.md
+docs: []
+#   - docs/api-reference.md
+#   - docs/presentation.html
+
 profiles:
   E:  # cosmetic — typos, CSS, documentation
     hooks: []
