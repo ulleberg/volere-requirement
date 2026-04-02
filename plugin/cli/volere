@@ -442,22 +442,44 @@ cmd_coverage() {
     local dal=$(grep "^dal:" "$f" | head -1 | awk '{print $2}')
     [ -z "$id" ] && continue
 
-    # Count fit criteria dimensions in this card
-    local dims=$(grep "^    criterion:" "$f" 2>/dev/null | wc -l | tr -d ' ')
-    [ "$dims" -eq 0 ] && dims=1  # At least one assumed
+    # Extract dimension names from fit_criteria block
+    local in_fit=0
+    local dims_list=""
+    while IFS= read -r line; do
+      if echo "$line" | grep -q "^fit_criteria:"; then
+        in_fit=1; continue
+      fi
+      if [ "$in_fit" -eq 1 ]; then
+        if echo "$line" | grep -qE "^[a-z_]+:" && ! echo "$line" | grep -qE "^  "; then
+          break
+        fi
+        if echo "$line" | grep -qE "^  [a-z_]+:$"; then
+          local dname=$(echo "$line" | sed 's/^  //; s/://')
+          dims_list="$dims_list $dname"
+        fi
+      fi
+    done < "$f"
+    dims_list=$(echo "$dims_list" | xargs)  # trim
+
+    if [ -z "$dims_list" ]; then
+      dims_list="user"  # default if no dimensions found
+    fi
+
+    local dim_count=$(echo "$dims_list" | wc -w | tr -d ' ')
 
     # If filtering by dimension, check if this card has it
     if [ -n "$dimension" ]; then
-      if ! grep -q "^  $dimension:" "$f" 2>/dev/null; then
+      if ! echo " $dims_list " | grep -q " $dimension "; then
         continue
       fi
-      dims=1
+      dims_list="$dimension"
+      dim_count=1
     fi
 
-    total_criteria=$((total_criteria + dims))
+    total_criteria=$((total_criteria + dim_count))
     total_cards=$((total_cards + 1))
 
-    # Check if tests reference this ID (count all matching test files)
+    # Find all test files referencing this ID
     local test_files=$(grep -rl "$id" "$PROJECT_ROOT" \
       --include="*_test.go" --include="*.test.js" --include="*.test.ts" --include="*.spec.*" \
       --include="*test*.sh" --include="*_test.py" --include="*_test.rs" \
@@ -468,22 +490,61 @@ cmd_coverage() {
     fi
     total_tests=$((total_tests + test_count))
 
-    if [ -n "$test_files" ]; then
-      covered=$((covered + dims))
-      echo -e "  ${GREEN}✓${NC} $id (DAL-$dal): tested"
+    # Per-dimension coverage check
+    local covered_dims=""
+    local missing_dims=""
+    local dim_covered=0
+
+    for dname in $dims_list; do
+      local found=0
+      if [ -n "$test_files" ]; then
+        # Check for tagged reference: ID:dimension
+        if echo "$test_files" | xargs grep -l "$id:$dname" 2>/dev/null | head -1 | grep -q .; then
+          found=1
+        fi
+        # Backwards compat: bare ID reference counts as user
+        if [ "$found" -eq 0 ] && [ "$dname" = "user" ]; then
+          if echo "$test_files" | xargs grep -l "$id" 2>/dev/null | head -1 | grep -q .; then
+            found=1
+          fi
+        fi
+      fi
+
+      if [ "$found" -eq 1 ]; then
+        covered_dims="$covered_dims $dname"
+        dim_covered=$((dim_covered + 1))
+      else
+        missing_dims="$missing_dims $dname"
+      fi
+    done
+
+    covered=$((covered + dim_covered))
+    uncovered=$((uncovered + dim_count - dim_covered))
+
+    # Output per card
+    covered_dims=$(echo "$covered_dims" | xargs)
+    missing_dims=$(echo "$missing_dims" | xargs)
+
+    if [ "$dim_covered" -eq "$dim_count" ]; then
+      echo -e "  ${GREEN}✓${NC} $id (DAL-$dal): $dim_covered/$dim_count (${covered_dims// /, })"
+    elif [ "$dim_covered" -gt 0 ]; then
+      echo -e "  ${YELLOW}◐${NC} $id (DAL-$dal): $dim_covered/$dim_count (${covered_dims// /, }) — missing: ${missing_dims// /, }"
     else
-      uncovered=$((uncovered + dims))
-      echo -e "  ${RED}✗${NC} $id (DAL-$dal): ${RED}not tested${NC}"
+      echo -e "  ${RED}✗${NC} $id (DAL-$dal): 0/$dim_count — missing: ${missing_dims// /, }"
     fi
   done
 
   echo ""
   if [ "$total_criteria" -gt 0 ]; then
-    echo "  Coverage: $covered/$total_criteria ($(( covered * 100 / total_criteria ))%)"
+    local pct=$(( covered * 100 / total_criteria ))
+    if [ "$uncovered" -gt 0 ]; then
+      echo "  Coverage: $covered/$total_criteria ($pct%) — $uncovered dimensions uncovered"
+    else
+      echo "  Coverage: $covered/$total_criteria ($pct%)"
+    fi
   else
     echo "  No fit criteria found"
   fi
-  echo -e "  Uncovered: ${RED}$uncovered${NC}"
 
   # Cards-to-tests ratio (UR-019)
   if [ "$total_cards" -gt 0 ]; then
