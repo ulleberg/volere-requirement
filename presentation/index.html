@@ -332,6 +332,40 @@
     padding: 1rem;
   }
 
+  /* === DAL Bars === */
+  .dal-bars {
+    display: flex;
+    gap: 0.5rem;
+    align-items: flex-end;
+    justify-content: center;
+    margin-top: 2rem;
+  }
+
+  .dal-bar {
+    flex: 1;
+    max-width: 120px;
+    text-align: center;
+  }
+
+  .dal-bar-inner {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 0.75rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    transition: height 0.6s ease, border-color 0.6s ease;
+  }
+
+  .dal-bar-label {
+    color: var(--text-muted);
+    font-size: 0.6rem;
+    font-family: var(--font-mono);
+    margin-top: 0.5rem;
+    line-height: 1.4;
+  }
+
   /* === Responsive === */
   @media (max-width: 768px) {
     section { padding: 2rem 1rem; }
@@ -729,7 +763,54 @@
 </section>
 
 <!-- Section 12: DAL Graduated Rigour -->
-<section id="s12"><div class="section-inner"></div></section>
+<section id="s12">
+<div class="section-inner" style="text-align: center;">
+  <h2 class="fade-in">Not everything needs the same rigour.</h2>
+  <p class="fade-in stagger subtitle" style="--delay: 0.1s;">DAL scales verification effort to actual risk.</p>
+
+  <div class="dal-bars">
+    <div class="dal-bar fade-in stagger" style="--delay: 0.15s;">
+      <div class="dal-bar-inner" style="height: 80px;">
+        <div class="mono" style="color: var(--text-muted); font-size: 1.25rem; font-weight: 700;">E</div>
+        <div style="color: var(--text-dim); font-size: 0.6rem;">Cosmetic</div>
+      </div>
+      <div class="dal-bar-label">linting</div>
+    </div>
+    <div class="dal-bar fade-in stagger" style="--delay: 0.25s;">
+      <div class="dal-bar-inner" style="height: 110px; border-color: rgba(121,192,255,0.25);">
+        <div class="mono" style="color: var(--blue); font-size: 1.25rem; font-weight: 700;">D</div>
+        <div style="color: var(--text-dim); font-size: 0.6rem;">Minor</div>
+      </div>
+      <div class="dal-bar-label">unit +<br>integration</div>
+    </div>
+    <div class="dal-bar fade-in stagger" style="--delay: 0.35s;">
+      <div class="dal-bar-inner" style="height: 140px; border-color: rgba(210,168,255,0.25);">
+        <div class="mono" style="color: var(--purple); font-size: 1.25rem; font-weight: 700;">C</div>
+        <div style="color: var(--text-dim); font-size: 0.6rem;">Moderate</div>
+      </div>
+      <div class="dal-bar-label">+ system<br>tests</div>
+    </div>
+    <div class="dal-bar fade-in stagger" style="--delay: 0.45s;">
+      <div class="dal-bar-inner" style="height: 170px; border-color: rgba(255,166,87,0.25);">
+        <div class="mono" style="color: var(--orange); font-size: 1.25rem; font-weight: 700;">B</div>
+        <div style="color: var(--text-dim); font-size: 0.6rem;">Critical</div>
+      </div>
+      <div class="dal-bar-label">+ code<br>review</div>
+    </div>
+    <div class="dal-bar fade-in stagger" style="--delay: 0.55s;">
+      <div class="dal-bar-inner" style="height: 210px; border-color: rgba(248,81,73,0.25);">
+        <div class="mono" style="color: var(--red); font-size: 1.25rem; font-weight: 700;">A</div>
+        <div style="color: var(--text-dim); font-size: 0.6rem;">Catastrophic</div>
+      </div>
+      <div class="dal-bar-label">+ mutation testing<br>+ multi-agent review</div>
+    </div>
+  </div>
+
+  <p class="fade-in stagger mono" style="--delay: 0.7s; color: var(--text-dim); font-size: 0.75rem; margin-top: 1.5rem;">
+    CSS color change = DAL-E &nbsp;&nbsp;|&nbsp;&nbsp; Database migration = DAL-A
+  </p>
+</div>
+</section>
 
 <!-- Section 13: Hard + Soft Enforcement -->
 <section id="s13"><div class="section-inner"></div></section>
