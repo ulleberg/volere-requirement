@@ -33,7 +33,7 @@ if [ "$CARD_COUNT" -eq 0 ]; then
   exit 0
 fi
 
-# Count total, tested, and untested requirements
+# Count total dimensions, tested dimensions, and untested gaps
 TOTAL=0
 TESTED=0
 UNTESTED_LIST=""
@@ -50,7 +50,7 @@ for f in "$REQS_DIR"/*.yaml; do
   status=$(grep "^status:" "$f" 2>/dev/null | head -1 | awk '{print $2}')
   [ "$status" = "deprecated" ] && continue
 
-  # Skip not-yet-implemented requirements (don't inflate denominator)
+  # Skip not-yet-implemented requirements
   testability=$(grep "^testability:" "$f" 2>/dev/null | head -1 | awk '{print $2}' || echo "automatable")
   [ -z "$testability" ] && testability="automatable"
   [ "$testability" = "not-yet-implemented" ] && continue
@@ -58,26 +58,59 @@ for f in "$REQS_DIR"/*.yaml; do
   dal=$(grep "^dal:" "$f" 2>/dev/null | head -1 | awk '{print $2}')
   title=$(grep "^title:" "$f" 2>/dev/null | head -1 | sed 's/^title: //; s/^"//; s/"$//')
 
-  TOTAL=$((TOTAL + 1))
+  # Extract dimension names from fit_criteria block
+  in_fit=0
+  dims_list=""
+  while IFS= read -r line; do
+    if echo "$line" | grep -q "^fit_criteria:"; then
+      in_fit=1; continue
+    fi
+    if [ "$in_fit" -eq 1 ]; then
+      if echo "$line" | grep -qE "^[a-z_]+:" && ! echo "$line" | grep -qE "^  "; then
+        break
+      fi
+      if echo "$line" | grep -qE "^  [a-z_]+:$"; then
+        dname=$(echo "$line" | sed 's/^  //; s/://')
+        dims_list="$dims_list $dname"
+      fi
+    fi
+  done < "$f"
+  dims_list=$(echo "$dims_list" | xargs)
+  [ -z "$dims_list" ] && dims_list="user"
 
-  # Check if any test file references this ID
-  has_test=$(grep -rl "$id" "$PROJECT_ROOT" \
+  # Find test files referencing this ID
+  test_files=$(grep -rl "$id" "$PROJECT_ROOT" \
     --include="*_test.go" --include="*.test.js" --include="*.test.ts" --include="*.spec.*" \
     --include="*test*.sh" --include="*_test.py" --include="*_test.rs" \
-    2>/dev/null | grep -v node_modules | head -1 || true)
+    2>/dev/null | grep -v node_modules || true)
 
-  if [ -n "$has_test" ]; then
-    TESTED=$((TESTED + 1))
-  else
-    # Extract first fit criterion for context
-    fit_text=$(grep -A1 "criterion:" "$f" 2>/dev/null | tail -1 | sed 's/^[[:space:]]*//' | head -c 120 || true)
-    [ -z "$fit_text" ] && fit_text="(no fit criterion)"
+  # Check each dimension
+  for dname in $dims_list; do
+    TOTAL=$((TOTAL + 1))
+    found=0
 
-    UNTESTED_LIST="$UNTESTED_LIST  - $id: $title (DAL-$dal)\n"
-    if [ "$dal" = "A" ] || [ "$dal" = "B" ]; then
-      DAL_B_GAPS="$DAL_B_GAPS  - $id: $title (DAL-$dal)\n    Fit: $fit_text\n"
+    if [ -n "$test_files" ]; then
+      if echo "$test_files" | xargs grep -l "$id:$dname" 2>/dev/null | head -1 | grep -q .; then
+        found=1
+      fi
+      if [ "$found" -eq 0 ] && [ "$dname" = "user" ]; then
+        if echo "$test_files" | xargs grep -l "$id" 2>/dev/null | head -1 | grep -q .; then
+          found=1
+        fi
+      fi
     fi
-  fi
+
+    if [ "$found" -eq 1 ]; then
+      TESTED=$((TESTED + 1))
+    else
+      UNTESTED_LIST="$UNTESTED_LIST  - $id: $title ($dname, DAL-$dal)\n"
+      if [ "$dal" = "A" ] || [ "$dal" = "B" ]; then
+        fit_text=$(grep -A1 "criterion:" "$f" 2>/dev/null | tail -1 | sed 's/^[[:space:]]*//' | head -c 120 || true)
+        [ -z "$fit_text" ] && fit_text="(no fit criterion)"
+        DAL_B_GAPS="$DAL_B_GAPS  - $id: $title ($dname, DAL-$dal)\n    Fit: $fit_text\n"
+      fi
+    fi
+  done
 done
 
 if [ "$TOTAL" -eq 0 ]; then
