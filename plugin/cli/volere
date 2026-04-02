@@ -1024,9 +1024,11 @@ cmd_graph() {
 
   local json="{\"nodes\":$nodes,\"edges\":$edges}"
 
-  # Inject JSON into template
-  # Use awk to avoid sed issues with special characters in JSON
-  awk -v data="$json" '{gsub(/\{\{DATA\}\}/, data); print}' "$template" > "$output"
+  # Inject JSON into template using shell substitution
+  # (awk -v consumes backslash escapes, breaking JSON with \" in fit criteria)
+  local template_content
+  template_content=$(<"$template")
+  printf '%s' "${template_content/\{\{DATA\}\}/$json}" > "$output"
 
   echo -e "${CYAN}Requirement Graph${NC} — $(basename "$PROJECT_ROOT")"
   echo ""
