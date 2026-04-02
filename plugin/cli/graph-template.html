@@ -244,11 +244,11 @@ body {
     <div class="detail-field-label">Status</div>
     <div class="detail-field-value" id="detail-status"></div>
   </div>
-  <div class="detail-field" id="detail-fit-section">
+  <div class="detail-field">
     <div class="detail-field-label">Fit Criteria</div>
     <div id="detail-fit"></div>
   </div>
-  <div class="detail-field" id="detail-links-section">
+  <div class="detail-field">
     <div class="detail-field-label">Links</div>
     <div class="detail-links" id="detail-links"></div>
   </div>
@@ -296,17 +296,17 @@ DATA.nodes.forEach(n => {
 });
 
 // Render helpers
-function dalBadge(dal, cls) {
-  return `<span class="dal-mini ${DAL_CLASS[dal] || 'dal-E'}">${dal || '?'}</span>`;
+function dalBadge(dal) {
+  return `<span class="dal-mini ${DAL_CLASS[dal] || 'dal-E'}">${escHtml(dal || '?')}</span>`;
 }
 
 function makePill(n) {
   const cls = TYPE_CLASS[n.type] || 'ur';
   const dal = n.dal || '?';
-  return `<div class="pill ${cls}" data-id="${n.id}" title="${escHtml(n.title)}">
+  return `<div class="pill ${cls}" data-id="${escHtml(n.id)}" title="${escHtml(n.title)}">
     <span class="pill-id">${escHtml(n.id)}</span>
     <span class="pill-label">${escHtml(n.label || '')}</span>
-    <span class="pill-dal ${DAL_CLASS[dal] || 'dal-E'}">${dal}</span>
+    <span class="pill-dal ${DAL_CLASS[dal] || 'dal-E'}">${escHtml(dal)}</span>
   </div>`;
 }
 
@@ -337,7 +337,7 @@ Object.values(clusters).forEach(({ buc, urs, tcs }) => {
   const hasPills = urs.length || tcs.length;
 
   div.innerHTML = `
-    <div class="cluster-hero" data-id="${buc.id}">
+    <div class="cluster-hero" data-id="${escHtml(buc.id)}">
       <div class="hero-top">
         <span class="hero-id">${escHtml(buc.id)}</span>
         ${dalBadge(buc.dal)}
@@ -374,7 +374,6 @@ if (orphanURs.length || orphanTCs.length) {
 // Detail panel
 const detail = document.getElementById('detail');
 const backdrop = document.getElementById('backdrop');
-let activeImpactId = null;
 
 function typeClass(id) {
   const n = nodeMap[id];
@@ -427,8 +426,6 @@ function showDetail(nodeId, doImpact) {
 }
 
 function applyImpact(nodeId) {
-  activeImpactId = nodeId;
-
   // Find all clusters/pills connected to this node
   const connectedBUCs = new Set();
   const connectedPills = new Set([nodeId]);
@@ -446,7 +443,7 @@ function applyImpact(nodeId) {
 
   document.querySelectorAll('.cluster').forEach(c => {
     const bucId = c.dataset.bucId;
-    const isConnected = connectedBUCs.has(bucId) || bucId === '__orphan__' && connectedPills.has(nodeId);
+    const isConnected = connectedBUCs.has(bucId) || (bucId === '__orphan__' && connectedPills.has(nodeId));
     c.classList.toggle('dimmed', !isConnected);
   });
 
@@ -457,7 +454,6 @@ function applyImpact(nodeId) {
 }
 
 function clearImpact() {
-  activeImpactId = null;
   document.querySelectorAll('.cluster').forEach(c => c.classList.remove('dimmed'));
   document.querySelectorAll('.pill').forEach(p => p.classList.remove('dimmed'));
 }
