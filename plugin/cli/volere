@@ -966,7 +966,7 @@ cmd_graph() {
 
     # Extract relationship arrays
     for rel_type in depends_on serves decomposed_to cross_verify conflicts; do
-      local targets=$(grep -A 20 "^${rel_type}:" "$f" 2>/dev/null | grep "^  - " | sed 's/^  - //' | tr -d ' ')
+      local targets=$(grep -A 20 "^${rel_type}:" "$f" 2>/dev/null | grep "^  - " | sed 's/^  - //' | tr -d ' ' | grep -E '^(BUC|PUC|UR|TC)-[0-9]+$')
       for target in $targets; do
         [ "$first_edge" -eq 0 ] && edges="$edges,"
         edges="$edges{\"from\":\"$from_id\",\"to\":\"$target\",\"type\":\"$rel_type\"}"
