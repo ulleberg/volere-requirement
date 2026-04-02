@@ -59,7 +59,7 @@ volere-requirement/
 │   │   ├── compliance-profile.yaml  Compliance dimension template
 │   │   ├── imports.yaml             Catalog import template
 │   │   └── evidence/                Evidence record template
-│   ├── requirements/                Framework's own requirements (dogfooding)
+│   ├── requirements/                Framework's own requirements (36 cards, dogfooding)
 │   └── validate.sh                  Card validator (Node.js, no external deps)
 ├── CLAUDE.md
 ├── ARCHITECTURE.md                  This file

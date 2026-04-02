@@ -45,7 +45,7 @@ This framework adds a novel synthesis: each Volere type maps to a V-Model verifi
 | `plugin/cli/volere` | CLI with 7 commands: init, new, validate, trace, coverage, impact, review |
 | `plugin/catalogs/` | Shared requirement catalogs (security-baseline) |
 | `plugin/templates/` | Project scaffold, BUC/PUC/UR/TC/evidence/compliance templates, retrofit guide |
-| `plugin/requirements/` | 32 cards dogfooding the framework (5 BUCs, 12 URs, 15 TCs), 52 tests, 100% coverage |
+| `plugin/requirements/` | 36 cards dogfooding the framework (5 BUCs, 16 URs, 15 TCs), 57 tests, 97% coverage |
 
 ## Key Features
 

@@ -14,5 +14,5 @@ Thumbs.db
 ~$*
 
 # Runtime
-.volere/
+# .volere/ is committed in this repo (dogfooding the framework)
 .studio/

@@ -1,13 +1,15 @@
 # Roadmap: v0.1 → v1.0
 
-## Status: Active — v0.1 through v0.8 shipped, entering v0.9 hardening
-## Date: 2026-03-30
+## Status: Active — v0.1 through v0.9.1 shipped, v1.0 in progress
+## Date: 2026-04-02
 
 ## Where We Are
 
-v0.1 through v0.8 shipped in a single session. The framework has: 5 skills, 4 hooks, 7 CLI commands, 4 JSON schemas, project scaffold, requirement templates (BUC/PUC/UR/TC), security baseline catalog, evidence lifecycle, suspect link management, and DAL profiles.
+v0.1 through v0.9.1 shipped. The framework has: 8 skills, 7 hooks, 7 CLI commands, 4 JSON schemas, project scaffold, requirement templates (BUC/PUC/UR/TC), security baseline catalog, evidence lifecycle, suspect link management, DAL profiles, and plugin published to thul-plugins marketplace.
 
-Next: v0.9 hardening (validate on 3 real projects), then v1.0 release.
+36 requirement cards (5 BUCs, 16 URs, 15 TCs), 57 tests, 35/36 acceptance coverage (97%).
+
+Next: v1.0 — subagent pressure tests, plugin packaging, getting started guide.
 
 ## Dependency Graph
 

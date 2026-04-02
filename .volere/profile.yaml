@@ -1,0 +1,69 @@
+# Volere DAL Profile — volere-requirement (dogfooding)
+# Design Assurance Level — scales verification effort to risk.
+
+dal: C                              # moderate — framework project
+
+# Additional docs checked for staleness alongside ARCHITECTURE.md, README.md, CLAUDE.md
+docs:
+  - presentation/index.html
+  - docs/roadmap.md
+
+profiles:
+  E:  # cosmetic — typos, CSS, documentation
+    hooks: []
+    ci: [lint, typecheck]
+    review: none
+    verification:
+      unit: optional
+      integration: optional
+      system: optional
+      acceptance: optional
+      manual: optional
+
+  D:  # minor — small features, config changes
+    hooks: [check-secrets]
+    ci: [lint, typecheck, test]
+    review: none
+    verification:
+      unit: required
+      integration: optional
+      system: optional
+      acceptance: optional
+      manual: optional
+
+  C:  # moderate — standard features, API changes
+    hooks: [check-secrets, check-traceability]
+    ci: [lint, typecheck, test, coverage]
+    review: code-reviewer
+    verification:
+      unit: required
+      integration: required
+      system: required
+      acceptance: required
+      manual: forbidden
+
+  B:  # critical — security, data integrity, auth
+    hooks: [check-secrets, check-traceability, check-fit-criteria]
+    ci: [lint, typecheck, test, coverage, mutation]
+    review: [code-reviewer, test-engineer]
+    verification:
+      unit: required
+      integration: required
+      system: required
+      acceptance: required
+      performance: required
+      manual: forbidden
+
+  A:  # catastrophic — safety-critical, regulatory, data loss
+    hooks: [check-secrets, check-traceability, check-fit-criteria]
+    ci: [lint, typecheck, test, coverage, mutation, fitness-functions]
+    review: [code-reviewer, test-engineer, architecture-reviewer, security-engineer]
+    verification:
+      unit: required
+      integration: required
+      system: required
+      acceptance: required
+      performance: required
+      visual: required
+      mutation: required
+      manual: forbidden
