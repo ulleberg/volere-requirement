@@ -32,8 +32,8 @@ jobs:
 
       - name: Sync files
         run: |
-          # Skills (preserve using-volere which only exists in target)
-          rsync -a --delete --exclude='using-volere/' source/plugin/skills/ target/skills/
+          # Skills
+          rsync -a --delete source/plugin/skills/ target/skills/
 
           # CLI
           mkdir -p target/commands/cli
