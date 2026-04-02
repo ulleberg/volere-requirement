@@ -24,6 +24,15 @@ fit_criteria:
       skipped with a warning.
     verification: test
     test_type: system
+  operational:
+    criterion: >
+      volere clean --archive moves process artifacts to docs/.archive/
+      before removal, preserving lineage for traceability. After archive,
+      only docs/spec.md remains among D2D artifacts in docs/ root.
+      Archived files retain their original directory structure under
+      docs/.archive/.
+    verification: test
+    test_type: system
 
 dal: D
 priority: should
@@ -39,4 +48,7 @@ depends_on: [UR-021]  # documentation consistency — clean complements stalenes
 history:
   - date: "2026-04-02"
     action: created
+    by: thomas-ulleberg
+  - date: "2026-04-02"
+    action: "added operational fit criterion — archive-before-delete for lineage traceability"
     by: thomas-ulleberg

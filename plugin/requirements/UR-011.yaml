@@ -18,6 +18,15 @@ fit_criteria:
     verification: test
     test_type: system
     verification_method: system
+  operational:
+    criterion: >
+      When the input includes a structured spec (sections: Capabilities,
+      Success criteria, Constraints, Decisions, Risks), the extract skill
+      maps sections to card fields: Capabilities to UR descriptions,
+      Success criteria to fit criteria, Constraints to TC cards,
+      Decisions to rationale, Risks to cross_verify links.
+    verification: test
+    test_type: system
 
 dal: C
 priority: must
@@ -28,3 +37,11 @@ origin:
   date: "2026-03-31"
   trigger: "Codebase extraction"
   source: "plugin/skills/extract-requirements/SKILL.md"
+
+history:
+  - date: "2026-03-31"
+    action: created
+    by: extract-requirements
+  - date: "2026-04-02"
+    action: "added operational fit criterion — structured spec consumption from D2D"
+    by: thomas-ulleberg
