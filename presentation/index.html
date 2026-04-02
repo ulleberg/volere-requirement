@@ -851,10 +851,59 @@
 </section>
 
 <!-- Section 14: Dogfooding -->
-<section id="s14"><div class="section-inner"></div></section>
+<section id="s14">
+<div class="section-inner" style="text-align: center;" data-has-counters>
+  <h2 class="fade-in">The framework verifies itself.</h2>
+  <p class="fade-in stagger subtitle" style="--delay: 0.1s;">Volere's own requirements are written as Volere cards.</p>
+
+  <div style="display: flex; gap: 1.25rem; justify-content: center; margin-top: 2.5rem; flex-wrap: wrap;">
+    <div class="fade-in stagger" style="--delay: 0.2s; background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 1.5rem; width: 150px;">
+      <div class="mono" style="color: var(--purple); font-size: 2.25rem; font-weight: 700;" data-count="32">0</div>
+      <div style="color: var(--text-muted); font-size: 0.7rem; margin-top: 0.25rem;">requirement cards</div>
+      <div style="color: var(--text-dim); font-size: 0.6rem;">5 BUC, 12 UR, 15 TC</div>
+    </div>
+    <div class="fade-in stagger" style="--delay: 0.35s; background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 1.5rem; width: 150px;">
+      <div class="mono" style="color: var(--blue); font-size: 2.25rem; font-weight: 700;" data-count="52">0</div>
+      <div style="color: var(--text-muted); font-size: 0.7rem; margin-top: 0.25rem;">acceptance tests</div>
+      <div style="color: var(--text-dim); font-size: 0.6rem;">hooks + CLI + schema</div>
+    </div>
+    <div class="fade-in stagger" style="--delay: 0.5s; background: var(--surface); border: 1px solid rgba(126,231,135,0.25); border-radius: 8px; padding: 1.5rem; width: 150px;">
+      <div class="mono" style="color: var(--green); font-size: 2.25rem; font-weight: 700;" data-count="100" data-suffix="%">0%</div>
+      <div style="color: var(--text-muted); font-size: 0.7rem; margin-top: 0.25rem;">coverage</div>
+      <div style="color: var(--text-dim); font-size: 0.6rem;">32/32 testable</div>
+    </div>
+  </div>
+
+  <p class="fade-in stagger" style="--delay: 0.7s; color: var(--text-muted); font-size: 0.85rem; font-style: italic; max-width: 28rem; margin: 2rem auto 0; line-height: 1.6;">
+    "If a framework can't pass its own requirements, why would you trust it with yours?"
+  </p>
+</div>
+</section>
 
 <!-- Section 15: Getting Started -->
-<section id="s15"><div class="section-inner"></div></section>
+<section id="s15">
+<div class="section-inner" style="text-align: center;">
+  <h2 class="fade-in" style="font-size: clamp(1.75rem, 4vw, 2.5rem);">Try it.</h2>
+
+  <div class="fade-in stagger" style="--delay: 0.2s; background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 1rem 1.5rem; display: inline-block; margin-top: 2rem;">
+    <code class="mono" style="font-size: 0.9rem;">
+      <span style="color: var(--text-muted);">$</span>
+      <span style="color: var(--blue);"> claude plugins install</span>
+      <span style="color: var(--cyan);"> volere@ulleberg</span>
+    </code>
+  </div>
+
+  <div style="display: flex; gap: 0.75rem; justify-content: center; margin-top: 2rem; flex-wrap: wrap;">
+    <a class="fade-in stagger" style="--delay: 0.35s; background: var(--surface); border: 1px solid var(--border); border-radius: 6px; padding: 0.6rem 1.25rem; font-size: 0.8rem; color: var(--blue); font-family: var(--font-mono); text-decoration: none; cursor: pointer;" href="https://github.com/ulleberg/volere-requirement" target="_blank" rel="noopener">GitHub</a>
+    <a class="fade-in stagger" style="--delay: 0.45s; background: var(--surface); border: 1px solid var(--border); border-radius: 6px; padding: 0.6rem 1.25rem; font-size: 0.8rem; color: var(--purple); font-family: var(--font-mono); text-decoration: none; cursor: pointer;" href="https://github.com/ulleberg/volere-requirement#readme" target="_blank" rel="noopener">Documentation</a>
+    <a class="fade-in stagger" style="--delay: 0.55s; background: var(--surface); border: 1px solid var(--border); border-radius: 6px; padding: 0.6rem 1.25rem; font-size: 0.8rem; color: var(--green); font-family: var(--font-mono); text-decoration: none; cursor: pointer;" href="https://github.com/ulleberg/thul-plugins" target="_blank" rel="noopener">Plugin Marketplace</a>
+  </div>
+
+  <p class="fade-in stagger" style="--delay: 0.7s; color: var(--text-dim); font-size: 0.7rem; margin-top: 3rem;">
+    Built with the Volere Agentic Framework &middot; 2026
+  </p>
+</div>
+</section>
 
 <script>
 (function() {
