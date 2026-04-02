@@ -1,0 +1,48 @@
+id: UR-020
+type: functional
+title: "Interactive requirement graph visualization"
+
+description: >
+  The CLI provides a graph command that reads all requirement cards and
+  generates a self-contained interactive HTML file showing cards as nodes
+  and their relationships as edges.
+
+rationale: >
+  With 34+ cards, understanding the requirement hierarchy and cross-cutting
+  dependencies requires reading individual YAML files and holding
+  relationships mentally. A visual graph makes onboarding, impact analysis,
+  and review sessions faster by showing the full structure at a glance.
+
+fit_criteria:
+  user:
+    criterion: >
+      Running volere graph produces an HTML file that renders all
+      requirement cards as nodes and all relationship types (depends_on,
+      serves, cross_verify, decomposed_to, conflicts) as edges. Nodes
+      are colored by type (BUC, PUC, UR, TC). Clicking a node displays
+      the card's title, DAL, status, and fit criteria summary.
+    verification: test
+    test_type: system
+  operational:
+    criterion: >
+      The output HTML file is self-contained with no external
+      dependencies, opens from file:// protocol, and renders correctly
+      in Safari, Chrome, and Firefox.
+    verification: test
+    test_type: system
+
+dal: D
+priority: should
+status: proposed
+
+origin:
+  stakeholder: thomas-ulleberg
+  date: "2026-04-02"
+  trigger: "Session observation — framework has rich traceability data in YAML but no way to visualize the graph"
+
+depends_on: [UR-008]  # coverage/traceability reporting
+
+history:
+  - date: "2026-04-02"
+    action: created
+    by: thomas-ulleberg
