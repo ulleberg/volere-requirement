@@ -68,10 +68,14 @@ volere-requirement/
 
 ## V-Model Mapping
 
-The framework maps Volere's requirement structure to the V-Model's definition and verification levels:
+This framework's core contribution: connecting two proven disciplines for the first time.
+
+- **Volere** (Robertson & Robertson, 1995) defines requirement types — BUC, PUC, UR, TC — with testable fit criteria. It says nothing about verification levels.
+- **V-Model** (systems engineering) defines a symmetry between definition levels and verification levels. It says nothing about requirement formats.
+- **This framework** maps each Volere requirement type to a V-Model verification level, creating a complete definition→verification chain for agentic development.
 
 ```
-V-Model Left (Definition)              V-Model Right (Verification)
+Volere (Definition)                    V-Model (Verification)
 ──────────────────────────              ────────────────────────────
 
 Stakeholder Needs                       Validation
