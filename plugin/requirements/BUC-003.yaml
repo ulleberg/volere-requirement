@@ -28,6 +28,8 @@ origin:
   trigger: "Extraction review — dogfooding session"
 decomposed_to:
   - TC-003
+  - TC-010
+  - TC-015
   - UR-007
   - UR-014
   - UR-015

@@ -31,7 +31,12 @@ origin:
 decomposed_to:
   - TC-007
   - TC-008
+  - TC-011
+  - TC-013
   - UR-004
   - UR-005
   - UR-010
   - UR-012
+  - UR-018
+  - UR-021
+  - UR-023

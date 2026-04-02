@@ -34,8 +34,14 @@ decomposed_to:
   - TC-002
   - TC-004
   - TC-009
+  - TC-012
+  - TC-014
+  - TC-016
   - UR-006
   - UR-008
+  - UR-009
+  - UR-019
+  - UR-020
 
 history:
   - date: "2026-03-31"
