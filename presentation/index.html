@@ -192,6 +192,74 @@
     width: 160px;
   }
 
+  /* === Loop Detail Layout === */
+  .loop-detail {
+    display: flex;
+    gap: 1.5rem;
+    align-items: flex-start;
+  }
+
+  .loop-detail-main { flex: 1; }
+
+  .loop-detail-gate {
+    flex: 0 0 220px;
+    background: var(--surface);
+    border-radius: 8px;
+    padding: 1.25rem;
+  }
+
+  .phase-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    margin-top: 1.25rem;
+  }
+
+  .phase-item {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    font-size: 0.8rem;
+  }
+
+  .phase-badge {
+    padding: 0.25rem 0.5rem;
+    border-radius: 4px;
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    min-width: 5rem;
+    text-align: center;
+  }
+
+  .skill-tags {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+    margin-top: 1rem;
+  }
+
+  .skill-tag {
+    background: rgba(121,192,255,0.08);
+    border: 1px solid rgba(121,192,255,0.2);
+    border-radius: 4px;
+    padding: 0.4rem 0.75rem;
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    color: var(--blue);
+  }
+
+  .vmodel {
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    line-height: 2;
+    margin-top: 1rem;
+  }
+
+  .vmodel-row {
+    display: flex;
+    justify-content: space-between;
+  }
+
   /* === Responsive === */
   @media (max-width: 768px) {
     section { padding: 2rem 1rem; }
@@ -201,6 +269,8 @@
     .loop-diagram { flex-direction: column; gap: 1rem; }
     .loop-arrow { transform: rotate(90deg); }
     .failure-labels { flex-direction: column; align-items: center; gap: 1rem; }
+    .loop-detail { flex-direction: column; }
+    .loop-detail-gate { flex: auto; }
   }
 </style>
 </head>
@@ -368,13 +438,104 @@
 </section>
 
 <!-- Section 6: Loop 1 - Discovery -->
-<section id="s6"><div class="section-inner"></div></section>
+<section id="s6">
+<div class="section-inner">
+  <div class="loop-detail">
+    <div class="loop-detail-main">
+      <div class="fade-in label" style="color: var(--green);">Loop 1 — Discovery</div>
+      <h2 class="fade-in stagger" style="--delay: 0.1s; margin-top: 0.75rem;">Understand before you build.</h2>
+      <p class="fade-in stagger" style="--delay: 0.2s; color: var(--text-muted); font-size: 0.9rem; margin-top: 0.75rem;">
+        The double diamond: diverge to explore the problem space, converge to a brief, diverge to explore solutions, converge to a spec.
+      </p>
+      <div class="phase-list">
+        <div class="phase-item fade-in stagger" style="--delay: 0.3s;">
+          <div class="phase-badge" style="background: rgba(126,231,135,0.12); color: var(--green);">Discover</div>
+          <span style="color: var(--text-muted);">&rarr; docs/problem.md</span>
+        </div>
+        <div class="phase-item fade-in stagger" style="--delay: 0.4s;">
+          <div class="phase-badge" style="background: rgba(126,231,135,0.12); color: var(--green);">Define</div>
+          <span style="color: var(--text-muted);">&rarr; docs/brief.md</span>
+        </div>
+        <div class="phase-item fade-in stagger" style="--delay: 0.5s;">
+          <div class="phase-badge" style="background: rgba(126,231,135,0.12); color: var(--green);">Develop</div>
+          <span style="color: var(--text-muted);">&rarr; docs/options/, docs/decisions.md</span>
+        </div>
+        <div class="phase-item fade-in stagger" style="--delay: 0.6s;">
+          <div class="phase-badge" style="background: rgba(126,231,135,0.12); color: var(--green);">Deliver</div>
+          <span style="color: var(--text-muted);">&rarr; docs/spec.md <span style="color: var(--green);">(handoff to Volere)</span></span>
+        </div>
+      </div>
+    </div>
+    <div class="loop-detail-gate fade-in stagger" style="--delay: 0.5s; border: 1px solid rgba(126,231,135,0.2);">
+      <div class="mono" style="color: var(--green); font-size: 0.7rem; font-weight: 600; margin-bottom: 0.5rem;">Quality gate</div>
+      <div style="font-weight: 600; font-size: 0.9rem; margin-bottom: 0.5rem;">Are we solving the right problem?</div>
+      <div style="color: var(--text-muted); font-size: 0.75rem;">No code until the problem is explored, options are compared, and a spec is written.</div>
+    </div>
+  </div>
+</div>
+</section>
 
 <!-- Section 7: Loop 2 - Volere -->
-<section id="s7"><div class="section-inner"></div></section>
+<section id="s7">
+<div class="section-inner">
+  <div class="loop-detail">
+    <div class="loop-detail-main">
+      <div class="fade-in label" style="color: var(--purple);">Loop 2 — Volere</div>
+      <h2 class="fade-in stagger" style="--delay: 0.1s; margin-top: 0.75rem;">Specify what "done" means.</h2>
+      <p class="fade-in stagger" style="--delay: 0.2s; color: var(--text-muted); font-size: 0.9rem; margin-top: 0.75rem;">
+        Turns the spec into testable requirement cards. Each card has measurable fit criteria — the definition of when a requirement is satisfied.
+      </p>
+      <div class="vmodel fade-in stagger" style="--delay: 0.3s;">
+        <div class="vmodel-row">
+          <span style="color: var(--purple);">BUC (Business Context)</span>
+          <span style="color: var(--purple);">Acceptance Tests</span>
+        </div>
+        <div class="vmodel-row" style="padding: 0 1.25rem;">
+          <span style="color: var(--text);">UR (User Requirements)</span>
+          <span style="color: var(--text);">System Tests</span>
+        </div>
+        <div class="vmodel-row" style="padding: 0 2.5rem;">
+          <span style="color: var(--text-muted);">TC (Tech Constraints)</span>
+          <span style="color: var(--text-muted);">Unit Tests</span>
+        </div>
+        <div style="text-align: center; color: var(--text-dim); padding-top: 0.25rem;">&darr; Code &darr;</div>
+      </div>
+    </div>
+    <div class="loop-detail-gate fade-in stagger" style="--delay: 0.4s; border: 1px solid rgba(210,168,255,0.2);">
+      <div class="mono" style="color: var(--purple); font-size: 0.7rem; font-weight: 600; margin-bottom: 0.5rem;">Quality gate</div>
+      <div style="font-weight: 600; font-size: 0.9rem; margin-bottom: 0.5rem;">Do requirements have measurable fit criteria?</div>
+      <div style="color: var(--text-muted); font-size: 0.75rem;">No implementation until every requirement defines what "pass" looks like.</div>
+    </div>
+  </div>
+</div>
+</section>
 
 <!-- Section 8: Loop 3 - Superpowers -->
-<section id="s8"><div class="section-inner"></div></section>
+<section id="s8">
+<div class="section-inner">
+  <div class="loop-detail">
+    <div class="loop-detail-main">
+      <div class="fade-in label" style="color: var(--blue);">Loop 3 — Superpowers</div>
+      <h2 class="fade-in stagger" style="--delay: 0.1s; margin-top: 0.75rem;">Build with discipline.</h2>
+      <p class="fade-in stagger" style="--delay: 0.2s; color: var(--text-muted); font-size: 0.9rem; margin-top: 0.75rem;">
+        Implementation guided by requirement cards and fit criteria. TDD, structured plans, code review, and verification — not just "write code."
+      </p>
+      <div class="skill-tags fade-in stagger" style="--delay: 0.3s;">
+        <div class="skill-tag">/brainstorm</div>
+        <div class="skill-tag">/write-plan</div>
+        <div class="skill-tag">/execute-plan</div>
+        <div class="skill-tag">TDD</div>
+        <div class="skill-tag">Code review</div>
+      </div>
+    </div>
+    <div class="loop-detail-gate fade-in stagger" style="--delay: 0.4s; border: 1px solid rgba(121,192,255,0.2);">
+      <div class="mono" style="color: var(--blue); font-size: 0.7rem; font-weight: 600; margin-bottom: 0.5rem;">Quality gate</div>
+      <div style="font-weight: 600; font-size: 0.9rem; margin-bottom: 0.5rem;">Do tests verify fit criteria, not just implementation?</div>
+      <div style="color: var(--text-muted); font-size: 0.75rem;">Coverage feeds back to Volere. Gaps trigger re-verification.</div>
+    </div>
+  </div>
+</div>
+</section>
 
 <!-- Section 9: The Handoffs -->
 <section id="s9"><div class="section-inner"></div></section>
