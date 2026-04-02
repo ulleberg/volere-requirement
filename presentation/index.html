@@ -122,11 +122,44 @@
   .subtitle { color: var(--text-muted); font-size: clamp(0.875rem, 1.5vw, 1rem); margin-top: 0.5rem; }
   .mono { font-family: var(--font-mono); }
 
+  /* === Split Comparison === */
+  .split-compare {
+    display: flex;
+    gap: 1rem;
+    margin-top: 2rem;
+  }
+
+  .split-compare > div {
+    flex: 1;
+    background: var(--surface);
+    border-radius: 8px;
+    padding: 1.5rem;
+  }
+
+  .split-compare .flow {
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    line-height: 1.8;
+    margin-top: 0.75rem;
+  }
+
+  .split-compare .detail {
+    margin-top: 0.75rem;
+    padding: 0.5rem;
+    background: var(--bg);
+    border-radius: 4px;
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    line-height: 1.6;
+  }
+
   /* === Responsive === */
   @media (max-width: 768px) {
     section { padding: 2rem 1rem; }
     #dot-nav { right: 0.75rem; gap: 8px; }
     .dot { width: 6px; height: 6px; }
+    .split-compare { flex-direction: column; }
   }
 </style>
 </head>
@@ -177,10 +210,61 @@
 </section>
 
 <!-- Section 3: What Breaks -->
-<section id="s3"><div class="section-inner"></div></section>
+<section id="s3">
+<div class="section-inner">
+  <h2 class="fade-in" style="text-align: center;">Without requirements, agents produce:</h2>
+  <div style="display: flex; flex-wrap: wrap; gap: 0.75rem; justify-content: center; margin-top: 2rem;">
+    <div class="fade-in stagger" style="--delay: 0.1s; background: var(--surface); border-left: 3px solid var(--red); border-radius: 4px; padding: 1rem 1.25rem; width: 260px;">
+      <div class="mono" style="color: var(--red); font-size: 0.8rem; font-weight: 600;">01 Monolith Degradation</div>
+      <div style="color: var(--text-muted); font-size: 0.8rem; margin-top: 0.4rem;">No structural constraints. Every fix grows the ball of mud.</div>
+    </div>
+    <div class="fade-in stagger" style="--delay: 0.2s; background: var(--surface); border-left: 3px solid var(--red); border-radius: 4px; padding: 1rem 1.25rem; width: 260px;">
+      <div class="mono" style="color: var(--red); font-size: 0.8rem; font-weight: 600;">02 Test Theater</div>
+      <div style="color: var(--text-muted); font-size: 0.8rem; margin-top: 0.4rem;">High coverage, but tests verify implementation — not behavior.</div>
+    </div>
+    <div class="fade-in stagger" style="--delay: 0.3s; background: var(--surface); border-left: 3px solid var(--red); border-radius: 4px; padding: 1rem 1.25rem; width: 260px;">
+      <div class="mono" style="color: var(--red); font-size: 0.8rem; font-weight: 600;">03 Interface Drift</div>
+      <div style="color: var(--text-muted); font-size: 0.8rem; margin-top: 0.4rem;">Signatures change. Downstream breaks silently. No one notices.</div>
+    </div>
+    <div class="fade-in stagger" style="--delay: 0.4s; background: var(--surface); border-left: 3px solid var(--red); border-radius: 4px; padding: 1rem 1.25rem; width: 260px;">
+      <div class="mono" style="color: var(--red); font-size: 0.8rem; font-weight: 600;">04 Doc-Code Divergence</div>
+      <div style="color: var(--text-muted); font-size: 0.8rem; margin-top: 0.4rem;">Code evolves. Requirements and CLAUDE.md don't follow.</div>
+    </div>
+    <div class="fade-in stagger" style="--delay: 0.5s; background: var(--surface); border-left: 3px solid var(--red); border-radius: 4px; padding: 1rem 1.25rem; width: 260px;">
+      <div class="mono" style="color: var(--red); font-size: 0.8rem; font-weight: 600;">05 Quality Roulette</div>
+      <div style="color: var(--text-muted); font-size: 0.8rem; margin-top: 0.4rem;">Each session starts fresh. Quality depends on prompt luck.</div>
+    </div>
+  </div>
+</div>
+</section>
 
 <!-- Section 4: The Missing Piece -->
-<section id="s4"><div class="section-inner"></div></section>
+<section id="s4">
+<div class="section-inner" style="text-align: center;">
+  <h2 class="fade-in">The gap isn't intelligence. It's discipline.</h2>
+  <p class="fade-in stagger subtitle" style="--delay: 0.1s;">Requirements engineering bridges the gap between capability and quality.</p>
+  <div class="split-compare">
+    <div class="fade-in stagger" style="--delay: 0.2s; border: 1px solid rgba(248,81,73,0.2);">
+      <div class="label" style="color: var(--red);">Without requirements</div>
+      <div class="flow">idea &rarr; prompt &rarr; code &rarr; <span style="color: var(--red);">pray</span></div>
+      <div class="detail" style="color: var(--text-dim);">
+        "It works on my machine"<br>
+        "Tests pass" (but test what?)<br>
+        "Ship it" (and hope)
+      </div>
+    </div>
+    <div class="fade-in stagger" style="--delay: 0.4s; border: 1px solid rgba(126,231,135,0.2);">
+      <div class="label" style="color: var(--green);">With requirements</div>
+      <div class="flow">problem &rarr; spec &rarr; requirements &rarr; code &rarr; <span style="color: var(--green);">verify</span></div>
+      <div class="detail" style="color: var(--text-muted);">
+        Measurable fit criteria<br>
+        Tests verify behavior, not impl<br>
+        Evidence chain to stakeholders
+      </div>
+    </div>
+  </div>
+</div>
+</section>
 
 <!-- Section 5: Three Loops Overview -->
 <section id="s5"><div class="section-inner"></div></section>
