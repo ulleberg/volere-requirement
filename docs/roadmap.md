@@ -5,9 +5,9 @@
 
 ## Where We Are
 
-v0.1 through v0.9.1 shipped. The framework has: 8 skills, 7 hooks, 7 CLI commands, 4 JSON schemas, project scaffold, requirement templates (BUC/PUC/UR/TC), security baseline catalog, evidence lifecycle, suspect link management, DAL profiles, and plugin published to thul-plugins marketplace.
+v0.1 through v0.9.1 shipped. The framework has: 9 skills, 7 hooks, 9 CLI commands, 4 JSON schemas, project scaffold, requirement templates (BUC/PUC/UR/TC), security baseline catalog, evidence lifecycle, suspect link management, DAL profiles, and plugin published to thul-plugins marketplace.
 
-36 requirement cards (5 BUCs, 16 URs, 15 TCs), 57 tests, 35/36 acceptance coverage (97%).
+39 requirement cards (5 BUCs, 19 URs, 15 TCs), 63 tests, 38/39 acceptance coverage (97%).
 
 Next: v1.0 — subagent pressure tests, plugin packaging, getting started guide.
 

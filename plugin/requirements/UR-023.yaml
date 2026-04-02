@@ -23,7 +23,7 @@ fit_criteria:
 
 dal: E
 priority: could
-status: proposed
+status: implemented
 
 origin:
   stakeholder: thomas-ulleberg

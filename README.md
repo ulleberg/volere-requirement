@@ -40,12 +40,12 @@ This framework adds a novel synthesis: each Volere type maps to a V-Model verifi
 | Component | What it does |
 |-----------|-------------|
 | `plugin/schema/` | JSON Schema for requirement cards, DAL profiles, compliance, evidence |
-| `plugin/skills/` | 8 skills: extract-requirements, simplify-requirements, write-requirement, review-requirements, trace-codebase, audit-tests, classify-risk, glossary |
+| `plugin/skills/` | 9 skills: using-volere, extract-requirements, simplify-requirements, write-requirement, review-requirements, trace-codebase, audit-tests, classify-risk, glossary |
 | `plugin/hooks/` | 7 hooks: check-secrets, check-simplicity, check-traceability, check-fit-criteria, check-checkout, check-merge, coverage-gaps + installer |
-| `plugin/cli/volere` | CLI with 7 commands: init, new, validate, trace, coverage, impact, review |
+| `plugin/cli/volere` | CLI with 9 commands: init, new, validate, trace, coverage, impact, review, check-docs, clean |
 | `plugin/catalogs/` | Shared requirement catalogs (security-baseline) |
 | `plugin/templates/` | Project scaffold, BUC/PUC/UR/TC/evidence/compliance templates, retrofit guide |
-| `plugin/requirements/` | 36 cards dogfooding the framework (5 BUCs, 16 URs, 15 TCs), 57 tests, 97% coverage |
+| `plugin/requirements/` | 39 cards dogfooding the framework (5 BUCs, 19 URs, 15 TCs), 63 tests, 97% coverage |
 
 ## Key Features
 

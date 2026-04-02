@@ -25,7 +25,7 @@ fit_criteria:
 
 dal: C
 priority: should
-status: proposed
+status: implemented
 
 # Future hardening: PreToolUse hook on brainstorm skill invocation that
 # checks whether a requirement ID has been referenced in the conversation.

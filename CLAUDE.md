@@ -9,12 +9,12 @@ Archive of the original Volere Requirements Template (v15) plus the Volere Agent
   - **docs/insights/** — session insights from applying the framework to real projects. Research findings with framework action items. Read these before proposing changes to the framework — they contain lessons from production use.
 - **plugin/** — the framework (v0.1–v0.8 shipped, v0.9 hardening):
   - `schema/` — 4 JSON schemas (requirement with cross_verify + verification_method, profile with verification_commands, compliance, evidence with verification_level)
-  - `skills/` — 8 skills (extract-requirements, simplify-requirements, write-requirement, review-requirements, trace-codebase, audit-tests, classify-risk, glossary)
+  - `skills/` — 9 skills (using-volere, extract-requirements, simplify-requirements, write-requirement, review-requirements, trace-codebase, audit-tests, classify-risk, glossary)
   - `hooks/` — 7 hooks (check-secrets, check-simplicity, check-traceability, check-fit-criteria, check-checkout, check-merge, coverage-gaps) + installer
-  - `cli/` — CLI with 7 commands + suspect link manager
+  - `cli/` — CLI with 9 commands + suspect link manager
   - `catalogs/` — shared requirement catalogs (security-baseline)
   - `templates/` — project scaffold, BUC/PUC/UR/TC/evidence/compliance templates, retrofit guide
-  - `requirements/` — 36 cards dogfooding the framework (5 BUCs, 16 URs, 15 TCs), 57 tests, 97% coverage
+  - `requirements/` — 39 cards dogfooding the framework (5 BUCs, 19 URs, 15 TCs), 63 tests, 97% coverage
 
 See `ARCHITECTURE.md` for the full V-Model mapping, design principles, and design decisions.
 

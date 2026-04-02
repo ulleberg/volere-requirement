@@ -26,7 +26,8 @@ volere-requirement/
 │   │   ├── profile.schema.json      DAL profiles + verification_commands
 │   │   ├── compliance.schema.json   Compliance dimensions
 │   │   └── evidence.schema.json     Evidence lifecycle + verification_level
-│   ├── skills/                      8 Claude Code skills
+│   ├── skills/                      9 Claude Code skills
+│   │   ├── using-volere/            Session start: project detection, requirement gate, doc tracking
 │   │   ├── extract-requirements/    Scan codebase → draft UR/TC cards → owner review
 │   │   ├── simplify-requirements/   Reduce cards: delete, merge, question every card
 │   │   ├── write-requirement/       Card format + cross-impact prompt
@@ -59,7 +60,7 @@ volere-requirement/
 │   │   ├── compliance-profile.yaml  Compliance dimension template
 │   │   ├── imports.yaml             Catalog import template
 │   │   └── evidence/                Evidence record template
-│   ├── requirements/                Framework's own requirements (36 cards, dogfooding)
+│   ├── requirements/                Framework's own requirements (39 cards, dogfooding)
 │   └── validate.sh                  Card validator (Node.js, no external deps)
 ├── CLAUDE.md
 ├── ARCHITECTURE.md                  This file
