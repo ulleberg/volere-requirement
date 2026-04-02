@@ -64,6 +64,21 @@ Present the relevant section(s) based on what the user is working with. If they 
 | **system** | Does the system behave correctly? | The team |
 | **acceptance** | Does the user get value? | The user |
 
+### Volere → V-Model Mapping (Framework Synthesis)
+
+This framework's novel contribution — connecting Volere's requirement types to V-Model verification levels:
+
+| Volere Type | Question | V-Model Level | Verification |
+|-------------|----------|---------------|-------------|
+| **BUC** | Why does this exist? | Acceptance | Does the system support the business? |
+| **PUC** | What does the user do? | System | Does the system work as a whole? |
+| **UR** | What must it do? | System | Functional + non-functional verification |
+| Architecture | How is it structured? | Integration | Module boundary verification |
+| **TC** | What must impl guarantee? | Unit | Component-level verification |
+| Code | Implementation | Static analysis | Linting, type checking |
+
+This mapping is not from original Volere (Robertson & Robertson, 1995) nor inherent to the V-Model. It is the framework's synthesis of both.
+
 ## Requirement Card Fields
 
 | Field | Required | Purpose |
