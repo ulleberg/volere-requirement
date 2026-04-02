@@ -821,6 +821,28 @@ rm -f docs/brief.md
 
 echo ""
 
+# ============================================================
+echo "skill instructions:"
+# ============================================================
+
+USING_SKILL="$SCRIPT_DIR/../skills/using-volere/SKILL.md"
+
+# Test 65: using-volere skill contains doc tracking instruction (UR-023)
+if grep -q "profile.yaml" "$USING_SKILL" && grep -q "docs" "$USING_SKILL" && grep -q "staleness" "$USING_SKILL"; then
+  log_pass "using-volere skill contains doc tracking instruction (UR-023)"
+else
+  log_fail "using-volere skill should instruct agents to offer profile.yaml doc tracking"
+fi
+
+# Test 66: using-volere skill contains brainstorm gate instruction (UR-024)
+if grep -q "write-requirement" "$USING_SKILL" && grep -q "brainstorm" "$USING_SKILL" && grep -q "fit criteria" "$USING_SKILL"; then
+  log_pass "using-volere skill contains requirement-before-brainstorm gate (UR-024)"
+else
+  log_fail "using-volere skill should require a requirement card before brainstorming"
+fi
+
+echo ""
+
 # Clean up
 rm -rf docs/requirements .volere src
 
