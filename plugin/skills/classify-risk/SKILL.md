@@ -16,6 +16,8 @@ Assign a Design Assurance Level (A-E) to a code change, feature, or requirement.
 
 ## DAL Levels
 
+DAL levels are adapted from DO-178C (aerospace software safety standards), scaled for general software development.
+
 See `/glossary` for the full DAL table. Quick reference: A=catastrophic, B=critical, C=moderate, D=minor, E=cosmetic.
 
 ## Classification Method
